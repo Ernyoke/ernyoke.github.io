@@ -207,6 +207,7 @@ article {
     max-width: 54em;
     min-height: 80vh;
     width: 100%;
+    text-align: justify;
 }
 
 article img {
