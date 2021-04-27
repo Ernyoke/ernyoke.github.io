@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <link href="https://ernyoke.github.io/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ernyoke.github.io/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ernyoke.github.io/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ernyoke.github.io/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ernyoke.github.io/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ernyoke.github.io/scripts/scripts.js">
+  </script>
+  <title>
+   Ervin Szilágyi
+  </title>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ernyoke.github.io/index.html">
+       <img alt="logo" class="logo" src="https://ernyoke.github.io/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ernyoke.github.io/resume.html">
+       Résumé
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Generate "low poly" images using Delaunay triangulation
+   </h1>
+   <h2>
+    Intro
+   </h2>
+   <p>
+    According to
+    <a href="https://www.sessions.edu/notes-on-design/whats-the-deal-with-low-poly-art/#:~:text=Simple%20geometric%20shapes%20placed%20side,early%20days%20of%203D%20animation." target="_blank">
+     sessions.edu
+    </a>
+    a "low poly" image is an image composed from:
+   </p>
+   <blockquote>
+    <p>
+     Simple geometric shapes placed side-by-side to create angular, often minimalist, compositions.
+    </p>
+   </blockquote>
+   <p>
+    To give an example, the following image is considered to be "low poly":
+    <img alt='"Low poly" portrait of Leonardo DiCaprio' src="img-generate-low-poly-images/leo.jpeg"/>
+   </p>
+   <p>
+    The roots of "low poly" art go back to the early days of computer graphics, where lack of performant hardware forced computer scientists and game designers to present their idea using as few polygons as possible. Nowadays, obviously, this is not really an issue, but the artistic nature of having more edges than curves is still present, representing a somewhat niche artistic style.
+   </p>
+   <p>
+    <a href="https://www.youtube.com/watch?v=XuTXzLZMLUE&amp;ab_channel=ThinMatrix" target="_blank">
+     <img alt="Equilinox" src="http://img.youtube.com/vi/XuTXzLZMLUE/0.jpg"/>
+    </a>
+   </p>
+   <p>
+    Being fascinated by this style, one might ask how could we generate images like this? More specifically, how could we transform an arbitrary image into a "low poly" one? One solution would be Delaunay triangulation, which will presented bellow.
+   </p>
+   <h2>
+    Delaunay triangulation
+   </h2>
+   <p>
+    Let's imagine the following challenge: we are given a set of points in a 2D space. From this set of points we should create a mesh having the following properties:
+- the mesh should be composed from triangles
+- no overlapping triangles are allowed
+- the mesh should be pleasing to the eye:
+  - we should avoid having
+    <a href="https://math.stackexchange.com/questions/56680/sliver-triangle" target="_blank">
+     sliver triangles
+    </a>
+    .
+  - the area of each triangle should be minimal, or at least the tendency should be to prioritize triangles with smaller area.
+   </p>
+   <p>
+    One way to tackle this challenge would be to use Delaunay triangulation algorithm. According to
+    <a href="https://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">
+     Wikipedia
+    </a>
+    , the definition is the following:
+   </p>
+   <blockquote>
+    <p>
+     In mathematics and computational geometry, a Delaunay triangulation (also known as a Delone triangulation) for a given set P of discrete points in a plane is a triangulation DT(P) such that no point in P is inside the circumcircle of any triangle in DT(P).
+    </p>
+   </blockquote>
+   <p>
+    Let's break this down. First, let's see what is the circumcircle of a triangle?
+The circumcircle of a triangle is basically the a circle which can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.
+   </p>
+   <p>
+    Example:
+    <img alt="Alt Text" src="img-generate-low-poly-images/circumcirlce.png"/>
+   </p>
+   <p>
+    In order to calculate the center (circumcenter) of the circle, we can use the following formulas:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/formula1.png"/>
+   </p>
+   <p>
+    Where
+    <code>
+     U(x, y)
+    </code>
+    represents the center of the circle in cartesian coordinates, and
+    <code>
+     A(x, y)
+    </code>
+    ,
+    <code>
+     B(x, y)
+    </code>
+    and
+    <code>
+     C(x, y)
+    </code>
+    are to vertices of the triangle.
+The radius of the circumcircle can be calculated as follows:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/formula2.png"/>
+   </p>
+   <p>
+    As we see, a lot of formulas here, the good thing is that they are pretty straightforward to implement, and relatively easy to unit tests, given the fact that there are a lot of only circumcircle calculators out there. Let's see some code here:
+   </p>
+   <pre><code class="language-Java">// https://en.wikipedia.org/wiki/Circumscribed_circle#Triangles
+private static Circle calculateCircumCircle(Point a, Point b, Point c) {
+    double d = 2 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
+    double centerX = 1.0 / d * ((a.x * a.x + a.y * a.y) * (b.y - c.y) + (b.x * b.x + b.y * b.y) * (c.y - a.y) + (c.x * c.x + c.y * c.y) * (a.y - b.y));
+    double centerY = 1.0 / d * ((a.x * a.x + a.y * a.y) * (c.x - b.x) + (b.x * b.x + b.y * b.y) * (a.x - c.x) + (c.x * c.x + c.y * c.y) * (b.x - a.x));
+
+    Point bSign = new Point(b.x - a.x, b.y - a.y);
+    Point cSign = new Point(c.x - a.x, c.y - a.y);
+    double dSign = 2 * (bSign.x * cSign.y - bSign.y * cSign.x);
+    double centerXSign = 1.0 / dSign * (cSign.y * (bSign.x * bSign.x + bSign.y * bSign.y) - bSign.y * (cSign.x * cSign.x + cSign.y * cSign.y));
+    double centerYSign = 1.0 / dSign * (bSign.x * (cSign.x * cSign.x + cSign.y * cSign.y) - cSign.x * (bSign.x * bSign.x + bSign.y * bSign.y));
+
+    double r = Math.sqrt(centerXSign * centerXSign + centerYSign * centerYSign);
+    return new Circle(new Point(centerX, centerY), r);
+}
+</code></pre>
+   <p>
+    Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set if points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex which is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in other triangle's circumcircle:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/triangulation.png"/>
+   </p>
+   <p>
+    Moving forward there are several categories of algorithms used for Delaunay triangulation. Probably to be the easier to understand and to implement is the one called
+    <a href="https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm" target="_blank">
+     Bowyer-Watson
+    </a>
+    algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the effected area of the final result. The steps of the algorithm are the following:
+   </p>
+   <pre><code class="language-Bash">function BowyerWatson (pointList)
+   // pointList is a set of coordinates defining the points to be triangulated
+   triangulationResult := empty triangle mesh data structure
+
+   // create a super triangle which contains all the points
+   add super-triangle to triangulation
+
+   // iterate through each point
+   for each point in pointList do
+
+      badTriangles := empty set
+      // filter all the triangles which circumcirlce contains the current point
+      for each triangle in triangulationResult do
+         if point is inside circumcircle of triangle
+            add triangle to badTriangles
+
+      polygon := empty set
+      // get all the edges from bad triangles which are not shared by other bad triangles. Add them to another set.
+      for each triangle in badTriangles do
+         for each edge in triangle do
+            if edge is not shared by any other triangles in badTriangles
+               add edge to polygon
+
+      // remove all the bad triangles from the final result
+      for each triangle in badTriangles do
+         remove triangle from triangulationResult
+
+      // use each edges which are not shared to create new triangles using the current point from the pointlist
+      for each edge in polygon do
+         newTriangle := form a triangle from edge to point
+         add newTriangle to triangulationResult
+
+   // remove the original super triangle
+   for each triangle in triangulationResult
+      if triangle contains a vertex from original super-triangle
+         remove triangle from triangulationResult
+   return triangulationResult
+</code></pre>
+   <p>
+    Java implementation:
+   </p>
+   <pre><code class="language-Java">// https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm
+private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size imageSize) {
+    List&lt;Triangle&gt; triangles = new ArrayList&lt;&gt;(createInitialSuperTriangle(imageSize));
+
+    for (Point point : edgePoints) {
+        Map&lt;Boolean, List&lt;Triangle&gt;&gt; partitionedTriangles = triangles.stream()
+                .collect(Collectors.partitioningBy(triangle -&gt; triangle.getCircumCircle().isInside(point),
+                        Collectors.toCollection(ArrayList&lt;Triangle&gt;::new)));
+
+        List&lt;Triangle&gt; badTriangles = partitionedTriangles.get(true);
+        Set&lt;Edge&gt; polygon = new HashSet&lt;&gt;();
+        for (Triangle triangle : badTriangles) {
+            for (Edge edge : triangle.getEdges()) {
+                boolean sharedEdge = false;
+                for (Triangle otherTriangle : badTriangles) {
+                    if (triangle != otherTriangle &amp;&amp; otherTriangle.containsEdge(edge)) {
+                        sharedEdge = true;
+                        break;
+                    }
+                }
+                if (!sharedEdge) {
+                    polygon.add(edge);
+                }
+            }
+        }
+
+        List&lt;Triangle&gt; goodTriangles = partitionedTriangles.get(false);
+        for (Edge edge : polygon) {
+            goodTriangles.add(new Triangle(edge.getA(), edge.getB(), point));
+        }
+
+        triangles = goodTriangles;
+    }
+
+    if (arguments.isDeleteBorder()) {
+        List&lt;Triangle&gt; superTriangle = createInitialSuperTriangle(imageSize);
+
+        return triangles.stream().filter(triangle -&gt; {
+            for (Triangle st : superTriangle) {
+                for (Edge edge : triangle.getEdges()) {
+                    if (st.containsVertex(edge.getA()) || st.containsVertex(edge.getB())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    return triangles;
+}
+</code></pre>
+   <p>
+    The algorithm has an
+    <code>
+     O(n^2)
+    </code>
+    time complexity, which leaves some rooms for improvement, but it has potential for parallelization.
+   </p>
+   <h2>
+    Putting it all to together
+   </h2>
+   <p>
+    Knowing how the Delaunay triangulation works, the next challenge would be to apply it somehow in order to get from this image:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/original-resized.jpeg"/>
+   </p>
+   <p>
+    to this one:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/final-resized.jpg"/>
+   </p>
+   <p>
+    In order to achieve this, we could consider the following steps:
+   </p>
+   <ol>
+    <li>
+     Apply a blurring filter to the image.
+    </li>
+    <li>
+     Create a gray-scale image from the blurred image.
+    </li>
+    <li>
+     Apply some edge detection to the image and capture the output.
+    </li>
+    <li>
+     Clean up the image by applying a simple de-noising (thresholding) algorithm.
+    </li>
+    <li>
+     Feed the output to the Delaunay triangulation algorithm to get a set of triangles forming the Delaunay mesh.
+    </li>
+    <li>
+     Reconstruct the image from the mesh.
+    </li>
+   </ol>
+   <p>
+    Moving forward, let's brake these steps down by having an in-depth discussion about some implementation details. Basically every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case I've decided to use a third party library, namely
+    <a href="https://github.com/openpnp/opencv" target="_blank">
+     openpnp/opencv
+    </a>
+    , which is a Java wrapper around the already established
+    <a href="https://opencv.org/" target="_blank">
+     OpenCV
+    </a>
+    image processing library.
+   </p>
+   <ol>
+    <li>
+     <h3>
+      Apply a blurring filter to the image:
+     </h3>
+    </li>
+   </ol>
+   <p>
+    A common way to blur images is done through applying a
+    <a href="https://en.wikipedia.org/wiki/Gaussian_blur" target="_blank">
+     Gaussian filter
+    </a>
+    to the image. A Gaussian filter is basically a
+    <code>
+     NxN
+    </code>
+    matrix which gets
+    <a href="https://en.wikipedia.org/wiki/Convolution" target="_blank">
+     convolved
+    </a>
+    with the RGB pixel values of the image. Using OpenCV, this can be done by a simple function call:
+   </p>
+   <pre><code class="language-Java">Imgproc.GaussianBlur(originalImage, blurredImage, new Size(arguments.getBlurKernelSize(), arguments.getBlurKernelSize()), 0);
+</code></pre>
+   <p>
+    The size of the kernel aka filter is determines how "blurry" the image will be. In order to not loose a lot of information regarding the characteristics of an image, I recommend sticking to a smaller kernel size. This is important, since it will have a significant impact of the final result.
+   </p>
+   <p>
+    Besides Gaussian blur approach, there are other solutions for getting a blurry image, (example.
+    <a href="http://incubator.quasimondo.com/processing/fast_blur_deluxe.php" target="_blank">
+     Stack-blur
+    </a>
+    ). Usually the tendency is faster blurring procedures will result in lower quality blur, but in our case this does not really affect the final result. I simply went with Gaussian algorithm, because OpenCV provides an implementation for it.
+   </p>
+   <ol start="2">
+    <li>
+     <h3>
+      Create a gray-scale image from the blurred image:
+     </h3>
+    </li>
+   </ol>
+   <p>
+    Probably everyone knows what a grayscale image is. Essentially is a black-and white image or a monochrome image carrying only light intensity information. Usually, if we want to transform an RGB image to a grayscale one, we can compute the value of each pixel using a weighted sum. The formula can be found on the
+    <a href="https://en.wikipedia.org/wiki/Grayscale" target="_blank">
+     Wikipedia - Grayscale
+    </a>
+    page. Using OpenCV, grayscaling can be achieved with the following line:
+   </p>
+   <pre><code class="language-Java">Imgproc.cvtColor(blurredImage, grayscaleImage, Imgproc.COLOR_RGB2GRAY);
+</code></pre>
+   <ol start="3">
+    <li>
+     <h3>
+      Apply some edge detection to the image and capture the output
+     </h3>
+    </li>
+   </ol>
+   <p>
+    Next, we would want to isolate the main characteristics of an image by doing edge detection. Again, there are several methodologies to detect the edges from an image. For our case a simple
+    <a href="https://en.wikipedia.org/wiki/Sobel_operator" target="_blank">
+     Sobel
+    </a>
+    operator might be sufficient to get an acceptable result.
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/edge-detection-resized.jpg"/>
+   </p>
+   <ol start="4">
+    <li>
+     <h3>
+      Clean up the image by applying a simple de-noising algorithm
+     </h3>
+    </li>
+   </ol>
+   <p>
+    In order to get rid of noise and to also preserve the strongest edges from the image, we would want to apply some
+    <a href="https://en.wikipedia.org/wiki/Thresholding_(image_processing)" target="_blank">
+     thresholding
+    </a>
+    to it, eventually creating a binary image. The simplest thresholding approach works just fine, meaning that we get an input threshold value and we compare that with every pixel from the image with the edges. If the pixel value is greater than the threshold value, we set the pixel to be 255 - white. Every pixel with value less than the threshold will be 0 - black.
+   </p>
+   <p>
+    We can play around with the value of the threshold, because it will impact the outcome significantly. Lower threshold may result in images having way more information preserved than higher threshold values. Depending on what we want to achieve, this may result in favorable output or it may have to much going on.
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/edge-points-resized.png"/>
+   </p>
+   <ol start="5">
+    <li>
+     <h3>
+      Feed the output to the Delaunay triangulation algorithm to get a set of triangles forming the Delaunay mesh
+     </h3>
+    </li>
+   </ol>
+   <p>
+    After tresholding we may end up with a bunch of black and white pixels. If we feed the location if these pixels to the Delaunay algorithm, we get a mesh of triangles which can be plotted to a surface. If we are lucky, the triangles will be aligned in a way which preserves the essence of the original image.
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/wire-final-resized.png"/>
+   </p>
+   <ol start="6">
+    <li>
+     <h3>
+      Reconstruct the image from the mesh
+     </h3>
+    </li>
+   </ol>
+   <p>
+    In order to fill these triangles with colors, we can take each node from the a triangle and locate the original pixels for their locations. Adding the RGB values of the original pixels and dividing the sum by 3, we may get an RGB value which may be used to fill the triangle.
+   </p>
+   <p>
+    The final result may look like this:
+   </p>
+   <p>
+    <img alt="Alt Text" src="img-generate-low-poly-images/final-resized.jpg"/>
+   </p>
+   <p>
+    The code for this project can be found on
+    <a href="https://github.com/Ernyoke/DelaunayImage" target="_blank">
+     Github
+    </a>
+   </p>
+   <p>
+    Parameters used to generate the final image:
+   </p>
+   <pre><code class="language-Bash">java -jar delaunay.jar res/img3.jpg res/out.jpg -ea laplacian -bk 25 -sk 5 -max 4600 -t 150
+</code></pre>
+   <h2>
+    References:
+   </h2>
+   <ol>
+    <li>
+     Delaunay triangulation:
+     <a href="https://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">
+      https://en.wikipedia.org/wiki/Delaunay_triangulation
+     </a>
+    </li>
+    <li>
+     Circumcircle of a triangle:
+     <a href="https://en.wikipedia.org/wiki/Circumscribed_circle#Triangles" target="_blank">
+      https://en.wikipedia.org/wiki/Circumscribed_circle#Triangles
+     </a>
+    </li>
+    <li>
+     Bowyer-Watson algorithm:
+     <a href="https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm" target="_blank">
+      https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm
+     </a>
+    </li>
+    <li>
+     Gaussian blur:
+     <a href="https://en.wikipedia.org/wiki/Gaussian_blur" target="_blank">
+      https://en.wikipedia.org/wiki/Gaussian_blur
+     </a>
+    </li>
+    <li>
+     Grayscale image:
+     <a href="https://en.wikipedia.org/wiki/Grayscale" target="_blank">
+      https://en.wikipedia.org/wiki/Grayscale
+     </a>
+    </li>
+    <li>
+     Sobel operator:
+     <a href="https://en.wikipedia.org/wiki/Sobel_operator" target="_blank">
+      https://en.wikipedia.org/wiki/Sobel_operator
+     </a>
+    </li>
+    <li>
+     Thresholding:
+     <a href="https://en.wikipedia.org/wiki/Thresholding_(image_processing)" target="_blank">
+      https://en.wikipedia.org/wiki/Thresholding_(image_processing)
+     </a>
+    </li>
+   </ol>
+  </article>
+  <footer>
+   Site generated with
+   <a href="https://github.com/Ernyoke/ssg" target="_blank">
+    ssg
+   </a>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js">
+  </script>
+  <script>
+   hljs.highlightAll();
+  </script>
+ </body>
+</html>
