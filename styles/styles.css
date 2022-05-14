@@ -224,6 +224,18 @@ blockquote {
     background-color: var(--bg_grey);
 }
 
+.anchor-link {
+    opacity: 0;
+}
+
+.anchor-link:hover {
+    opacity: 1;
+}
+
+.anchor-link:focus {
+    opacity: 1;
+}
+
 footer {
     text-align: center;
     font-size: 14px;
