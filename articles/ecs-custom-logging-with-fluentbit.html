@@ -137,7 +137,7 @@
    <p>
     For ECS cluster setup first we need to provision an Application Load Balancer. ECS services will be automatically registered to this load balancer. For security purposes ant follow best practices, we would allow for the running containers to be able to communicate with the load balancer only. To achieve this, we will provision our ECS infrastructure as follows:
    </p>
-   <pre><code class="language-bash"># Create a Security Group for the Application Load Balancer
+   <pre><code class="language-terraform"># Create a Security Group for the Application Load Balancer
 resource "aws_security_group" "fluent_bit_alb_sg" {
   name        = "fluent-bit-alb-sg"
   description = "Controls access to the ALB"
@@ -265,7 +265,7 @@ resource "aws_ecs_service" "fluent_bit_service" {
     </a>
     ):
    </p>
-   <pre><code>{
+   <pre><code class="language-json">{
     "family": "firelens-example-cloudwatch",
     "taskRoleArn": "arn:aws:iam::123456789012:role/ecs_task_iam_role",
     "containerDefinitions": [
@@ -313,7 +313,7 @@ resource "aws_ecs_service" "fluent_bit_service" {
    <p>
     The Terraform equivalent of the task definition would be the following:
    </p>
-   <pre><code>resource "aws_ecs_task_definition" "nginx_fluent_bit" {
+   <pre><code class="language-bash">resource "aws_ecs_task_definition" "nginx_fluent_bit" {
   family                   = "nginx-fluent-bit"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -338,7 +338,7 @@ resource "aws_ecs_service" "fluent_bit_service" {
     </code>
     template file:
    </p>
-   <pre><code>[
+   <pre><code class="language-json">[
     {
     "essential": true,
     "image": "906394416424.dkr.ecr.us-east-1.amazonaws.com/aws-for-fluent-bit:latest",
@@ -387,7 +387,7 @@ resource "aws_ecs_service" "fluent_bit_service" {
    <p>
     The task definition requires an execution role. This role is assumed by ECS service and it is used while deploying and setting up the container. The task definition can also have a task role. This role is attached to the containers and it provides permission for the running containers themselves. For simplicity, we will use the same role for the task and for the execution roles.
    </p>
-   <pre><code>resource "aws_iam_role" "fluent_bit_task_role" {
+   <pre><code class="language-bash">resource "aws_iam_role" "fluent_bit_task_role" {
   name = "fluent-bit-task-role"
 
   assume_role_policy = jsonencode({
@@ -450,7 +450,7 @@ resource "aws_iam_role_policy_attachment" "fluent_bit_task_role_attachment" {
     </a>
     . An example for this configuration file which would allow streaming logs to S3 would be the following:
    </p>
-   <pre><code>[INPUT]
+   <pre><code class="language-apache">[INPUT]
     Name forward
     unix_path /var/run/fluent.sock
     Mem_Buf_Limit 100MB
@@ -474,7 +474,7 @@ resource "aws_iam_role_policy_attachment" "fluent_bit_task_role_attachment" {
     </code>
     section for the Fluent Bit task definition. In this case, we would use the previous Fluentbit config file which we would bake it inside our Docker image. The task definition would be as follows:
    </p>
-   <pre><code>{
+   <pre><code class="language-json">{
   "essential": true,
   "image": "&lt;id&gt;.dkr.ecr.us-east-1.amazonaws.com/fluent-bit-s3:latest"
   "name": "fluentbit-log-router",
@@ -496,19 +496,19 @@ resource "aws_iam_role_policy_attachment" "fluent_bit_task_role_attachment" {
    <p>
     The Docker image with the configuration FluentBit configuration file is as simple as this:
    </p>
-   <pre><code>FROM amazon/aws-for-fluent-bit:latest
+   <pre><code class="language-bash">FROM amazon/aws-for-fluent-bit:latest
 ADD s3.conf /fluent-bit/alt/fluent-bit.conf
 CMD ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/alt/fluent-bit.conf"]
 </code></pre>
    <p>
     We build this image with the usual Docker build command:
    </p>
-   <pre><code>docker buildx build --platform linux/amd64 -t fluent-bit-s3 .
+   <pre><code class="language-bash">docker buildx build --platform linux/amd64 -t fluent-bit-s3 .
 </code></pre>
    <p>
     Also, we need to push this image to a registry from which ECS would be able to pull it. We can use Elastic Container Registry (ECR) for storing our Docker images. We can create an ECR repository with the following Terraform definition:
    </p>
-   <pre><code>resource "aws_ecr_repository" "fluentbit_repository" {
+   <pre><code class="language-bash">resource "aws_ecr_repository" "fluentbit_repository" {
   name                 = var.repo_name
   image_tag_mutability = "MUTABLE"
 }
@@ -527,7 +527,7 @@ output "fluent_bit_registry_url" {
    <p>
     Two more things left to do is to create an S3 bucket in which we can stream logs and provision a policy for the task role for being able to write in this S3 bucket. We can create the S3 bucket as follows:
    </p>
-   <pre><code>resource "aws_s3_bucket" "fluentbit_logging_bucket" {
+   <pre><code class="language-bash">resource "aws_s3_bucket" "fluentbit_logging_bucket" {
   bucket = "fluent-bit-log-12345"
 }
 
@@ -539,7 +539,7 @@ resource "aws_s3_bucket_acl" "fluentbit_logging_bucket_acl" {
    <p>
     We could provision the following policy and attach it to the task role:
    </p>
-   <pre><code>resource "aws_iam_policy" "fluent_bit_task_policy_s3_write" {
+   <pre><code class="language-bash">resource "aws_iam_policy" "fluent_bit_task_policy_s3_write" {
   name        = "fluent_bit_task_policy_allow_s3_write"
   path        = "/"
   description = "Task policy"
@@ -629,10 +629,12 @@ resource "aws_iam_role_policy_attachment" "fluent_bit_task_role_s3_write_attachm
     ssg
    </a>
   </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
   </script>
   <script>
-   hljs.highlightAll();
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
   </script>
  </body>
 </html>
