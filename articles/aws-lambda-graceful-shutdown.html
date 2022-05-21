@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <title>
+   Ervin Szilágyi
+  </title>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/index.html">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    AWS Lambda Graceful Shutdown
+   </h1>
+   <h2>
+    Intro
+    <a class="anchor-link" href="#intro" id="intro">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    A common optimization technique for Lambda functions recommended by AWS is to
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" target="_blank">
+     take advantage of execution environment reuse to improve the performance of your function
+    </a>
+    . This means, for example, in case we have a database connection, it is recommended for this connections to be initialized before the function handler. In case of a cold start, the Lambda execution environment will run the full initialization of the connectivity (essentially all the code before handler will be executed), while in case of warm starts, this execution will be avoided, the already initialized state being cached and reused.
+   </p>
+   <p>
+    The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be teared down gracefully. In case of database connections, it would be a best practice to disconnect and end existing connections if we know we wont use them anymore. For a long time there were no recommended solution for building a graceful shutdown mechanism. At the point of writing this article I still could not find a recommended solution in the official AWS documentation. But happily we can find some examples for graceful shutdown in the official
+    <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
+     aws-samples
+    </a>
+    GitHub repositories.
+   </p>
+   <h2>
+    Graceful Shutdown with Lambda
+    <a class="anchor-link" href="#graceful-shutdown-with-lambda" id="graceful-shutdown-with-lambda">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Actually it is pretty simple the achieve graceful shutdown, although it may seem a little be hacky. In case of a Lambda function
+    <strong>
+     which is registered with an external extension
+    </strong>
+    , the Lambda environment allocates 300-500 milliseconds of cleanup for the runtime process. When Lambda service is about to shut down the runtime, it will send a
+    <code>
+     SIGTERM
+    </code>
+    signal to the runtime and then a
+    <code>
+     SHUTDOWN
+    </code>
+    event to each registered external extension. We can catch the
+    <code>
+     SIGTERM
+    </code>
+    signal in our Lambda functions and execute some cleanup logic.
+   </p>
+   <p>
+    Let's see an example of a Lambda using NodeJS which listens to
+    <code>
+     SIGTERM
+    </code>
+    signal and attempts to do some cleanup:
+   </p>
+   <pre><code class="language-javascript">const connectionPromise = mysql.createConnection({...});
+
+// Handler
+exports.handler = async function (event, context) {
+    const connection = await connectionPromise;
+    // business logic here ...
+};
+
+// SIGTERM Handler 
+process.on('SIGTERM', async () =&gt; {
+    console.info('[runtime] SIGTERM received');
+
+    console.info('[runtime] cleaning up');
+    // perform actual clean up work here. 
+    const connection = await connectionPromise;
+    connection.end();
+
+    console.info('[runtime] exiting');
+    process.exit(0);
+});
+</code></pre>
+   <p>
+    In order for this approach to work, we need to register our Lambda function with an external extension. The easiest way would be to use
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html" target="_blank">
+     CloudWatch Lambda Insights
+    </a>
+    . CloudWatch Lambda Insight is monitoring and troubleshooting solution for serverless applications. It is provided by AWS and it works with both
+    <code>
+     x86
+    </code>
+    and
+    <code>
+     arm64
+    </code>
+    types of Lambdas. It can be attached as a Lambda Layer to our function. Here is an example how to create a function with Lambda Insights layer using Terraform:
+   </p>
+   <pre><code class="language-terraform">resource "aws_lambda_function" "lambda" {
+  function_name    = "my-function"
+  handler          = "index.handler"
+  memory_size      = 1024
+  package_type     = "Zip"
+  role             = aws_iam_role.lambda_role.arn
+  runtime          = "nodejs14.x"
+  filename         = "function.zip"
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  timeout          = 60
+  architectures    = ["arm64"]
+
+  layers = [
+    "arn:aws:lambda:${var.region}:580247275435:layer:LambdaInsightsExtension-Arm64:2" # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-extension-versionsARM.html
+  ]
+}
+
+# Zip Archive for our function
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  output_path = "${path.module}/function.zip"
+  source_dir  = "${path.module}/function"
+}
+
+# Lambda Role with CloudWatch Logs enabled
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_role"
+
+  assume_role_policy = &lt;&lt;EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = &lt;&lt;EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+</code></pre>
+   <h2>
+    Conclusion
+    <a class="anchor-link" href="#conclusion" id="conclusion">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In this article we've seen how can we have graceful shutdown for Lambda functions which rely on environment re-use. We built a function using NodeJS environment. Examples for other execution environments can be found in the
+    <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
+     AWS samples
+    </a>
+    project mentioned before.
+   </p>
+   <h2>
+    References:
+    <a class="anchor-link" href="#references" id="references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Best practices for working with AWS Lambda functions:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html
+     </a>
+    </li>
+    <li>
+     GitHub - aws-samples/graceful-shutdown-with-aws-lambda:
+     <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
+      https://github.com/aws-samples/graceful-shutdown-with-aws-lambda
+     </a>
+    </li>
+    <li>
+     Using Lambda Insights in Amazon CloudWatch:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html
+     </a>
+    </li>
+   </ol>
+  </article>
+  <footer>
+   Site generated with
+   <a href="https://github.com/Ernyoke/ssg" target="_blank">
+    ssg
+   </a>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
