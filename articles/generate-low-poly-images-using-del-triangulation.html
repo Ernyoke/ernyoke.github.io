@@ -80,7 +80,7 @@
     </a>
    </p>
    <p>
-    Being fascinated by this style, one might ask how could we generate images like this? More specifically, how could we transform an arbitrary image into a "low poly" one? One solution would be Delaunay triangulation, which will presented bellow.
+    Being fascinated by this style, one might ask how could we generate images like this? More specifically, how could we transform an arbitrary image into a "low poly" one? One solution would be Delaunay triangulation, which will be presented below.
    </p>
    <h2>
     Delaunay triangulation
@@ -98,7 +98,7 @@
      sliver triangles
     </a>
     .
-  - the area of each triangle should be minimal, or at least the tendency should be to prioritize triangles with smaller area.
+  - the area of each triangle should be minimal, or at least the tendency should be to prioritize triangles with smaller areas.
    </p>
    <p>
     One way to tackle this challenge would be to use Delaunay triangulation algorithm. According to
@@ -114,7 +114,7 @@
    </blockquote>
    <p>
     Let's break this down. First, let's see what is the circumcircle of a triangle?
-The circumcircle of a triangle is basically the a circle which can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.
+The circumcircle of a triangle is basically a circle which can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.
    </p>
    <p>
     Example:
@@ -143,14 +143,14 @@ The circumcircle of a triangle is basically the a circle which can be drawn arou
     <code>
      C(x, y)
     </code>
-    are to vertices of the triangle.
+    are the vertices of the triangle.
 The radius of the circumcircle can be calculated as follows:
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/formula2.png"/>
    </p>
    <p>
-    As we see, a lot of formulas here, the good thing is that they are pretty straightforward to implement, and relatively easy to unit tests, given the fact that there are a lot of only circumcircle calculators out there. Let's see some code here:
+    As we see a lot of formulas here, the good thing is that they are pretty straightforward to implement, and relatively easy to unit tests, given the fact that there are a lot of only circumcircle calculators out there. Let's see some code here:
    </p>
    <pre><code class="language-Java">// https://en.wikipedia.org/wiki/Circumscribed_circle#Triangles
 private static Circle calculateCircumCircle(Point a, Point b, Point c) {
@@ -169,7 +169,7 @@ private static Circle calculateCircumCircle(Point a, Point b, Point c) {
 }
 </code></pre>
    <p>
-    Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set if points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex which is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in other triangle's circumcircle:
+    Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set of points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex which is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in other triangle's circumcircle:
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/triangulation.png"/>
@@ -179,7 +179,7 @@ private static Circle calculateCircumCircle(Point a, Point b, Point c) {
     <a href="https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm" target="_blank">
      Bowyer-Watson
     </a>
-    algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the effected area of the final result. The steps of the algorithm are the following:
+    algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the affected area of the final result. The steps of the algorithm are the following:
    </p>
    <pre><code class="language-Bash">function BowyerWatson (pointList)
    // pointList is a set of coordinates defining the points to be triangulated
@@ -279,7 +279,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     <code>
      O(n^2)
     </code>
-    time complexity, which leaves some rooms for improvement, but it has potential for parallelization.
+    time complexity, which leaves some room for improvement, but it has potential for parallelization.
    </p>
    <h2>
     Putting it all to together
@@ -323,7 +323,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    Moving forward, let's brake these steps down by having an in-depth discussion about some implementation details. Basically every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case I've decided to use a third party library, namely
+    Moving forward, let's break these steps down by having an in-depth discussion about some implementation details. Basically every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case I've decided to use a third party library, namely
     <a href="https://github.com/openpnp/opencv" target="_blank">
      openpnp/opencv
     </a>
@@ -358,14 +358,14 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
    <pre><code class="language-Java">Imgproc.GaussianBlur(originalImage, blurredImage, new Size(arguments.getBlurKernelSize(), arguments.getBlurKernelSize()), 0);
 </code></pre>
    <p>
-    The size of the kernel aka filter is determines how "blurry" the image will be. In order to not loose a lot of information regarding the characteristics of an image, I recommend sticking to a smaller kernel size. This is important, since it will have a significant impact of the final result.
+    The size of the kernel aka filter determines how "blurry" the image will be. In order to not lose a lot of information regarding the characteristics of an image, I recommend sticking to a smaller kernel size. This is important, since it will have a significant impact on the final result.
    </p>
    <p>
     Besides Gaussian blur approach, there are other solutions for getting a blurry image, (example.
     <a href="http://incubator.quasimondo.com/processing/fast_blur_deluxe.php" target="_blank">
      Stack-blur
     </a>
-    ). Usually the tendency is faster blurring procedures will result in lower quality blur, but in our case this does not really affect the final result. I simply went with Gaussian algorithm, because OpenCV provides an implementation for it.
+    ). Usually the tendency is faster blurring procedures will result in lower quality blur, but in our case this does not really affect the final result. I simply went with the Gaussian algorithm, because OpenCV provides an implementation for it.
    </p>
    <ol start="2">
     <li>
@@ -415,7 +415,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     to it, eventually creating a binary image. The simplest thresholding approach works just fine, meaning that we get an input threshold value and we compare that with every pixel from the image with the edges. If the pixel value is greater than the threshold value, we set the pixel to be 255 - white. Every pixel with value less than the threshold will be 0 - black.
    </p>
    <p>
-    We can play around with the value of the threshold, because it will impact the outcome significantly. Lower threshold may result in images having way more information preserved than higher threshold values. Depending on what we want to achieve, this may result in favorable output or it may have to much going on.
+    We can play around with the value of the threshold, because it will impact the outcome significantly. Lower threshold may result in images having way more information preserved than higher threshold values. Depending on what we want to achieve, this may result in favorable output or it may have too much going on.
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/edge-points-resized.png"/>
@@ -428,7 +428,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    After tresholding we may end up with a bunch of black and white pixels. If we feed the location if these pixels to the Delaunay algorithm, we get a mesh of triangles which can be plotted to a surface. If we are lucky, the triangles will be aligned in a way which preserves the essence of the original image.
+    After tresholding we may end up with a bunch of black and white pixels. If we feed the location of these pixels to the Delaunay algorithm, we get a mesh of triangles which can be plotted to a surface. If we are lucky, the triangles will be aligned in a way which preserves the essence of the original image.
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/wire-final-resized.png"/>
@@ -441,7 +441,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    In order to fill these triangles with colors, we can take each node from the a triangle and locate the original pixels for their locations. Adding the RGB values of the original pixels and dividing the sum by 3, we may get an RGB value which may be used to fill the triangle.
+    In order to fill these triangles with colors, we can take each node from a triangle and locate the original pixels for their locations. Adding the RGB values of the original pixels and dividing the sum by 3, we may get an RGB value which may be used to fill the triangle.
    </p>
    <p>
     The final result may look like this:
