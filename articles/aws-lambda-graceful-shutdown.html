@@ -60,10 +60,10 @@
     <a href="https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" target="_blank">
      take advantage of execution environment reuse to improve the performance of your function
     </a>
-    . This means, for example, in case we have a database connection, it is recommended for this connections to be initialized before the function handler. In case of a cold start, the Lambda execution environment will run the full initialization of the connectivity (essentially all the code before handler will be executed), while in case of warm starts, this execution will be avoided, the already initialized state being cached and reused.
+    . This means, for example, in case we have a database connection, it is recommended for these connections to be initialized before the function handler. In case of a cold start, the Lambda execution environment will run the full initialization of the connectivity (essentially all the code before handler will be executed), while in case of warm starts, this execution will be avoided, the already initialized state being cached and reused.
    </p>
    <p>
-    The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be teared down gracefully. In case of database connections, it would be a best practice to disconnect and end existing connections if we know we wont use them anymore. For a long time there were no recommended solution for building a graceful shutdown mechanism. But happily we can find some examples for graceful shutdown in the official
+    The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be teared down gracefully. In case of database connections, it would be a best practice to disconnect and end existing connections if we know we won't use them anymore. For a long time there were no recommended solutions for building a graceful shutdown mechanism. But happily we can find some examples for graceful shutdown in the official
     <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
      aws-samples
     </a>
@@ -76,7 +76,7 @@
     </a>
    </h2>
    <p>
-    Actually it is pretty simple the achieve graceful shutdown, although it may seem a little be hacky. In case of a Lambda function
+    Actually it is pretty simple to achieve graceful shutdown, although it may seem a little hacky. In case of a Lambda function
     <strong>
      which is registered with an external extension
     </strong>
@@ -127,7 +127,7 @@ process.on('SIGTERM', async () =&gt; {
     <a href="https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html" target="_blank">
      CloudWatch Lambda Insights
     </a>
-    . CloudWatch Lambda Insight is monitoring and troubleshooting solution for serverless applications. It is provided by AWS and it works with both
+    . CloudWatch Lambda Insight is a monitoring and troubleshooting solution for serverless applications. It is provided by AWS and it works with both
     <code>
      x86
     </code>
@@ -217,7 +217,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
     </a>
    </h2>
    <p>
-    In this article we've seen how can we have graceful shutdown for Lambda functions which rely on environment re-use. We built a function using NodeJS environment. Examples for other execution environments can be found in the
+    In this article we've seen how we can have graceful shutdown for Lambda functions which rely on environment re-use. We built a function using the NodeJS environment. Examples for other execution environments can be found in the
     <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
      AWS samples
     </a>
