@@ -63,7 +63,7 @@
     . This means, for example, in case we have a database connection, it is recommended for this connections to be initialized before the function handler. In case of a cold start, the Lambda execution environment will run the full initialization of the connectivity (essentially all the code before handler will be executed), while in case of warm starts, this execution will be avoided, the already initialized state being cached and reused.
    </p>
    <p>
-    The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be teared down gracefully. In case of database connections, it would be a best practice to disconnect and end existing connections if we know we wont use them anymore. For a long time there were no recommended solution for building a graceful shutdown mechanism. At the point of writing this article I still could not find a recommended solution in the official AWS documentation. But happily we can find some examples for graceful shutdown in the official
+    The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be teared down gracefully. In case of database connections, it would be a best practice to disconnect and end existing connections if we know we wont use them anymore. For a long time there were no recommended solution for building a graceful shutdown mechanism. But happily we can find some examples for graceful shutdown in the official
     <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">
      aws-samples
     </a>
