@@ -144,13 +144,13 @@ run:
     . If this is our first deployment in App Runner, we will have to connect our AWS account to our GitHub account and we should give access to the repository we would want to deploy. After we've done that, we can select the git branch we want to deploy:
    </p>
    <p>
-    <img alt="Select Repository" src="step-1-repository.png"/>
+    <img alt="Select Repository" src="articles/img-deploy-containers-with-app-runner/step-1-repository.png"/>
    </p>
    <p>
     For now we would want to have manual deployment triggers. We could have automatic deployment triggers as well, meaning each git push will trigger a deployment. This would be a good option for development environments, but obviously it is not recommended for production. Deployments also cost money, so we will stick to manual deployments for now.
    </p>
    <p>
-    <img alt="Select Deployment Type" src="step-1-deployment-settings.png"/>
+    <img alt="Select Deployment Type" src="articles/img-deploy-containers-with-app-runner/step-1-deployment-settings.png"/>
    </p>
    <h3>
     2. Configure Builds
@@ -167,7 +167,7 @@ run:
     option.
    </p>
    <p>
-    <img alt="Select Configuration File" src="step-2-configure-build.png"/>
+    <img alt="Select Configuration File" src="articles/img-deploy-containers-with-app-runner/step-2-configure-build.png"/>
    </p>
    <h3>
     3. Configure service
@@ -176,7 +176,7 @@ run:
     Probably this step has the most options to configure, luckily for most of these options the defaults would be just fine for us. First we need to give a name to our service. Second, we need to select the CPU and memory we would like to allocate to our application. This is important, since we pay for these resources, so we don't want to use what we don't need. Also, we don't want to under-provision. In our case we select 1 vCPU and 2 GB or memory.
    </p>
    <p>
-    <img alt="Configure Service" src="step-3-configure-service.png"/>
+    <img alt="Configure Service" src="articles/img-deploy-containers-with-app-runner/step-3-configure-service.png"/>
    </p>
    <p>
     There are few other settings here for which we will leave the default values, although I will go through them and explain in short their functionality.
@@ -237,7 +237,7 @@ run:
     The application will be deployed in minutes and will be accessible over the internet. We can follow the deployment steps using the event logs.
    </p>
    <p>
-    <img alt="Event Logs" src="event-log.png"/>
+    <img alt="Event Logs" src="articles/img-deploy-containers-with-app-runner/event-log.png"/>
    </p>
    <p>
     App Runner provides a default domain, on which our application is publicly accessible. If we have a registered domain, we can use that as well with App Runner. Moreover, App Runner has integration with Route53, the domain registrar provided by AWS.
