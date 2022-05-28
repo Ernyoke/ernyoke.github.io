@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/index.html">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Deploy Containers with App Runner
+   </h1>
+   <blockquote>
+    <p>
+     AWS App Runner is a fully managed service that makes it easy for developers to quickly deploy containerized web applications and APIs, at scale and with no prior infrastructure experience required.
+    </p>
+   </blockquote>
+   <p>
+    This is how AWS markets App Runner service on their
+    <a href="https://aws.amazon.com/apprunner/" target="_blank">
+     official page
+    </a>
+    . The focus should be on easiness and quickness on this description. The reality is that containers can be misleadingly complex, deploying them to cloud services can be even more daunting. Before App Runner, AWS provided a few ways for us to be able to run containers: we had Elastic Container Service (ECS) - which is AWS's own implementation of a container orchestrator, we had Elastic Kubernetes Service (EKS) - Kubernetes cluster as a service provided by AWS, and last but not least we had Elastic Beanstalk - which attempted to be a simplification layer over ECS.
+   </p>
+   <p>
+    While these options do work well, as intended, for running containers on the AWS cloud, they are not simple and easy to use services. Even if we take a look at Elastic Beanstalk, we can notice that it offers lots and lots of configurations. Elastic Beanstalk by itself is a CloudFormation template, managed by AWS, which is executed anytime we create a new environment. This template will provision several resources on the backend, which ultimately have to be managed by us. We might be OK with that, but if we are not, then we could take a look at App Runner.
+   </p>
+   <h2>
+    Deploy Application straight from GitHub
+    <a class="anchor-link" href="#deploy-application-straight-from-github" id="deploy-application-straight-from-github">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In order to deploy containers in App Runner, we can either build our Docker container ourselves and push it into an Elastic Container Registry repository, or we can let App Runnier build the container for us by pulling our code from GitHub and building our application automatically.
+   </p>
+   <p>
+    While App Runner is smart enough to build our application, to be able to do it correctly, we should place an
+    <code>
+     apprunner.yaml
+    </code>
+    configuration file in the root of our repository. This config file should contain information about how to build the application, what runtime environment to use, and additional configuration for deployment of the application.
+   </p>
+   <p>
+    An example for an
+    <code>
+     apprunner.yaml
+    </code>
+    configuration file for
+    <a href="https://nestjs.com/" target="_blank">
+     NestJS
+    </a>
+    could be the following:
+   </p>
+   <pre><code class="language-yaml">version: 1.0
+runtime: nodejs14
+
+build:
+  commands:
+    pre-build:
+      - echo "Deployment started..."
+    build:
+      - npm ci
+      - npm run build
+    post-build:
+      - echo "Deployment finished successfully!"
+
+run:
+  runtime-version: 14.19.0
+  command: npm run start:prod
+  network:
+    port: 3000
+  env:
+    - name: MY_VAR
+      value: my_var
+</code></pre>
+   <p>
+    The whole project can be found on GitHub:
+    <a href="https://github.com/Ernyoke/aws-apprunner-nest-example" target="_blank">
+     https://github.com/Ernyoke/aws-apprunner-nest-example
+    </a>
+    .
+   </p>
+   <p>
+    The steps of deploying this application to App Runner straight from GitHub, are the following:
+   </p>
+   <h3>
+    1. Source and deployment
+   </h3>
+   <p>
+    From our AWS console, in our region of choice, we should go to the App Runner page and press the
+    <strong>
+     Create an App Runner service
+    </strong>
+    button. We will be greeted with a form having 4 steps. In the first step we have to specify whether we are trying to deploy our application from an Elastic Container Repository (ECR) or from GitHub source. In our case, we should select
+    <strong>
+     Source Code Repository
+    </strong>
+    . If this is our first deployment in App Runner, we will have to connect our AWS account to our GitHub account and we should give access to the repository we would want to deploy. After we've done that, we can select the git branch we want to deploy:
+   </p>
+   <p>
+    <img alt="Select Repository" src="step-1-repository.png"/>
+   </p>
+   <p>
+    For now we would want to have manual deployment triggers. We could have automatic deployment triggers as well, meaning each git push will trigger a deployment. This would be a good option for development environments, but obviously it is not recommended for production. Deployments also cost money, so we will stick to manual deployments for now.
+   </p>
+   <p>
+    <img alt="Select Deployment Type" src="step-1-deployment-settings.png"/>
+   </p>
+   <h3>
+    2. Configure Builds
+   </h3>
+   <p>
+    For step 2 we are required to configure builds. Since we already have an
+    <code>
+     apprunner.yaml
+    </code>
+    file in the root of our source repository, we don't really have to do anything. We just have to make sure we select the
+    <strong>
+     Use a configuration file
+    </strong>
+    option.
+   </p>
+   <p>
+    <img alt="Select Configuration File" src="step-2-configure-build.png"/>
+   </p>
+   <h3>
+    3. Configure service
+   </h3>
+   <p>
+    Probably this step has the most options to configure, luckily for most of these options the defaults would be just fine for us. First we need to give a name to our service. Second, we need to select the CPU and memory we would like to allocate to our application. This is important, since we pay for these resources, so we don't want to use what we don't need. Also, we don't want to under-provision. In our case we select 1 vCPU and 2 GB or memory.
+   </p>
+   <p>
+    <img alt="Configure Service" src="step-3-configure-service.png"/>
+   </p>
+   <p>
+    There are few other settings here for which we will leave the default values, although I will go through them and explain in short their functionality.
+   </p>
+   <ul>
+    <li>
+     <p>
+      <em>
+       Auto Scaling
+      </em>
+      : we can have multiple instances of our application serving requests if we feel we are overloaded. The autoscaling is happening based on the number of concurrent requests. The default configuration, if we enable autoscaling, is to add 1 instance if we have more than 100 requests per instance. By default, auto scaling is disabled.
+     </p>
+    </li>
+    <li>
+     <p>
+      <em>
+       Security
+      </em>
+      : we can attach an IAM role to our App Runner application. This IAM role can give access to the application to interact with other AWS services such as S3 buckets, databases (DynamoDB, Aurora, etc.) and so on. By default, there is no IAM role attached to our application. We can also encrypt the source image and source bundle of our application with either an AWS managed KMS key or with a KMS key managed by ourselves. By default, our application source bundle/image is encrypted with an AWS managed key.
+     </p>
+    </li>
+    <li>
+     <p>
+      <em>
+       Networking
+      </em>
+      : we can give access to our application to connect to a virtual private network (VPC). This can be useful, if we want to connect to resources which are running inside a VPC (for example: RDS databases, ElastiCache instances, etc.). Even if we give access to our application to a VPC, the application will still run outside of the VPC and it will be publicly accessible.
+     </p>
+    </li>
+    <li>
+     <p>
+      <em>
+       Observability
+      </em>
+      : we can enable AWS X-Ray for the application. X-Ray offers monitoring and observability to our application. X-Ray comes at a cost and it is disabled by default.
+     </p>
+    </li>
+    <li>
+     <p>
+      <em>
+       Tags
+      </em>
+      : we can add tags to our application. Tags are key-value pairs, they are used for labeling.
+     </p>
+    </li>
+   </ul>
+   <h3>
+    4. Review and Create
+   </h3>
+   <p>
+    The last step is a review page where we can double-check all of the options selected in the steps before. If we are fine with all the selection, we can trigger the deployment by pressing
+    <strong>
+     Create and Deploy
+    </strong>
+    .
+   </p>
+   <p>
+    The application will be deployed in minutes and will be accessible over the internet. We can follow the deployment steps using the event logs.
+   </p>
+   <p>
+    <img alt="Event Logs" src="event-log.png"/>
+   </p>
+   <p>
+    App Runner provides a default domain, on which our application is publicly accessible. If we have a registered domain, we can use that as well with App Runner. Moreover, App Runner has integration with Route53, the domain registrar provided by AWS.
+   </p>
+   <h2>
+    References:
+    <a class="anchor-link" href="#references" id="references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     AWS App Runner:
+     <a href="https://aws.amazon.com/apprunner/" target="_blank">
+      https://aws.amazon.com/apprunner/
+     </a>
+    </li>
+    <li>
+     GitHub - aws-apprunner-nest-example project:
+     <a href="https://github.com/Ernyoke/aws-apprunner-nest-example" target="_blank">
+      https://github.com/Ernyoke/aws-apprunner-nest-example
+     </a>
+    </li>
+   </ol>
+  </article>
+  <footer>
+   Site generated with
+   <a href="https://github.com/Ernyoke/ssg" target="_blank">
+    ssg
+   </a>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
