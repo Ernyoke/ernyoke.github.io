@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/index.html">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    GCP Associate Cloud Engineer Certification Experience
+   </h1>
+   <h2>
+    Intro
+    <a class="anchor-link" href="#intro" id="intro">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Today (9th of August, 2022) I took the Associate Cloud Engineer certification exam from Google. I'm writing this article to document my experience and to potentially give some advice to some other people who are planning to sit through this exam. This article reflects my own opinion about the exam itself, about requirements to pass the exam and about the online proctored exam process. I will talk about these in detail in the following lines, but as intro I have to say that I had a questionable experience.
+   </p>
+   <h2>
+    Motivation
+    <a class="anchor-link" href="#motivation" id="motivation">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Before talking about the exam, I feel the necessity to present my background. I feel like this is important in order for everyone to understand what I mean when I throw around some adjectives like "easy", "hard", "challenging", etc. What might be challenging for me, it might be a walk in the park for you, since your background matters when taking an exam based mostly on experience with a certain toolset.
+   </p>
+   <p>
+    Currently I am a platform engineer working for a big automotive company. I have a software engineering background, working as a professional developer from 2015. I worked on several projects for several clients using a wide range of technologies. In my current work I manage the infrastructure of a global product. I use AWS cloud on a daily basis at my work. I 6 times AWS certified (you can read about my experience here:
+    <a href="https://ervinszilagyi.dev/articles/my-journey-to-become-5-times-aws-certified.html">
+     My Journey to become 5 times AWS Certified
+    </a>
+    and here:
+    <a href="https://www.reddit.com/r/AWSCertifications/comments/r9dcys/passed_the_advanced_networking_specialty_exam/" target="_blank">
+     Passed the Advanced Networking Specialty exam
+    </a>
+    , which means I have a bit of experience with taking certification exams.
+   </p>
+   <p>
+    Before preparing for this exam, I never used Google Cloud Products at all. Obviously, I never had the chance to use them professionally at my work. My cloud experience relies mostly on AWS. What motivated me to invest time in a GCP certificate, was just pure curiosity and the will of knowing more. I'm not looking for a career change or a new job, I wont get a promotion for this. I just wanted to have an alternative view compared to my AWS experience.
+   </p>
+   <h2>
+    Preparation
+    <a class="anchor-link" href="#preparation" id="preparation">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    I won't go into the details about what learning material is required for the Cloud Engineering certification. This can be found on the
+    <a href="https://cloud.google.com/certification/cloud-engineer" target="_blank">
+     official certification page
+    </a>
+    : What I will talk about is the material I've used to pass the exam:
+- The official learning path provided by Google
+    <a href="https://cloud.google.com/training/cloud-infrastructure#cloud-engineer-learning-path" target="_blank">
+     https://cloud.google.com/training/cloud-infrastructure#cloud-engineer-learning-path
+    </a>
+    : This learning path consists of several introductory courses for Google Cloud Services. It also provides the ability to do labs (Qwiklabs) using temporary accounts created for Google Cloud. This can be very handy to get practical experience with GCP and to try out services without the fear of inquiring costs for our personal GCP account. The learning material provided by the courses is fine, but is not enough for being able to pass the exam, so we need to look elsewhere for other resources.
+- Google Cloud Associate Cloud Engineer Course - Pass the Exam! course provided by freeCodeCamp and Antoni Tzavelas
+    <a href="https://www.youtube.com/watch?v=jpno8FSqpc8" target="_blank">
+     https://www.youtube.com/watch?v=jpno8FSqpc8
+    </a>
+    : this is a 20+ hour course provided for free and available on youtube. This was published while I was doing the courses from the official learning path and it became super handy. Since this is a free course on youtube, I don't know how much effort we put in keeping it up to date, since GCP can change a lot from one day to another. But for the near future, I would be one of the best materials out there.
+- Dan Sullivan - Official Google Cloud Certified Associate
+    <a href="https://www.amazon.com/Google-Cloud-Certified-Associate-Engineer/dp/1119564417" target="_blank">
+     https://www.amazon.com/Google-Cloud-Certified-Associate-Engineer/dp/1119564417
+    </a>
+    : A book by Dan Sullivan for preparing the exam, which is good addition to the resources above. While the content of the book is great, I don't feel like it is enough by itself to pass the exam. If you have 30$ to spare for this book, go for it, otherwise just forget about it.
+   </p>
+   <p>
+    While learning I also did create my own notes and cheat sheets, which can be found on GitHub:
+    <a href="https://github.com/Ernyoke/certified-gcp-cloud-engineer" target="_blank">
+     https://github.com/Ernyoke/certified-gcp-cloud-engineer
+    </a>
+    . While this helped me remember certain things, I feel everyone should do their own notes to get the most value out of it. Nevertheless, I could help others as well to get an idea what is required to pass this certification.
+   </p>
+   <h2>
+    Practice Questions
+    <a class="anchor-link" href="#practice-questions" id="practice-questions">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Going through course materials and having hands-on experience with GCP is a must for passing the exam. What is also important, in my opinion, is having the necessary skills to deal with exam questions. The exam structure is multiple choice and multiple select type questions (I personally had only multiple select questions during my exam). In order to get some experience with similar type of questions, I recommend the following options:
+- Sample questions by Google
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfexWKtXT2OSFJ-obA4iT3GmzgiOCGvjrT9OfxilWC1yPtmfQ/viewform" target="_blank">
+     https://docs.google.com/forms/d/e/1FAIpQLSfexWKtXT2OSFJ-obA4iT3GmzgiOCGvjrT9OfxilWC1yPtmfQ/viewform
+    </a>
+    : a set of 20 sample questions from Google for free. Nothing to add here, just go and take them ;)
+- TutorialDojo - Google Certified Associate Cloud Engineer Practice Exams
+    <a href="https://portal.tutorialsdojo.com/courses/google-certified-associate-cloud-engineer-practice-exams/" target="_blank">
+     https://portal.tutorialsdojo.com/courses/google-certified-associate-cloud-engineer-practice-exams/
+    </a>
+    : TutorialDojo provides the highest quality practice exams on the internet. This is also true for GCP cloud engineer certification, although some questions from the set might require some adjustments in order to be up to date. Nevertheless, for the the price of $15, this is the most representative set of questions we can get.
+- Google Cloud Associate Cloud Engineer Practice Tests by Dan Sullivan
+    <a href="https://www.udemy.com/course/google-cloud-associate-cloud-engineer-practice-examspractice-exams" target="_blank">
+     https://www.udemy.com/course/google-cloud-associate-cloud-engineer-practice-examspractice-exams
+    </a>
+    : another set of 100 questions (2 exams) which can be purchased for around 15$ on Udemy. The questions are ok, they are mostly based on the material from Dan Sullivan book. There are way too many questions asking for certain CLI commands. While the exam may ask you about CLI commands, these types of questions are not frequent, at least according to my experience.
+   </p>
+   <h2>
+    Thoughts about the Exam itself
+    <a class="anchor-link" href="#thoughts-about-the-exam-itself" id="thoughts-about-the-exam-itself">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    The exam was challenging. It was certainly not the hardest certification exam I've taken, it does not even get close to the "AWS Certified Solutions Architect - Professional" exam, but it nevertheless is challenging. Most of the questions present a real life situation where you have to choose the most suitable option from the available ones. While it requires certain things to be memorized, I did not find that many hard factual questions during my exam.
+   </p>
+   <p>
+    Besides doing the exam preparation above, having certain working experience may help you tremendously. For example:
+   </p>
+   <ul>
+    <li>
+     Kubernetes experience or having previously taken CKAD, CKA exams: a high number of questions are k8s related, so having exposure this this technology can help you a lot;
+    </li>
+    <li>
+     Experience with other cloud providers such as AWS, Azure: there is no standard which is followed by every provider. Nevertheless, not every provider will try to reinvent the wheel. A lot of skills from having work experience with AWS or Azure can carry over the GCP as well;
+    </li>
+    <li>
+     General IT, administration or network engineering experience: Associate Cloud Engineer exam is an operations exam. Having exposure to basic IT procedures can help you a lot. Again, cloud itself does not try to reinvent the wheel all the time, it just adjusts existing procedures to this fancy environments, ultimately calling it "cloud".
+    </li>
+   </ul>
+   <h2>
+    Online Proctoring is a Mess
+    <a class="anchor-link" href="#online-proctoring-is-a-mess" id="online-proctoring-is-a-mess">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    I took several exams before the Associate Cloud Engineering exam. All my exams were done through online proctoring, using Pearson. While I had my fair-share of problems with them, they do not even come close to the mess which is called Kryterion. It is a standard procedure for now that in order to take an online proctored exam, you have to download their software which essentially takes over your whole computer for the time of exam. Whether we agree or not with this approach is beside the point, what is infuriating is that this tool will scan your PC/Mac and will tell you which processes you have to kill in order to proceed with the exam. This would be also fine if they could at least provide a list with these processes before the exam, but obviously they don't. You have around 30 minutes to go and clean your task manager according to their wish. I might add, some of the processes which need to be killed can not even be done from the task manager. For example, Windows 11 starts an Outlook process/service by default. In order to kill it, I had to search StackOverflow and SuperUser on the fly to get this CMD command which can kill it:
+   </p>
+   <pre><code>taskkill /F /IM HxOutlook.exe
+</code></pre>
+   <p>
+    Even if I managed to kill everything they requested, I was still struggling to start the damn exam. The tool was giving an "Invalid request" error and blocked my whole PC without being able to close it (remember, it takes your whole PC hostage). I had to manually reset my PC twice using the Power Button. While I was doing this, I had to contact support to ask them what the actual fuck is happening with their damn software. Ultimately, I think the issue was that I was using Chrome to start launching their proctoring tool, which on the other hand tried to kill Chrome but it couldn't (LOL). I managed to launch my exam at the last minute using Firefox. So yeah...no further comments needed.
+   </p>
+   <h2>
+    Everything Else
+    <a class="anchor-link" href="#everything-else" id="everything-else">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Other useful resources about the exam can be found in this GitHub repo:
+    <a href="https://github.com/sathishvj/awesome-gcp-certifications/blob/master/associate-cloud-engineer.html" target="_blank">
+     sathishvj/awesome-gcp-certifications
+    </a>
+   </p>
+   <p>
+    After finishing the exam, the proctoring tool gives you a PASS/FAILED result. This also will have to be confirmed by Google, which can take up to 7-10 days.
+   </p>
+   <h2>
+    Links and References
+    <a class="anchor-link" href="#links-and-references" id="links-and-references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Associate Cloud Engineer:
+     <a href="https://cloud.google.com/certification/cloud-engineer" target="_blank">
+      https://cloud.google.com/certification/cloud-engineer
+     </a>
+    </li>
+    <li>
+     Cloud Engineer learning path:
+     <a href="https://cloud.google.com/training/cloud-infrastructure#cloud-engineer-learning-path" target="_blank">
+      https://cloud.google.com/training/cloud-infrastructure#cloud-engineer-learning-path
+     </a>
+    </li>
+    <li>
+     Google Cloud Associate Cloud Engineer Course - Pass the Exam! by Antoni Tzavelas:
+     <a href="https://www.youtube.com/watch?v=jpno8FSqpc8" target="_blank">
+      https://www.youtube.com/watch?v=jpno8FSqpc8
+     </a>
+    </li>
+    <li>
+     Sample Questions:
+     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfexWKtXT2OSFJ-obA4iT3GmzgiOCGvjrT9OfxilWC1yPtmfQ/viewform" target="_blank">
+      https://docs.google.com/forms/d/e/1FAIpQLSfexWKtXT2OSFJ-obA4iT3GmzgiOCGvjrT9OfxilWC1yPtmfQ/viewform
+     </a>
+    </li>
+    <li>
+     TutorialDojo - Google Certified Associate Cloud Engineer Practice Exams:
+     <a href="https://portal.tutorialsdojo.com/courses/google-certified-associate-cloud-engineer-practice-exams/" target="_blank">
+      https://portal.tutorialsdojo.com/courses/google-certified-associate-cloud-engineer-practice-exams/
+     </a>
+    </li>
+    <li>
+     Google Cloud Associate Cloud Engineer Practice Tests by Dan Sullivan
+     <a href="https://www.udemy.com/course/google-cloud-associate-cloud-engineer-practice-examspractice-exams" target="_blank">
+      https://www.udemy.com/course/google-cloud-associate-cloud-engineer-practice-examspractice-exams
+     </a>
+    </li>
+    <li>
+     sathishvj/awesome-gcp-certifications
+     <a href="https://github.com/sathishvj/awesome-gcp-certifications/blob/master/associate-cloud-engineer.html" target="_blank">
+      https://github.com/sathishvj/awesome-gcp-certifications/blob/master/associate-cloud-engineer.md
+     </a>
+    </li>
+    <li>
+     My GCP Associate Cloud Engineer Notes:
+     <a href="https://github.com/Ernyoke/certified-gcp-cloud-engineer" target="_blank">
+      https://github.com/Ernyoke/certified-gcp-cloud-engineer
+     </a>
+    </li>
+   </ol>
+  </article>
+  <footer>
+   Site generated with
+   <a href="https://github.com/Ernyoke/ssg" target="_blank">
+    ssg
+   </a>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
