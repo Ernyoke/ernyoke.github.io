@@ -168,13 +168,14 @@ nav ul {
 
 nav ul li {
     list-style-type: none;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .fa {
     color: var(--fg) !important;
     display: block;
     line-height: 2em;
-    padding: 0.5em 0em 1em 1em;
 }
 
 nav div ul li a {
