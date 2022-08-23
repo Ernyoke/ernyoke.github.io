@@ -144,11 +144,18 @@
     </a>
    </h2>
    <p>
-    Imger is a collection of image processing algorithms implemented in Go. The idea behind this project was to reimplement
-    <em>
-     DelaunayImage
-    </em>
-    in Go and replace OpenCV with Imger. Unfortunately this did never materialize, but it should be entirely possible, since Imger has all the necessary building blocks.
+    Imger is a collection of image processing algorithms implemented in Go. Example of algorithms:
+    - Grayscale
+    - Blend algorithms: AddScalarToGray, AddGray, AddGrayWeighted
+    - Thresholding algorithms: Binary, BinaryInv, Trunc, ToZero, ToZeroInv, Otsu
+    - Image padding: BorderConstant, BorderReplicate, BorderReflect
+    - Convolution
+    - Blur algorithms: Average - Box, Gaussian
+    - Edge detection algorithms: Sobel, Laplacian, Canny
+    - Resizing algorithms: Nearest Neighbour, Linear, Catmull-Rom, Lanczos
+    - Effects: Pixelate, Sepia, Emboss, Sharpen, Invert
+    - Transform algorithms: Rotate
+    - Generate Gradients: LinearGradient, SigmoidalGradient
    </p>
    <ul>
     <li>
