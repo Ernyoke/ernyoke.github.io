@@ -116,7 +116,7 @@
    <pre><code class="language-bash">cargo lambda new function-name
 </code></pre>
    <p>
-    It will prompt some questions for us asking about the event type we will plan to use to launch the Lambda. Afterward, it will generate the project including the required AWS SDk dependencies based on what trigger whe chose. For example, for a function that can be invoked by an API Gateway - REST endpoint,
+    It will prompt some questions for us asking about the event type we will plan to use to launch the Lambda. Afterward, it will generate the project including the required AWS SDK dependencies based on what trigger we chose. For example, for a function that can be invoked by an API Gateway - REST endpoint,
     <code>
      cargo lambda
     </code>
@@ -203,7 +203,7 @@ async fn main() -&gt; Result&lt;(), Error&gt; {
     <code>
      cargo-lambda
     </code>
-    uses Zig-lang under hood for cross-compilation and it makes sure to hide the  complexity from us when we are building Rust executables.
+    uses Zig-lang under the hood for cross-compilation and it makes sure to hide the complexity from us when we are building Rust executables.
    </p>
    <h3>
     What if we don't like magic?
@@ -213,7 +213,7 @@ async fn main() -&gt; Result&lt;(), Error&gt; {
     <code>
      cargo-lambda
     </code>
-    makes it easy to build the necessary executable from a Rust project, but what if we would want to do it ourselves? It turns out this can be a kind of rabbit hole. Generally, if our Lambda is a binary executable, it should be built targeting a Linux environment since AWS is using a flavor Amazon Linux under the hood for the Lambda runtime. This can be done somewhat flawlessly if our host machine is also running Linux. We just have to do the steps bellow:
+    makes it easy to build the necessary executable from a Rust project, but what if we would want to do it ourselves? It turns out this can be a kind of rabbit hole. Generally, if our Lambda is a binary executable, it should be built targeting a Linux environment since AWS is using a flavor of Amazon Linux under the hood for the Lambda runtime. This can be done somewhat flawlessly if our host machine is also running Linux. We just have to do the steps below:
    </p>
    <ol>
     <li>
@@ -254,7 +254,7 @@ async fn main() -&gt; Result&lt;(), Error&gt; {
     <code>
      target
     </code>
-    folder in which we will a binary ready to be deployed to AWS.
+    folder in which we will have a binary ready to be deployed to AWS.
    </p>
    <h3>
     What about Windows and MacOS?
@@ -422,7 +422,7 @@ zip lambda.zip bootstrap
     <a href="https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support" target="_blank">
      announced container support
     </a>
-    for Lambda. This means a Lambda project can be packaged into a Docker container and pushed to a container registry (ECR), from where it can be deployed to AWS Lambda. Containerizing a Lambda function comes with a few benefits, for example we can deploy a project with a size of up to 10GB. This can be helpful for Rust project because having a bunch of dependencies can increase the project size exponentially.
+    for Lambda. This means a Lambda project can be packaged into a Docker container and pushed to a container registry (ECR), from where it can be deployed to AWS Lambda. Containerizing a Lambda function comes with a few benefits, for example, we can deploy a project with a size of up to 10GB. This can be helpful for a Rust project because having a bunch of dependencies can increase the project size exponentially.
    </p>
    <p>
     AWS provides a base image for Lambda,
@@ -431,7 +431,7 @@ zip lambda.zip bootstrap
       public.ecr.aws/lambda/provided:al2
      </code>
     </a>
-    which contains all the required components to run our functions. To containerize our Lambda, what we have to do is to copy our executable to the image and name it as
+    which contains all the required components to run our functions. To containerize our Lambda, what we have to do is to copy our executable to the image and name it
     <code>
      bootstrap
     </code>
