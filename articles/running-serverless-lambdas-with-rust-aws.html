@@ -625,7 +625,7 @@ ENTRYPOINT ["/bootstrap"]
     </code>
     digits of PI:
    </p>
-   <pre><code>aws lambda invoke \
+   <pre><code class="language-bash">aws lambda invoke \
     --function-name calculate-pi-rs-docker-arm64 \
     --invocation-type RequestResponse \
     --payload '{ "digits": "10_000" }' \
