@@ -529,11 +529,17 @@ ENTRYPOINT ["/bootstrap"]
     </a>
    </h2>
    <p>
-    Rust is fast. It should be, it is a system's programming language compiled down to machine code for a specific platform. To see how fast this highly optimized machine code is when executed as an AWS Lambda, I decided to do some totally non-scientific benchmarks. To measure the performance of code written in Rust I decided to attempt to compute the first N digits of PI. Algorithms used to compute digits of PI are used for several CPU stress testing and benchmarking tools, for example
+    Rust is fast. It should be, it is a system's programming language compiled down to machine code for a specific platform. To see how fast this highly optimized machine code is when executed as an AWS Lambda, I decided to do some totally non-scientific benchmarks.
+   </p>
+   <p>
+    To measure the performance of code written in Rust I decided to attempt to compute the first N digits of PI. Algorithms used to compute digits of PI are used by several CPU stress testing and benchmarking tools, such as
     <a href="https://www.superpi.net/" target="_blank">
      https://www.superpi.net/
     </a>
-    . To compute the first N digits of PI I used the
+    .
+   </p>
+   <p>
+    In order to compute the first N digits of PI I used the
     <a href="http://www.cs.ox.ac.uk/jeremy.gibbons/publications/spigot.pdf" target="_blank">
      Unbounded Spigot Algorithms for the Digits of PI
     </a>
