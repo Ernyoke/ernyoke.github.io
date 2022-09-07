@@ -92,7 +92,7 @@
     announcing the Rust implementation for the Lambda runtime is from more than 4 years ago. Using this runtime implementation we can build an executable for a Custom Lambda Environment.
    </p>
    <p>
-    The Lambda runtime implementation for Rust it is a dependency (which in the world of Rust are called crates), that will be packaged with our code.
+    The Lambda runtime implementation for Rust is a dependency (which in the world of Rust are called crates), that will be packaged with our code.
    </p>
    <h2>
     Create a Lambda Project using Rust
@@ -111,12 +111,12 @@
     <a href="https://www.cargo-lambda.info/guide/installation.html" target="_blank">
      documentation
     </a>
-    . To create a new project, we can use the this command:
+    . To create a new project, we can use this command:
    </p>
    <pre><code class="language-bash">cargo lambda new function-name
 </code></pre>
    <p>
-    It will prompt some questions for us asking about the event type we will plan to use to launch the Lambda. Afterward, it will generate the project including the required AWS SDK dependencies based on what trigger we chose. For example, for a function that can be invoked by an API Gateway - REST endpoint,
+    Running the command it will prompt some questions for us asking about the event type we will plan to use to launch the Lambda. Afterward, it will generate the project including the required AWS SDK dependencies based on what trigger we chose. For example, for a function that can be invoked by an API Gateway - REST endpoint,
     <code>
      cargo lambda
     </code>
@@ -257,7 +257,7 @@ async fn main() -&gt; Result&lt;(), Error&gt; {
     folder in which we will have a binary ready to be deployed to AWS.
    </p>
    <h3>
-    What about Windows and MacOS?
+    What about Windows and macOS?
    </h3>
    <p>
     If we are running Windows, we can use WSL to have access to a fully-fledged Linux environment, and then we can do the steps above. In case we don't want to use WSL or for some reason, we can't use it, we will have to do a cross-build to Linux. I tried the steps above from Windows, but at each attempt, I was running into a linker issue (
@@ -324,7 +324,7 @@ async fn main() -&gt; Result&lt;(), Error&gt; {
     <code>
      cargo-lambda
     </code>
-    again. What we have to do is to execute the command bellow:
+    again. What we have to do is to execute the command below:
    </p>
    <pre><code class="language-bash">cargo lambda deploy
 </code></pre>
@@ -446,7 +446,7 @@ zip lambda.zip bootstrap
     <a href="https://docs.docker.com/develop/develop-images/multistage-build" target="_blank">
      multi-stage
     </a>
-    Docker image. To accomplish this, we can use a base Rust image as the build stage, the purpose of which is do the compile and build step and to produce an executable. This executable will be copied over to the main image by the next second stage. While a multi-stage Docker image is not mandatory for our purposes, it can be helpful to automate the whole process of building Rust Lambdas.
+    Docker image. To accomplish this, we can use a base Rust image as the build stage, the purpose of which is to do the compile and build step and to produce an executable. This executable will be copied over to the main image by the next second stage. While a multi-stage Docker image is not mandatory for our purposes, it can be helpful to automate the whole process of building Rust Lambdas.
    </p>
    <p>
     Without further ado, this is our Lambda container:
@@ -539,7 +539,7 @@ ENTRYPOINT ["/bootstrap"]
     .
    </p>
    <p>
-    In order to compute the first N digits of PI I used the
+    In order to compute the first N digits of PI, I used the
     <a href="http://www.cs.ox.ac.uk/jeremy.gibbons/publications/spigot.pdf" target="_blank">
      Unbounded Spigot Algorithms for the Digits of PI
     </a>
@@ -882,7 +882,7 @@ ENTRYPOINT ["/bootstrap"]
     <code>
      Init
     </code>
-    phase of a Lambda. We encounter a cold start if our Lambda was not invoked recently or AWS decides to fire up another instance of our Lambda function in parallel to which is running currently. To do the cold start measurements, I let all the Lambdas rest and executed them afterward. I noted down the cold start duration and I let all the Lambdas rest again to make sure to encounter a cold start at the next execution as well. I did this 3 time for each Lambda and I got the following results:
+    phase of a Lambda. We encounter a cold start if our Lambda was not invoked recently or AWS decides to fire up another instance of our Lambda function in parallel to which is running currently. To do the cold start measurements, I let all the Lambdas rest and executed them afterward. I noted down the cold start duration and I let all the Lambdas rest again to make sure to encounter a cold start at the next execution as well. I did this 3 times for each Lambda and I got the following results:
    </p>
    <p>
     Rust:
