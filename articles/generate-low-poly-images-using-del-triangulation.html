@@ -88,7 +88,7 @@
     <img alt='"Low poly" portrait of Leonardo DiCaprio' src="img-generate-low-poly-images/leo.jpeg"/>
    </p>
    <p>
-    The roots of "low poly" art go back to the early days of computer graphics, where lack of performant hardware forced computer scientists and game designers to present their idea using as few polygons as possible. Nowadays, obviously, this is not really an issue, but the artistic nature of having more edges than curves is still present, representing a somewhat niche artistic style.
+    The roots of "low poly" art goes back to the early days of computer graphics, where the lack of performant hardware forced computer scientists and game designers to present their idea using as few polygons as possible. Nowadays, this is not really an issue, but the artistic nature of having more edges than curves is still present, representing a somewhat niche artistic style.
    </p>
    <p>
     <a href="https://www.youtube.com/watch?v=XuTXzLZMLUE&amp;ab_channel=ThinMatrix" target="_blank">
@@ -106,7 +106,7 @@
    </h2>
    <p>
     Let's imagine the following challenge: we are given a set of points in a 2D space. From this set of points we should create a mesh having the following properties:
-- the mesh should be composed from triangles
+- the mesh should be composed of triangles
 - no overlapping triangles are allowed
 - the mesh should be pleasing to the eye:
   - we should avoid having
@@ -130,7 +130,7 @@
    </blockquote>
    <p>
     Let's break this down. First, let's see what is the circumcircle of a triangle?
-The circumcircle of a triangle is basically a circle which can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.
+The circumcircle of a triangle is basically a circle that can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.
    </p>
    <p>
     Example:
@@ -185,17 +185,17 @@ private static Circle calculateCircumCircle(Point a, Point b, Point c) {
 }
 </code></pre>
    <p>
-    Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set of points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex which is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in other triangle's circumcircle:
+    Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set of points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex that is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in another triangle's circumcircle:
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/triangulation.png"/>
    </p>
    <p>
-    Moving forward there are several categories of algorithms used for Delaunay triangulation. Probably to be the easier to understand and to implement is the one called
+    Moving forward there are several categories of algorithms used for Delaunay triangulation. Probably to be the easier to understand and implement is the one called
     <a href="https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm" target="_blank">
      Bowyer-Watson
     </a>
-    algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the affected area of the final result. The steps of the algorithm are the following:
+    algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the affected areas of the final result. The steps of the algorithm are the following:
    </p>
    <pre><code class="language-Bash">function BowyerWatson (pointList)
    // pointList is a set of coordinates defining the points to be triangulated
@@ -298,13 +298,13 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     time complexity, which leaves some room for improvement, but it has potential for parallelization.
    </p>
    <h2>
-    Putting it all to together
-    <a class="anchor-link" href="#putting-it-all-to-together" id="putting-it-all-to-together">
+    Putting it all together
+    <a class="anchor-link" href="#putting-it-all-together" id="putting-it-all-together">
      &lt;&lt;
     </a>
    </h2>
    <p>
-    Knowing how the Delaunay triangulation works, the next challenge would be to apply it somehow in order to get from this image:
+    Knowing how the Delaunay triangulation works, the next challenge would be to apply it somehow to get from this image:
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/original-resized.jpeg"/>
@@ -316,7 +316,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     <img alt="Alt Text" src="img-generate-low-poly-images/final-resized.jpg"/>
    </p>
    <p>
-    In order to achieve this, we could consider the following steps:
+    To achieve this, we could consider the following steps:
    </p>
    <ol>
     <li>
@@ -339,7 +339,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    Moving forward, let's break these steps down by having an in-depth discussion about some implementation details. Basically every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case I've decided to use a third party library, namely
+    Moving forward, let's break these steps down by having an in-depth discussion about some implementation details. Every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case, I've decided to use a third-party library, namely
     <a href="https://github.com/openpnp/opencv" target="_blank">
      openpnp/opencv
     </a>
@@ -357,15 +357,15 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    A common way to blur images is done through applying a
+    A common way to blur images is by applying a
     <a href="https://en.wikipedia.org/wiki/Gaussian_blur" target="_blank">
      Gaussian filter
     </a>
-    to the image. A Gaussian filter is basically a
+    to the image. A Gaussian filter is basically an
     <code>
      NxN
     </code>
-    matrix which gets
+    matrix that gets
     <a href="https://en.wikipedia.org/wiki/Convolution" target="_blank">
      convolved
     </a>
@@ -374,14 +374,14 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
    <pre><code class="language-Java">Imgproc.GaussianBlur(originalImage, blurredImage, new Size(arguments.getBlurKernelSize(), arguments.getBlurKernelSize()), 0);
 </code></pre>
    <p>
-    The size of the kernel aka filter determines how "blurry" the image will be. In order to not lose a lot of information regarding the characteristics of an image, I recommend sticking to a smaller kernel size. This is important, since it will have a significant impact on the final result.
+    The size of the kernel aka filter determines how "blurry" the image will be. To not lose a lot of information regarding the characteristics of an image, I recommend sticking to smaller kernel sizes. This is important since it will have a significant impact on the final result.
    </p>
    <p>
     Besides Gaussian blur approach, there are other solutions for getting a blurry image, (example.
     <a href="http://incubator.quasimondo.com/processing/fast_blur_deluxe.php" target="_blank">
      Stack-blur
     </a>
-    ). Usually the tendency is faster blurring procedures will result in lower quality blur, but in our case this does not really affect the final result. I simply went with the Gaussian algorithm, because OpenCV provides an implementation for it.
+    ). Usually, the tendency is faster blurring procedures will result in a lower quality blur, but in our case, this does not really affect the final result. I simply went with the Gaussian algorithm, because OpenCV provides an implementation for it.
    </p>
    <ol start="2">
     <li>
@@ -391,7 +391,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    Probably everyone knows what a grayscale image is. Essentially is a black-and white image or a monochrome image carrying only light intensity information. Usually, if we want to transform an RGB image to a grayscale one, we can compute the value of each pixel using a weighted sum. The formula can be found on the
+    Probably everyone knows what a grayscale image is. Essentially is a black-and-white image or a monochrome image carrying only light intensity information. Usually, if we want to transform an RGB image into a grayscale one, we can compute the value of each pixel using a weighted sum. The formula can be found on the
     <a href="https://en.wikipedia.org/wiki/Grayscale" target="_blank">
      Wikipedia - Grayscale
     </a>
@@ -407,7 +407,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    Next, we would want to isolate the main characteristics of an image by doing edge detection. Again, there are several methodologies to detect the edges from an image. For our case a simple
+    Next, we would want to isolate the main characteristics of an image by doing edge detection. Again, there are several methodologies to detect the edges from an image. For our case, a simple
     <a href="https://en.wikipedia.org/wiki/Sobel_operator" target="_blank">
      Sobel
     </a>
@@ -424,14 +424,14 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    In order to get rid of noise and to also preserve the strongest edges from the image, we would want to apply some
+    To get rid of noise and to also preserve the strongest edges from the image, we would want to apply some
     <a href="https://en.wikipedia.org/wiki/Thresholding_(image_processing)" target="_blank">
      thresholding
     </a>
-    to it, eventually creating a binary image. The simplest thresholding approach works just fine, meaning that we get an input threshold value and we compare that with every pixel from the image with the edges. If the pixel value is greater than the threshold value, we set the pixel to be 255 - white. Every pixel with value less than the threshold will be 0 - black.
+    to it, eventually creating a binary image. The simplest thresholding approach works just fine, meaning that we get an input threshold value and we compare that with every pixel from the image with the edges. If the pixel value is greater than the threshold value, we set the pixel to be 255 - white. Every pixel with a value less than the threshold will be 0 - black.
    </p>
    <p>
-    We can play around with the value of the threshold, because it will impact the outcome significantly. Lower threshold may result in images having way more information preserved than higher threshold values. Depending on what we want to achieve, this may result in favorable output or it may have too much going on.
+    We can play around with the value of the threshold because it will impact the outcome significantly. A lower threshold may result in images having way more information preserved than higher threshold values. Depending on what we want to achieve, this may result in favorable output or it may have too much going on.
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/edge-points-resized.png"/>
@@ -444,7 +444,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    After tresholding we may end up with a bunch of black and white pixels. If we feed the location of these pixels to the Delaunay algorithm, we get a mesh of triangles which can be plotted to a surface. If we are lucky, the triangles will be aligned in a way which preserves the essence of the original image.
+    After thresholding, we may end up with a bunch of black and white pixels. If we feed the location of these pixels to the Delaunay algorithm, we get a mesh of triangles that can be plotted to a surface. If we are lucky, the triangles will be aligned in a way that preserves the essence of the original image.
    </p>
    <p>
     <img alt="Alt Text" src="img-generate-low-poly-images/wire-final-resized.png"/>
@@ -457,7 +457,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
     </li>
    </ol>
    <p>
-    In order to fill these triangles with colors, we can take each node from a triangle and locate the original pixels for their locations. Adding the RGB values of the original pixels and dividing the sum by 3, we may get an RGB value which may be used to fill the triangle.
+    To fill these triangles with colors, we can take each node from a triangle and locate the original pixels for their locations. Adding the RGB values of the original pixels and dividing the sum by 3, we may get an RGB value which may be used to fill the triangle.
    </p>
    <p>
     The final result may look like this:
