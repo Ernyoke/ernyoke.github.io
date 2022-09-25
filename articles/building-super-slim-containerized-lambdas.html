@@ -146,7 +146,7 @@
     </code>
     Lambda would look something like this:
    </p>
-   <pre><code class="language-bash">ARG FUNCTION_DIR="/function"
+   <pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
 
 FROM rust:1.63-buster as builder
 
@@ -183,7 +183,7 @@ ENTRYPOINT [ "./bootstrap" ]
     </code>
     Docker container as well:
    </p>
-   <pre><code class="language-bash">ARG FUNCTION_DIR="/function"
+   <pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
 
 FROM rust:1.63-buster as builder
 
@@ -451,6 +451,8 @@ ENTRYPOINT [ "./bootstrap" ]
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
   </script>
   <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
   </script>
   <script>
    hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
