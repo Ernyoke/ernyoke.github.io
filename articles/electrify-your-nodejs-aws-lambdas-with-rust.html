@@ -280,7 +280,7 @@ fn generate(mut cx: FunctionContext) -&gt; JsResult&lt;JsPromise&gt; {
     let channel = cx.channel();
 
     // Spawn a new task and attempt to compute the first N digits of PI
-    rt.spawn(async move {
+    rt.spawn_blocking(move || {
         let digits = generate_pi(limit.to_i64().unwrap());
         deferred.settle_with(&amp;channel, move |mut cx| {
             let res: Handle&lt;JsArray&gt; = JsArray::new(&amp;mut cx, digits.len() as u32);
