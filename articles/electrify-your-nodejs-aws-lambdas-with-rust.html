@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/index.html">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
+       Projects
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
+       Blog
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Electrify your NodeJS AWS Lambdas with Rust
+   </h1>
+   <h2>
+    Introduction
+    <a class="anchor-link" href="#introduction" id="introduction">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    NodeJS runtime for AWS Lambda is one of the most used and for good reasons. It is fast with a short cold start duration, it is easy to develop for it, and it can be used for Lambda@Edge functions. Besides these, JavaScript is one of the most popular languages. Ultimately, it "just makes sense" to use JavaScript for Lambdas. Sometimes, we might find ourselves in a niche situation where would want to be able to squeeze out a little bit more performance from our Lambda. In these cases, we could rewrite our whole function using something like Rust, or we could rewrite only a portion of our code using Rust and call it from a NodeJS host using a mechanism named
+    <a href="https://en.wikipedia.org/wiki/Foreign_function_interface" target="_blank">
+     foreign function interface (FFI)
+    </a>
+    .
+   </p>
+   <p>
+    NodeJS provides an
+    <a href="https://nodejs.org/api/addons.html" target="_blank">
+     API for addons
+    </a>
+    , dynamically-linked shared objects written usually in C++. As we might guess from the title, we are not required to use C++. There are several implementations of this API in other languages, such as Rust. Probably the most knowns are
+    <a href="https://github.com/node-ffi/node-ffi" target="_blank">
+     node-ffi
+    </a>
+    or
+    <a href="https://neon-bindings.com/docs/introduction" target="_blank">
+     Neon
+    </a>
+    .
+   </p>
+   <p>
+    In this article, we would use Neon to build and load dynamic libraries in a NodeJS project.
+   </p>
+   <h2>
+    Build a Dynamic Library with Neon
+    <a class="anchor-link" href="#build-a-dynamic-library-with-neon" id="build-a-dynamic-library-with-neon">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    To make a function call to a binary addon from NodeJS, we have to do the following:
+   </p>
+   <ol>
+    <li>
+     Import the binary addon into our JavaScript code. Binary modules should implement the
+     <a href="https://nodejs.org/api/n-api.html#node-api" target="_blank">
+      Node-API (N-API)
+     </a>
+     and usually, they have to
+     <code>
+      .node
+     </code>
+     extension. Using the
+     <code>
+      require
+     </code>
+     function from CommonJS, we can import them. In the case of Neon, this N-API implementation is hidden from us, we don't have to worry much about it (as long as we don't have to do some advanced debugging)
+    </li>
+    <li>
+     In the implementation of the binary code we have to apply some transformation of the input data. The types used by JavaScript may not be compatible with the types used by Rust. This conversion has to be done for the input arguments and the returned types as well. Neon provides the Rust variant of all the primitive JavaScript types and object types.
+    </li>
+    <li>
+     Implement our business logic in the native code.
+    </li>
+    <li>
+     Build the dynamic library. Rust makes this step convenient by being able to configure the
+     <code>
+      [lib]
+     </code>
+     section in the project's
+     <code>
+      toml
+     </code>
+     file. Moreover, if we are using Neon to initiate our project, this will be configured for us out of the box.
+    </li>
+   </ol>
+   <p>
+    As for the first step, we would want to create a Rust project with Neon dependency for building a dynamic library. This can be done using
+    <code>
+     npm init neon my-rust-lib
+    </code>
+    . To be more accurate, this will create a so-called Neon project, which means it already has a
+    <code>
+     package.json
+    </code>
+    for handling Node-related things. The project structure will look something like this:
+   </p>
+   <pre><code>my-rust-lib/
+├── Cargo.toml
+├── README.md
+├── package.json
+└── src
+    └── lib.rs
+</code></pre>
+   <p>
+    If we take a look at the
+    <code>
+     package.json
+    </code>
+    , we will find something that resembles the following:
+   </p>
+   <pre><code class="language-json">{
+  "name": "my-rust-library",
+  "version": "0.1.0",
+  "description": "My Rust library",
+  "main": "index.node",
+  "scripts": {
+    "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
+    "build-debug": "npm run build --",
+    "build-release": "npm run build -- --release",
+    "install": "npm run build-release",
+    "test": "cargo test"
+  },
+  "author": "Ervin Szilagyi",
+  "license": "ISC",
+  "devDependencies": {
+    "cargo-cp-artifact": "^0.1"
+  }
+}
+</code></pre>
+   <p>
+    Running
+    <code>
+     npm install
+    </code>
+    command, our dynamic library will be built in release mode. Is important to know that this will target our current CPU architecture and operating system. If we want to build this package for being used by an AWS Lambda, we will have to do a cross-target build to Linux x86-64 or arm64.
+   </p>
+   <p>
+    Taking a look at
+    <code>
+     lib.rs
+    </code>
+    file, we can see the entry point of our library exposing a function named
+    <code>
+     hello
+    </code>
+    . The return type of this function is a string. It is also important to notice the conversion from a Rust's
+    <code>
+     str
+    </code>
+    point to a JsString type. This type does the bridging for strings between JavaScript and Rust.
+   </p>
+   <pre><code class="language-rust">use neon::prelude::*;
+
+fn hello(mut cx: FunctionContext) -&gt; JsResult&lt;JsString&gt; {
+    Ok(cx.string("hello node"))
+}
+
+#[neon::main]
+fn main(mut cx: ModuleContext) -&gt; NeonResult&lt;()&gt; {
+    cx.export_function("hello", hello)?;
+    Ok(())
+}
+</code></pre>
+   <p>
+    After we built our library, we can install it in another NodeJS project by running:
+   </p>
+   <pre><code class="language-bash">npm install &lt;path&gt;
+</code></pre>
+   <p>
+    The
+    <code>
+     &lt;path&gt;
+    </code>
+    should point to the location of our Neon project.
+   </p>
+   <h2>
+    Building a Lambda Function with an Embedded Dynamic Library
+    <a class="anchor-link" href="#building-a-lambda-function-with-an-embedded-dynamic-library" id="building-a-lambda-function-with-an-embedded-dynamic-library">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In my previous article
+    <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">
+     Running Serverless Lambdas with Rust on AWS
+    </a>
+    we used an unbounded spigot algorithm for computing the first N digits of PI using Rust programming language. In the following lines, we will extract this algorithm into its own dynamic library and we will call it from a Lambda function written in JavaScript. This algorithm is good to measure a performance increase in case we jump from a JavaScript implementation to a Rust implementation.
+   </p>
+   <p>
+    First what we have to do is generate a Neon project. After that, we can extract the function which computes the first N digits of PI and wrap it into another function providing the glue-code between Rust and JavaScript interaction.
+   </p>
+   <p>
+    The whole implementation would look similar to this:
+   </p>
+   <pre><code class="language-rust">use neon::prelude::*;
+use num_bigint::{BigInt, ToBigInt};
+use num_traits::cast::ToPrimitive;
+use once_cell::sync::OnceCell;
+use tokio::runtime::Runtime;
+
+#[neon::main]
+fn main(mut cx: ModuleContext) -&gt; NeonResult&lt;()&gt; {
+    cx.export_function("generate", generate)?;
+    Ok(())
+}
+
+// Create a singleton runtime used for async function calls
+fn runtime&lt;'a, C: Context&lt;'a&gt;&gt;(cx: &amp;mut C) -&gt; NeonResult&lt;&amp;'static Runtime&gt; {
+    static RUNTIME: OnceCell&lt;Runtime&gt; = OnceCell::new();
+    RUNTIME.get_or_try_init(|| Runtime::new().or_else(|err| cx.throw_error(err.to_string())))
+}
+
+fn generate(mut cx: FunctionContext) -&gt; JsResult&lt;JsPromise&gt; {
+    // Transform the JavaScript types into Rust types
+    let js_limit = cx.argument::&lt;JsNumber&gt;(0)?;
+    let limit = js_limit.value(&amp;mut cx);
+
+    // Instantiate the runtime
+    let rt = runtime(&amp;mut cx)?;
+
+    // Create a JavaScript promise used for return. Since our function can take a longer period
+    // to execute, it would be wise to not block the main thread of the JS host
+    let (deferred, promise) = cx.promise();
+    let channel = cx.channel();
+
+    // Spawn a new task and attempt to compute the first N digits of PI
+    rt.spawn(async move {
+        let digits = generate_pi(limit.to_i64().unwrap());
+        deferred.settle_with(&amp;channel, move |mut cx| {
+            let res: Handle&lt;JsArray&gt; = JsArray::new(&amp;mut cx, digits.len() as u32);
+
+            // Place the first N digits into a JavaScript array and hand it back to the caller
+            for (i, &amp;digit) in digits.iter().enumerate() {
+                let val = cx.number(f64::from(digit));
+                res.set(&amp;mut cx, i as u32, val);
+            }
+            Ok(res)
+        });
+    });
+    Ok(promise)
+}
+
+fn generate_pi(limit: i64) -&gt; Vec&lt;i32&gt; {
+    let mut q = 1.to_bigint().unwrap();
+    let mut r = 180.to_bigint().unwrap();
+    let mut t = 60.to_bigint().unwrap();
+    let mut i = 2.to_bigint().unwrap();
+    let mut res: Vec&lt;i32&gt; = Vec::new();
+    for _ in 0..limit {
+        let digit: BigInt = ((&amp;i * 27 - 12) * &amp;q + &amp;r * 5) / (&amp;t * 5);
+        res.push(digit.to_i32().unwrap());
+        let mut u: BigInt = &amp;i * 3;
+        u = (&amp;u + 1) * 3 * (&amp;u + 2);
+        r = &amp;u * 10 * (&amp;q * (&amp;i * 5 - 2) + r - &amp;t * digit);
+        q *= 10 * &amp;i * (&amp;i * 2 - 1);
+        i = i + 1;
+        t *= u;
+    }
+    res
+}
+</code></pre>
+   <p>
+    What is important to notice here is that we return a promise to Javascript. In the Rust code, we create a new
+    <a href="https://docs.rs/tokio/1.20.1/tokio/runtime/index.html" target="_blank">
+     runtime
+    </a>
+    for handling asynchronous function executions from which we build a promise that gets returned to JavaScript.
+   </p>
+   <p>
+    Moving on, we have to create the AWS Lambda function targeting the NodeJS Lambda Runtime. The simplest way to do this is to create a NodeJS project using
+    <code>
+     npm init
+    </code>
+    with
+    <code>
+     app.js
+    </code>
+    file as the entry point and install the Rust dependency as mentioned above.
+   </p>
+   <p>
+    In the
+    <code>
+     app.js
+    </code>
+    we can build the Lambda handler as follows:
+   </p>
+   <pre><code class="language-javascript">// Import the dynamic library using commonjs
+const compute_pi = require("compute-pi-rs");
+
+// Build and async handler for the Lambda function. We use await for unpacking the promise provided by the embedded library
+exports.handler = async (event) =&gt; {
+    const digits = await compute_pi.generate(event.digits);
+    return {
+        digits: event.digits,
+        pi: digits.join('')
+    };
+};
+</code></pre>
+   <p>
+    This is it. To deploy this function into AWS, we have to pack the
+    <code>
+     app.js
+    </code>
+    file and the
+    <code>
+     node_modules
+    </code>
+    folder into a
+    <code>
+     zip
+    </code>
+    archive and upload it to AWS Lambda. Assuming our target architecture for the Lambda and for the dependencies match (we can not have an x86-64 native dependency running on a Lambda function set to use arm64), our function should work as expected....or maybe not.
+   </p>
+   <h3>
+    <code>
+     GLIBC_2.28
+    </code>
+    not found
+   </h3>
+   <p>
+    With our Neon project, we build a dynamic library. One of the differences between dynamic and static libraries is that dynamic libraries can have shared dependencies that are expected to be present on the host machine at the time of execution. In contrast, a static library may contain everything required in order to be able to be used as-is. If we build our dynamic library developed in Rust, we may encounter the following issue during its first execution:
+   </p>
+   <pre><code class="language-bash">/lib64/libc.so.6: version `GLIBC_2.28' not found (required by .../compute-pi-rs-lib/index.node)
+</code></pre>
+   <p>
+    The reason behind this issue, as explained in this
+    <a href="https://kobzol.github.io/rust/ci/2021/05/07/building-rust-binaries-in-ci-that-work-with-older-glibc.html" target="_blank">
+     blog post
+    </a>
+    , is that Rust dynamically links to the C standard library, more specifically the GLIBC implementation. This should not be a problem, since GLIBC should be present on essentially every Unix system, however, this becomes a challenge in case the version of the GLIBC used at build time is different compared to the version present on the system executing the binary. If we are using
+    <code>
+     cross
+    </code>
+    for building our library, the GLIBC version of the Docker container used by cross may be different than the one present in the Lambda Runtime on AWS.
+   </p>
+   <p>
+    The solution would be to build the library on a system that has the same GLIBC version. The most reliable solution I found is to use an Amazon Linux Docker image as the build image instead of using the default cross image.
+    <code>
+     cross
+    </code>
+    can be configured to use a
+    <a href="https://github.com/cross-rs/cross#custom-docker-images" target="_blank">
+     custom image
+    </a>
+    for compilation and building. What we have to do is to provide a Dockerfile with Amazon Linux 2 as its base image and provide additional configuration to be able to build Rust code. The Dockerfile could look like this:
+   </p>
+   <pre><code class="language-docker">FROM public.ecr.aws/amazonlinux/amazonlinux:2.0.20220912.1
+
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUST_VERSION=1.63.0
+
+RUN yum install -y gcc gcc-c++ openssl-devel; \
+    curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path --profile minimal --default-toolchain $RUST_VERSION -y; \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    rustup --version; \
+    cargo --version; \
+    rustc --version;
+
+WORKDIR /target
+</code></pre>
+   <p>
+    In the second step, we will have to create a toml file named
+    <code>
+     Cross.toml
+    </code>
+    in the root folder of our project. In the content of this file we have to specify a path to the Dockerfile above, for example:
+   </p>
+   <pre><code class="language-toml">[target.x86_64-unknown-linux-gnu]
+dockerfile = "./Dockerfile-x86-64"
+</code></pre>
+   <p>
+    This
+    <code>
+     toml
+    </code>
+    file will be used automatically at each build. Instead of the base
+    <code>
+     cross
+    </code>
+    Docker image, the specified dockerfile will be used for the custom image definition.
+   </p>
+   <p>
+    The reason for using Amazon Linux 2 is that the Lambda Runtime itself is based on that. We can find more information about runtimes and dependencies in the
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html" target="_blank">
+     AWS documentation about runtimes
+    </a>
+    .
+   </p>
+   <h2>
+    Performance and Benchmarks
+    <a class="anchor-link" href="#performance-and-benchmarks" id="performance-and-benchmarks">
+     &lt;&lt;
+    </a>
+   </h2>
+   <h3>
+    Setup for Benchmarking
+   </h3>
+   <p>
+    For my previous article
+    <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">
+     Running Serverless Lambdas with Rust on AWS
+    </a>
+    we used an unbounded spigot algorithm to compute the first N digits of PI. We will use the same algorithm for the upcoming benchmarks as well. We had seen the implementation of this algorithm above. To summarize, our Lambda function written in NodeJS will use FFI to call a function written in Rust which will return a list with the first N number of PI.
+   </p>
+   <p>
+    To be able to compare our measurements with the results gathered for a Lambda written entirely in Rust, we will use the same AWS Lambda configurations. These are
+    <code>
+     128 MB of RAM
+    </code>
+    memory allocated, and the Lambda being deployed in
+    <code>
+     us-east-1
+    </code>
+    . Measurements will be performed for both
+    <code>
+     x86-64
+    </code>
+    and
+    <code>
+     arm64
+    </code>
+    architectures.
+   </p>
+   <h3>
+    Cold Start/Warm Start
+   </h3>
+   <p>
+    Using XRay, we can get an interesting breakdown of how our Lambda performs and where the time is spent during each run. For example, here we can see a trace for a cold start execution for an
+    <code>
+     x86-64
+    </code>
+    Lambda:
+   </p>
+   <p>
+    <img alt="Trace for an execution with cold start" src="img-speed-up-js-lambdas-with-rust/cold-start-trace.png"/>
+   </p>
+   <p>
+    In the following we can see the trace for a warm start in case of the same Lambda:
+   </p>
+   <p>
+    <img alt="Trace for an execution with warm start" src="img-speed-up-js-lambdas-with-rust/warm-start-trace.png"/>
+   </p>
+   <p>
+    The initialization (cold start) period is pretty standard for a NodeJS runtime. In my previous article, we could measure cold starts between 100ms and 300ms for NodeJS. The cold start period for this current execution falls directly into this interval.
+   </p>
+   <h3>
+    Performance Comparisons
+   </h3>
+   <p>
+    As usual, I measured the running time of 5 consecutive executions of the same Lambda function. I did this for both
+    <code>
+     x86-64
+    </code>
+    and
+    <code>
+     arm64
+    </code>
+    architectures. These are the results I witnessed:
+   </p>
+   <table>
+    <thead>
+     <tr>
+      <th>
+      </th>
+      <th>
+       Duration - run 1
+      </th>
+      <th>
+       Duration - run 2
+      </th>
+      <th>
+       Duration - run 3
+      </th>
+      <th>
+       Duration - run 4
+      </th>
+      <th>
+       Duration - run 5
+      </th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <td>
+       x86-64
+      </td>
+      <td>
+       5029.48 ms
+      </td>
+      <td>
+       5204.80 ms
+      </td>
+      <td>
+       4811.30 ms
+      </td>
+      <td>
+       4852.36 ms
+      </td>
+      <td>
+       4829.74 ms
+      </td>
+     </tr>
+     <tr>
+      <td>
+       arm64
+      </td>
+      <td>
+       11064.26 ms
+      </td>
+      <td>
+       10703.61 ms
+      </td>
+      <td>
+       10968.51 ms
+      </td>
+      <td>
+       10755.36 ms
+      </td>
+      <td>
+       10716.85 ms
+      </td>
+     </tr>
+    </tbody>
+   </table>
+   <p>
+    Comparing them to vanilla NodeJS and vanilla Rust implementations, we get the following chart for
+    <code>
+     x86-64
+    </code>
+    :
+   </p>
+   <p>
+    <img alt="Execution time comparison between JS, RS, and embedded RS in JS (x86-64)" src="img-speed-up-js-lambdas-with-rust/x86-64.png"/>
+   </p>
+   <p>
+    With Graviton (
+    <code>
+     arm64
+    </code>
+    ) it looks similar:
+   </p>
+   <p>
+    <img alt="Execution time comparison between JS, RS, and embedded RS in JS (x86-64)" src="img-speed-up-js-lambdas-with-rust/arm64.png"/>
+   </p>
+   <p>
+    According to my measurements, the function with the dynamic library has a similar execution time compared to the one developed in vanilla Rust. In fact, it appears that might be a little bit faster. This is kind of unexpected since there is some overhead when using FFI. Although this performance increase might be considered a margin of error, we should also regard the fact that the measurements were not done on the same day. The underlying hardware might have been performed slightly better. Or simply I was just lucky and got an environment that does not encounter as much load from other AWS users, who knows...
+   </p>
+   <h2>
+    Final Thoughts
+    <a class="anchor-link" href="#final-thoughts" id="final-thoughts">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Combining native code with NodeJS can be a fun afternoon project, but would this make sense in a production environment?
+   </p>
+   <p>
+    In most cases probably not.
+   </p>
+   <p>
+    The reason why I'm saying this is that modern NodeJS interpreters are blazingly fast. They can perform at the level required for most of the use cases for which a Lambda function would be adequate. Having to deal with the baggage of complexity introduced by a dynamic library written in Rust may not be the perfect solution. Moreover, in most cases, Lambda functions are small enough that it would be wiser to migrate them entirely to a more performant runtime, rather than having to extract a certain part of it into a library. Before deciding to partially or entirely rewrite a function, I recommend doing some actual measurements and performance tests. XRay can help a lot to trace and diagnose bottlenecks in our code.
+   </p>
+   <p>
+    On the other hand, in certain situations, it might be useful to have a native binding as a dynamic library. For example:
+   </p>
+   <ul>
+    <li>
+     in the case of cryptographic functions, like hashing, encryption/decryption, temper verification, etc. These can be CPU-intensive tasks, so it may be a good idea to use a native approach for these;
+    </li>
+    <li>
+     if we are trying to do image processing, AI, data engineering, or having to do complex transformations on a huge amount of data;
+    </li>
+    <li>
+     if we need to provide a single library (developed in Rust) company-wise without the need for rewriting it for every other used stack. We could wrappers, such as Neon, to expose them to other APIs, such as the one of NodeJS.
+    </li>
+   </ul>
+   <h2>
+    Links and References
+    <a class="anchor-link" href="#links-and-references" id="links-and-references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Foreign function interface:
+     <a href="https://en.wikipedia.org/wiki/Foreign_function_interface" target="_blank">
+      https://en.wikipedia.org/wiki/Foreign_function_interface
+     </a>
+    </li>
+    <li>
+     NodeJS - C++ addons:
+     <a href="https://nodejs.org/api/addons.html" target="_blank">
+      https://nodejs.org/api/addons.html
+     </a>
+    </li>
+    <li>
+     GitHub - node-ffi:
+     <a href="https://github.com/node-ffi/node-ffi" target="_blank">
+      https://github.com/node-ffi/node-ffi
+     </a>
+    </li>
+    <li>
+     Neon:
+     <a href="https://neon-bindings.com/docs/introduction" target="_blank">
+      https://neon-bindings.com/docs/introduction
+     </a>
+    </li>
+    <li>
+     Node-API (N-API):
+     <a href="https://nodejs.org/api/n-api.html#node-api" target="_blank">
+      https://nodejs.org/api/n-api.html#node-api
+     </a>
+    </li>
+    <li>
+     Tokio Runtimes:
+     <a href="https://docs.rs/tokio/1.20.1/tokio/runtime/index.html" target="_blank">
+      https://docs.rs/tokio/1.20.1/tokio/runtime/index.html
+     </a>
+    </li>
+    <li>
+     Building Rust binaries in CI that work with older GLIBC:
+     <a href="https://kobzol.github.io/rust/ci/2021/05/07/building-rust-binaries-in-ci-that-work-with-older-glibc.html" target="_blank">
+      https://kobzol.github.io/rust/ci/2021/05/07/building-rust-binaries-in-ci-that-work-with-older-glibc.html
+     </a>
+    </li>
+    <li>
+     <code>
+      cross
+     </code>
+     - Custom Docker images:
+     <a href="https://github.com/cross-rs/cross#custom-docker-images" target="_blank">
+      https://github.com/cross-rs/cross#custom-docker-images
+     </a>
+    </li>
+    <li>
+     Lambda runtimes:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+     </a>
+    </li>
+    <li>
+     Running Serverless Lambdas with Rust on AWS:
+     <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">
+      https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html
+     </a>
+    </li>
+   </ol>
+   <p>
+    The code used in this article can be found on GitHub at
+    <a href="https://github.com/Ernyoke/aws-lambda-js-with-rust" target="_blank">
+     https://github.com/Ernyoke/aws-lambda-js-with-rust
+    </a>
+   </p>
+  </article>
+  <footer>
+   <span>
+    Site generated with
+    <a href="https://github.com/Ernyoke/ssg" target="_blank">
+     ssg
+    </a>
+   </span>
+   <span>
+    |
+   </span>
+   <span>
+    <a href="https://ervinszilagyi.dev/privacy.html">
+     Privacy Policy
+    </a>
+   </span>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
