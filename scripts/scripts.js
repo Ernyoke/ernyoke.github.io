@@ -17,6 +17,18 @@ function setHighlightJsTheme() {
     }
 }
 
+function setUtterancesTheme() {
+    const theme = getCurrentTheme() === 'dark' ? 'github-dark' : 'github-light'
+    const message = {
+        type: 'set-theme',
+        theme: theme
+    };
+    const iframe = document.querySelector('.utterances-frame');
+    if (iframe.contentWindow) {
+        iframe.contentWindow.postMessage(message, '*');
+    }
+}
+
 function switchTheme() {
     if (document.documentElement.getAttribute("data-theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "light");
@@ -26,8 +38,8 @@ function switchTheme() {
         localStorage.setItem("theme", "dark");
     }
     setHighlightJsTheme();
+    setUtterancesTheme();
 }
 
 setHighlightJsTheme();
 document.documentElement.setAttribute("data-theme", getCurrentTheme());
-
