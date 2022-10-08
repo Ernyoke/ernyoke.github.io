@@ -17,15 +17,21 @@ function setHighlightJsTheme() {
     }
 }
 
-function setUtterancesTheme() {
-    const theme = getCurrentTheme() === 'dark' ? 'github-dark' : 'github-light'
-    const message = {
-        type: 'set-theme',
-        theme: theme
-    };
-    const iframe = document.querySelector('.utterances-frame');
-    if (iframe.contentWindow) {
-        iframe.contentWindow.postMessage(message, '*');
+function createUtterancesIFrame() {
+    const id = "utterances";
+    const elements = document.getElementsByClassName(id);
+    if (elements.length > 0) {
+        const placeholder = elements[0];
+        const scriptTag = document.createElement("script");
+        scriptTag.src = "https://utteranc.es/client.js";
+        scriptTag.async = true;
+        scriptTag.crossOrigin = "anonymous";
+        scriptTag.setAttribute("repo", 'Ernyoke/ernyoke.github.io');
+        scriptTag.setAttribute("issue-term", "url");
+        scriptTag.setAttribute("label", "Comment");
+        scriptTag.setAttribute("theme", getCurrentTheme() == "dark" ? "github-dark" : "github-light");
+        scriptTag.setAttribute("id", id);
+        placeholder.parentNode.replaceChild(scriptTag, placeholder);
     }
 }
 
@@ -38,8 +44,11 @@ function switchTheme() {
         localStorage.setItem("theme", "dark");
     }
     setHighlightJsTheme();
-    setUtterancesTheme();
+    createUtterancesIFrame();
 }
 
-setHighlightJsTheme();
 document.documentElement.setAttribute("data-theme", getCurrentTheme());
+window.onload = () => {
+    setHighlightJsTheme();
+    createUtterancesIFrame();
+};
