@@ -75,8 +75,8 @@
     Nowadays, in software engineering, we take containers for granted. We rely on them for day-to-day work, we build highly available and highly scalable production environments with them. But, many of us, software engineers, are struggling to understand and consequently what containers fundamentally are. Usually, when explaining to others, we point out that they are not virtual machines, which is true, but we struggle to precisely state what they are. In this article, we will try to have a more in-depth understanding of what containers are, how they work, and how can we leverage them for building industry-standard systems.
    </p>
    <h2>
-    Playground Set-Up
-    <a class="anchor-link" href="#playground-set-up" id="playground-set-up">
+    Environment Set-Up
+    <a class="anchor-link" href="#environment-set-up" id="environment-set-up">
      &lt;&lt;
     </a>
    </h2>
@@ -92,7 +92,7 @@
     <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank">
      Docker documentation
     </a>
-    . We would want to specifically use Docker Engine and not Docker Desktop. Docker Desktop will use a virtual machine for the host, we don't want to have that virtual machine for our current purposes.
+    . We would want to specifically use Docker Engine and not Docker Desktop. Docker Desktop will utilize a virtual machine for the host, we don't want to have that virtual machine for our current purposes.
    </p>
    <h2>
     Process Isolation
@@ -101,7 +101,7 @@
     </a>
    </h2>
    <p>
-    Containers are not virtual machines (VMs). Despite having their own hostname, filesystem, process space, and networking, they are not VMs. They do not have a standalone kernel, and they cannot have separate kernel modules or device drives installed. They can have multiple processes, which are isolated from the host machine's running processes.
+    Containers are not virtual machines (VMs). Despite having their own hostname, filesystem, process space, and networking stack, they are not VMs. They do not have a standalone kernel, and they cannot have separate kernel modules or device drives installed. They can have multiple processes, which are isolated from the host machine's running processes.
    </p>
    <p>
     On our Ubuntu host, we can run the following command to get information about the kernel:
@@ -177,7 +177,7 @@ REDHAT_SUPPORT_PRODUCT_VERSION="8"
 Linux 5.15.0-1019-aws
 </code></pre>
    <p>
-    We can notice that it is the same as for the host machine. We can see that the container and the Ubuntu host machine are sharing the same kernel. Containers rely on the ability of the host operating system to isolate one program from another while allowing these programs to share resources between them such as CPU, memory, storage, and networking resources. This is accomplished by a capability of the Linux kernel, named
+    We can notice that it is the same as for the host machine. We can conclude that the container and the Ubuntu host machine are sharing the same kernel. Containers rely on the ability of the host operating system to isolate one program from another while allowing these programs to share resources between them such as CPU, memory, storage, and networking resources. This is accomplished by a capability of the Linux kernel, named
     <a href="https://en.wikipedia.org/wiki/Linux_namespaces" target="_blank">
      <strong>
       namespaces
@@ -186,10 +186,10 @@ Linux 5.15.0-1019-aws
     .
    </p>
    <p>
-    Linux namespaces are not a new technology or a recently added feature of the kernel, they have been available for many years. The role of a namespace is to isolate the processes running inside of it, so it should not be able to see things it shouldn't.
+    Linux namespaces are not a new technology or a recently added feature of the kernel, they have been available for many years. The role of a process namespace is to isolate the processes running inside of it, so they should not be able to see things they shouldn't.
    </p>
    <p>
-    To see process namespaces in action with containers, we will use
+    To watch process namespaces created by container runtimes in action, we will use
     <code>
      containerd
     </code>
@@ -197,11 +197,18 @@ Linux 5.15.0-1019-aws
     <code>
      containerd
     </code>
-    installed with Docker Engine. This is because Docker uses
+    installed with Docker Engine. Docker uses
     <code>
      containerd
     </code>
-    under the hood for the container runtime. A container runtime (container engine) provides low-level functionalities to execute containerized processes. To access
+    under the hood as its container runtime. A
+    <em>
+     container runtime
+    </em>
+    (container engine) provides low-level functionalities to execute containerized processes.
+   </p>
+   <p>
+    To access
     <code>
      containerd
     </code>
@@ -209,15 +216,19 @@ Linux 5.15.0-1019-aws
     <code>
      ctr
     </code>
-    command. For example, to check if it works correctly, we can run
+    command. For example, to check if
+    <code>
+     containerd
+    </code>
+    was installed and works correctly, we can run
     <code>
      ctr images ls
     </code>
-    , which will get a list of images. At this point we most likely don't have any images, so we can get a
+    , which should return a list of images in case of success, or an error. At this point we most likely don't have any images pulled, so should get an empty response. To pull a
     <code>
      busybox
     </code>
-    image using:
+    image we can do the following:
    </p>
    <pre><code class="language-bash">ctr image pull docker.io/library/busybox:latest
 </code></pre>
@@ -235,17 +246,13 @@ Linux 5.15.0-1019-aws
    <pre><code class="language-bash">ctr run -t --rm docker.io/library/busybox:latest v1
 </code></pre>
    <p>
-    This command will run the image in interactive mode, meaning that we will have a terminal to use from the image. Grabbing the list of currently running tasks with
-    <code>
-     ctr task ls
-    </code>
-    command, we should get something similar:
+    This command will start the image in interactive mode, meaning that we will be provided with an input shell waiting for commands. Now if we want to grab the list of currently running tasks from the host machine, we should get the following answer:
    </p>
    <pre><code>TASK    PID     STATUS
 v1      1517    RUNNING
 </code></pre>
    <p>
-    If we take the PID of the running container, we can get the parent process of it:
+    If we take the PID of the running container, we can get hold of the  parent process of it:
    </p>
    <pre><code>root@ip-172-31-24-119:~# ps -ef | grep 1517 | grep -v grep
 root        1517    1493  0 21:55 pts/0    00:00:00 sh
@@ -258,15 +265,11 @@ root        1517    1493  0 21:55 pts/0    00:00:00 sh
     <code>
      containerd
     </code>
-    . Moving on, we can get the process namespaces created by
+    . We can get the process namespaces created by
     <code>
      containerd
     </code>
-    with
-    <code>
-     lsns
-    </code>
-    :
+    as well:
    </p>
    <pre><code class="language-bash">root@ip-172-31-24-119:~# lsns | grep 1517
 4026532279 mnt         1  1517 root            sh
@@ -279,7 +282,7 @@ root        1517    1493  0 21:55 pts/0    00:00:00 sh
     <code>
      containerd
     </code>
-    is running five different types of namespaces for isolating processes running in our
+    is launched five different types of namespaces for isolating processes running in our
     <code>
      busybox
     </code>
@@ -314,7 +317,7 @@ root        1517    1493  0 21:55 pts/0    00:00:00 sh
      <code>
       net
      </code>
-     : interfaces, routeing tables and firewalls.
+     : network interfaces, routing tables, and firewalls.
     </li>
    </ul>
    <h2>
@@ -327,7 +330,7 @@ root        1517    1493  0 21:55 pts/0    00:00:00 sh
     <code>
      containerd
     </code>
-    is using network namespaces to have network isolation and to simplify configuration. In a lot of cases, our containers act as web servers. For being able to run a web server, we need to choose a network interface and port on which the server will listen on. To solve the issue of port collision (2 or more processes listening on the same interface on the same port), container runtimes use virtual network interfaces.
+    is using network namespaces to have network isolation and to simplify configuration. In a lot of cases, our containers act as web servers. For being able to run a web server, we need to choose a network interface and port on which the server will listen on. To solve the issue of port collision (two or more processes listening on the same interface on the same port), container runtimes use virtual network interfaces.
    </p>
    <p>
     If we would want to see the network namespace created by
@@ -346,7 +349,11 @@ root        1517    1493  0 21:55 pts/0    00:00:00 sh
     <code>
      ip netns list
     </code>
-    to list all the network namespaces present on our host machine, we most likely get no output. We can still get hold of the namespace if we do the following:
+    to list all the network namespaces present on our host machine, we most likely get no output. We can still get hold of the namespace created by
+    <code>
+     containerd
+    </code>
+    if we do the following:
    </p>
    <ol>
     <li>
@@ -426,7 +433,7 @@ touch /var/run/netns/13744
     </a>
    </h2>
    <p>
-    The idea of process isolation involves preventing a process from seeing things it should not. In terms of files and folders, Linux provides filesystem permissions. The Linux kernel associates an owner and group to each file and folder, on top of that it manages read, write and execute permissions. This permissions system works well, although if a process manages to elevate, it could see things that probably it shouldn't.
+    The idea of process isolation involves preventing a process from seeing things it should not. In terms of files and folders, Linux provides filesystem permissions. The Linux kernel associates an owner and group to each file and folder, on top of that it manages read, write and execute permissions. This permissions system works well, although if a process manages to elevate its privileges, it could see files and folders which should have been forbidden.
    </p>
    <p>
     A more advanced solution for isolation provided by a Linux kernel is to run a process in an isolated filesystem. This can be achieved by an approach known as
@@ -440,7 +447,7 @@ touch /var/run/netns/13744
     command changes the apparent root directory for the current running process and its children.
    </p>
    <p>
-    For example, we can use download Alpine Linux inside a folder and run an isolated shell using
+    For example, we can download Alpine Linux inside a folder and launch an isolated shell using
     <code>
      chroot
     </code>
@@ -457,7 +464,7 @@ ssm-user@ip-172-31-24-119:~/alpine$ ls
 alpine.tar.gz
 </code></pre>
    <p>
-    Now lets unpack the archive:
+    Let's unpack the archive:
    </p>
    <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~/alpine$ tar xf alpine.tar.gz
 ssm-user@ip-172-31-24-119:~/alpine$ ls
@@ -488,11 +495,11 @@ bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbi
     <code>
      chroot
     </code>
-    . Besides this, they provide a more practical way of setting up this filesystem isolation using
+    for filesystem isolation. On top of that, they provide a more practical way of setup for the isolation by using
     <strong>
      container images
     </strong>
-    . Container images are ready-to-use bundles that contain all the required files and folders for the base, metadata (environment variables, arguments), and other executables.
+    . Container images are ready-to-use bundles that contain all the required files and folders for the base filesystem, metadata (environment variables, arguments), and other executables.
    </p>
    <h2>
     Building Container Images
@@ -501,7 +508,11 @@ bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbi
     </a>
    </h2>
    <p>
-    Before building a container image ourselves, let's step a little bit back and investigate how are other, well-known images built. We will use docker to pull Apache httpd image and we will take it apart to see what it contains.
+    Before building a container image ourselves, let's step a little bit back and investigate how are other, popular images built. We will use Docker to pull an
+    <code>
+     Apache httpd
+    </code>
+    image, which we will take it apart to see its content.
    </p>
    <p>
     Let's pull the image from the Docker registry:
@@ -519,12 +530,12 @@ Status: Downloaded newer image for httpd:latest
 docker.io/library/httpd:latest
 </code></pre>
    <p>
-    We can spin up a container based on this image and connect to a shell inside of it using the following command:
+    We can launch a container based on this image and connect to a shell using the command below:
    </p>
    <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~$ docker run -it httpd /bin/bash
 </code></pre>
    <p>
-    Having a shell we can navigate to the root of the image and list all the files and folders:
+    Having a shell, we can navigate to the root of the container and list all the files and folders:
    </p>
    <pre><code class="language-bash">root@17556581d317:/usr/local/apache2# cd /
 root@17556581d317:/# ls -lart
@@ -553,25 +564,25 @@ dr-xr-xr-x 176 root root    0 Oct 15 20:19 proc
 drwxr-xr-x   5 root root  360 Oct 15 20:19 dev
 </code></pre>
    <p>
-    The Apache http image we are using is based on a Debian base image. This means it has a filesystem similar to what we would expect from the Debian Linux distribution. It contains all the necessary files and folders which would be expected by the Apache webserver to run correctly.
+    The
+    <code>
+     Apache httpd
+    </code>
+    image we are using is based on a Debian base image. This means it has a filesystem similar to what we would expect from the Debian Linux distribution. It contains all the necessary files and folders which would be expected by the Apache webserver to function correctly.
    </p>
    <p>
     Also, if we take another look at the output of the
     <code>
      docker pull
     </code>
-    command, we can see that a bunch of layers are downloaded. Moreover, some layers are skipped with the message that they already exist on our host machine. Container images are made up of layers. Layers can be shared between images. The reason why a layer was skipped is that I already have downloaded another image (
-    <code>
-     nginx
-    </code>
-    ) on the host machine which is also based on Debian. Docker detected that the images share the same layer and it did not download it twice. Layers are used to save space and to speed up the build and pulls/pushes.
+    command, we can observe that a bunch of layers was downloaded. Some layers are skipped with the message that they already exist on the host machine. Container images are made up of layers, that can be shared between images. The reason why a layer is skipped during a pull is that was already downloaded during a pull for another image or a previous version of the same image. Docker detects that more than one image has the same layer and it does not retrieve it twice. Layers are used to save space and to speed up the builds and pulls/pushes.
    </p>
    <p>
-    Layers are created when images are built. Usually, we build images using other base images. For example, we use
+    Layers are created when images are built. Usually, we rely on other base images when building our image. As an example, we use the
     <code>
      httpd
     </code>
-    and copy our website on it, adding another layer on top of the base image. Base images also should come from somewhere, usually, they are built from a minimal Linux filesystem. As another example, the Alpine Linux resources downloaded and used for
+    base image, on top of which we add our website, essentially creating another layer. Base images also should come from somewhere, usually, they are built from a minimal Linux filesystem. The Alpine Linux resources downloaded and used for
     <code>
      chroot
     </code>
@@ -633,7 +644,7 @@ COPY ./public-html/ /usr/local/apache2/htdocs/
     </a>
    </h2>
    <p>
-    In this article, we have seen what containers are. They are not virtual machines, they are essentially a group of isolated processes with their own isolated filesystem and networking. They are sharing the kernel modules with the host machine. Because of this, they are lightweight, compared to a fully-fledged virtual machine. They can be spawned up and torn down quickly.
+    In this article, we have seen what containers are. They are not virtual machines, they are essentially a group of isolated processes with their own isolated filesystem and networking. They share the kernel modules with the host machine. Because of this, they can be lightweight, compared to a fully-fledged virtual machine. They can be part of an agile architecture since they can be spawned up and torn down quickly.
    </p>
    <h2>
     Links and References
@@ -698,7 +709,7 @@ COPY ./public-html/ /usr/local/apache2/htdocs/
    </ol>
    <p>
     <em>
-     This article is heavily inspired from these 2 books:
+     This article is heavily inspired by these 2 books:
     </em>
    </p>
    <ol>
