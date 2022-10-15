@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/index.html">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
+       Projects
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
+       Blog
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Containers: Under the Hood
+   </h1>
+   <h2>
+    Introduction
+    <a class="anchor-link" href="#introduction" id="introduction">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Nowadays, in software engineering, we take containers for granted. We rely on them for day-to-day work, we build highly available and highly scalable production environments with them. But, many of us, software engineers, are struggling to understand and consequently what containers fundamentally are. Usually, when explaining to others, we point out that they are not virtual machines, which is true, but we struggle to precisely state what they are. In this article, we will try to have a more in-depth understanding of what containers are, how they work, and how can we leverage them for building industry-standard systems.
+   </p>
+   <h2>
+    Playground Set-Up
+    <a class="anchor-link" href="#playground-set-up" id="playground-set-up">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    To understand containers, we would want to play around with some
+    <em>
+     container runtimes
+    </em>
+    . Docker is the most popular implementation of a container runtime, we will use that for this article. There are several other implementations out there, for example, Podman, LXC/LXD, rkt, and many others.
+   </p>
+   <p>
+    Moving on with our setup, we would want to use a Linux (Ubuntu) machine on which we can install Docker Engine following the steps from the
+    <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank">
+     Docker documentation
+    </a>
+    . We would want to specifically use Docker Engine and not Docker Desktop. Docker Desktop will use a virtual machine for the host, we don't want to have that virtual machine for our current purposes.
+   </p>
+   <h2>
+    Process Isolation
+    <a class="anchor-link" href="#process-isolation" id="process-isolation">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Containers are not virtual machines (VMs). Despite having their own hostname, filesystem, process space, and networking, they are not VMs. They do not have a standalone kernel, and they cannot have separate kernel modules or device drives installed. They can have multiple processes, which are isolated from the host machine's running processes.
+   </p>
+   <p>
+    On our Ubuntu host, we can run the following command to get information about the kernel:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# uname -s -r
+Linux 5.15.0-1019-aws
+</code></pre>
+   <p>
+    From the output, we can see that the name of the kernel currently in use is
+    <code>
+     Linux
+    </code>
+    with the release version of the kernel
+    <code>
+     5.15.0-1019-aws
+    </code>
+    (The
+    <code>
+     aws
+    </code>
+    prefix comes from the fact that I'm using an EC2 machine on AWS).
+   </p>
+   <p>
+    Let's output some more information about our Linux distribution:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# cat /etc/os-release
+PRETTY_NAME="Ubuntu 22.04.1 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.1 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+</code></pre>
+   <p>
+    Now, let's run Rocky Linux from a Docker container using the following command:
+   </p>
+   <pre><code class="language-bash">docker run -ti rockylinux:8
+</code></pre>
+   <p>
+    The
+    <code>
+     -ti
+    </code>
+    flag will run the container in an interactive mode, prompting us to a shell inside the container. Let's fetch some OS information:
+   </p>
+   <pre><code class="language-bash">[root@3564a12dd942 /]# cat /etc/os-release
+NAME="Rocky Linux"
+VERSION="8.6 (Green Obsidian)"
+ID="rocky"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="8.6"
+PLATFORM_ID="platform:el8"
+PRETTY_NAME="Rocky Linux 8.6 (Green Obsidian)"
+ANSI_COLOR="0;32"
+CPE_NAME="cpe:/o:rocky:rocky:8:GA"
+HOME_URL="https://rockylinux.org/"
+BUG_REPORT_URL="https://bugs.rockylinux.org/"
+ROCKY_SUPPORT_PRODUCT="Rocky Linux"
+ROCKY_SUPPORT_PRODUCT_VERSION="8"
+REDHAT_SUPPORT_PRODUCT="Rocky Linux"
+REDHAT_SUPPORT_PRODUCT_VERSION="8"
+</code></pre>
+   <p>
+    It seems like we are connected to a different machine. But if we get information about the kernel, we will get something familiar.
+   </p>
+   <pre><code class="language-bash">[root@3564a12dd942 /]# uname -s -r
+Linux 5.15.0-1019-aws
+</code></pre>
+   <p>
+    We can notice that it is the same as for the host machine. We can see that the container and the Ubuntu host machine are sharing the same kernel. Containers rely on the ability of the host operating system to isolate one program from another while allowing these programs to share resources between them such as CPU, memory, storage, and networking resources. This is accomplished by a capability of the Linux kernel, named
+    <a href="https://en.wikipedia.org/wiki/Linux_namespaces" target="_blank">
+     <strong>
+      namespaces
+     </strong>
+    </a>
+    .
+   </p>
+   <p>
+    Linux namespaces are not a new technology or a recently added feature of the kernel, they have been available for many years. The role of a namespace is to isolate the processes running inside of it, so it should not be able to see things it shouldn't.
+   </p>
+   <p>
+    To see process namespaces in action with containers, we will use
+    <code>
+     containerd
+    </code>
+    . If we followed the installation link from above, we should have
+    <code>
+     containerd
+    </code>
+    installed with Docker Engine. This is because Docker uses
+    <code>
+     containerd
+    </code>
+    under the hood for the container runtime. A container runtime (container engine) provides low-level functionalities to execute containerized processes. To access
+    <code>
+     containerd
+    </code>
+    , we can use
+    <code>
+     ctr
+    </code>
+    command. For example, to check if it works correctly, we can run
+    <code>
+     ctr images ls
+    </code>
+    , which will get a list of images. At this point we most likely don't have any images, so we can get a
+    <code>
+     busybox
+    </code>
+    image using:
+   </p>
+   <pre><code class="language-bash">ctr image pull docker.io/library/busybox:latest
+</code></pre>
+   <p>
+    We can check again the existing images with
+    <code>
+     ctr images ls
+    </code>
+    which should list the
+    <code>
+     busybox
+    </code>
+    image. We can run this image using:
+   </p>
+   <pre><code class="language-bash">ctr run -t --rm docker.io/library/busybox:latest v1
+</code></pre>
+   <p>
+    This command will run the image in interactive mode, meaning that we will have a terminal to use from the image. Grabbing the list of currently running tasks with
+    <code>
+     ctr task ls
+    </code>
+    command, we should get something similar:
+   </p>
+   <pre><code>TASK    PID     STATUS
+v1      1517    RUNNING
+</code></pre>
+   <p>
+    If we take the PID of the running container, we can get the parent process of it:
+   </p>
+   <pre><code>root@ip-172-31-24-119:~# ps -ef | grep 1517 | grep -v grep
+root        1517    1493  0 21:55 pts/0    00:00:00 sh
+root@ip-172-31-24-119:~# ps -ef | grep 1493 | grep -v grep
+root        1493       1  0 21:55 ?        00:00:00 /usr/bin/containerd-shim-runc-v2 -namespace default -id v1 -address /run/containerd/containerd.sock
+root        1517    1493  0 21:55 pts/0    00:00:00 sh
+</code></pre>
+   <p>
+    As we might have expected, the parent process is
+    <code>
+     containerd
+    </code>
+    . Moving on, we can get the process namespaces created by
+    <code>
+     containerd
+    </code>
+    with
+    <code>
+     lsns
+    </code>
+    :
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# lsns | grep 1517
+4026532279 mnt         1  1517 root            sh
+4026532280 uts         1  1517 root            sh
+4026532281 ipc         1  1517 root            sh
+4026532282 pid         1  1517 root            sh
+4026532283 net         1  1517 root            sh
+</code></pre>
+   <p>
+    <code>
+     containerd
+    </code>
+    is running five different types of namespaces for isolating processes running in our
+    <code>
+     busybox
+    </code>
+    container. These are the following:
+   </p>
+   <ul>
+    <li>
+     <code>
+      mnt
+     </code>
+     : mount points;
+    </li>
+    <li>
+     <code>
+      uts
+     </code>
+     : Unix time sharing;
+    </li>
+    <li>
+     <code>
+      ipc
+     </code>
+     : interprocess communication;
+    </li>
+    <li>
+     <code>
+      pid
+     </code>
+     : process identifiers;
+    </li>
+    <li>
+     <code>
+      net
+     </code>
+     : interfaces, routeing tables and firewalls.
+    </li>
+   </ul>
+   <h2>
+    Network Isolation
+    <a class="anchor-link" href="#network-isolation" id="network-isolation">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    <code>
+     containerd
+    </code>
+    is using network namespaces to have network isolation and to simplify configuration. In a lot of cases, our containers act as web servers. For being able to run a web server, we need to choose a network interface and port on which the server will listen on. To solve the issue of port collision (2 or more processes listening on the same interface on the same port), container runtimes use virtual network interfaces.
+   </p>
+   <p>
+    If we would want to see the network namespace created by
+    <code>
+     containerd
+    </code>
+    , we will run into an issue. Unfortunately,
+    <a href="https://www.baeldung.com/linux/docker-network-namespace-invisible" target="_blank">
+     network namespaces created by
+     <code>
+      containerd
+     </code>
+     are invisible
+    </a>
+    . This means, if we execute
+    <code>
+     ip netns list
+    </code>
+    to list all the network namespaces present on our host machine, we most likely get no output. We can still get hold of the namespace if we do the following:
+   </p>
+   <ol>
+    <li>
+     Get the PID of the currently running container:
+    </li>
+   </ol>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# ctr task ls
+TASK    PID      STATUS
+v1      13744    RUNNING
+</code></pre>
+   <ol start="2">
+    <li>
+     Create an empty file in
+     <code>
+      /var/run/netns
+     </code>
+     location with the container identifier (we will use the container PID as the identifier):
+    </li>
+   </ol>
+   <pre><code>mkdir -p /var/run/netns
+touch /var/run/netns/13744
+</code></pre>
+   <ol start="3">
+    <li>
+     Bind the
+     <code>
+      net
+     </code>
+     process namespace to this file:
+    </li>
+   </ol>
+   <pre><code>mount -o bind /proc/13744/ns/net /var/run/netns/13744
+</code></pre>
+   <p>
+    Now if we run
+    <code>
+     ip netns list
+    </code>
+    , we get the following:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# ip netns list
+13744
+</code></pre>
+   <p>
+    We also can look at the interfaces on the network namespace:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-24-119:~# ip netns exec 13744 ip addr list
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+</code></pre>
+   <p>
+    Running
+    <code>
+     ip a
+    </code>
+    from inside the
+    <code>
+     busybox
+    </code>
+    container, we get similar output:
+   </p>
+   <pre><code class="language-bash">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever    
+</code></pre>
+   <h2>
+    Filesystem Isolation
+    <a class="anchor-link" href="#filesystem-isolation" id="filesystem-isolation">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    The idea of process isolation involves preventing a process from seeing things it should not. In terms of files and folders, Linux provides filesystem permissions. The Linux kernel associates an owner and group to each file and folder, on top of that it manages read, write and execute permissions. This permissions system works well, although if a process manages to elevate, it could see things that probably it shouldn't.
+   </p>
+   <p>
+    A more advanced solution for isolation provided by a Linux kernel is to run a process in an isolated filesystem. This can be achieved by an approach known as
+    <a href="https://en.wikipedia.org/wiki/Chroot" target="_blank">
+     change root
+    </a>
+    . The
+    <code>
+     chroot
+    </code>
+    command changes the apparent root directory for the current running process and its children.
+   </p>
+   <p>
+    For example, we can use download Alpine Linux inside a folder and run an isolated shell using
+    <code>
+     chroot
+    </code>
+    :
+   </p>
+   <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~$ ls
+ssm-user@ip-172-31-24-119:~$ mkdir alpine
+ssm-user@ip-172-31-24-119:~$ cd alpine
+ssm-user@ip-172-31-24-119:~/alpine$ curl -o alpine.tar.gz http://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.0-x86_64.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 2649k  100 2649k    0     0  65.6M      0 --:--:-- --:--:-- --:--:-- 66.3M
+ssm-user@ip-172-31-24-119:~/alpine$ ls
+alpine.tar.gz
+</code></pre>
+   <p>
+    Now lets unpack the archive:
+   </p>
+   <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~/alpine$ tar xf alpine.tar.gz
+ssm-user@ip-172-31-24-119:~/alpine$ ls
+alpine.tar.gz  bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+ssm-user@ip-172-31-24-119:~/alpine$ rm alpine.tar.gz
+ssm-user@ip-172-31-24-119:~/alpine$ ls
+bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+</code></pre>
+   <p>
+    We can recognize these folders from any other Linux distribution. The
+    <code>
+     alpine
+    </code>
+    folder has the necessary resources to be used as the root folder. We can run an isolated Alpine shell as follows:
+   </p>
+   <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~/alpine$ cd ..
+ssm-user@ip-172-31-24-119:~$ sudo chroot alpine sh
+/ # ls
+bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbin   srv    sys    tmp    usr    var
+/ #
+</code></pre>
+   <p>
+    Container runtimes, such as
+    <code>
+     containerd
+    </code>
+    (or Docker) implement a similar approach to
+    <code>
+     chroot
+    </code>
+    . Besides this, they provide a more practical way of setting up this filesystem isolation using
+    <strong>
+     container images
+    </strong>
+    . Container images are ready-to-use bundles that contain all the required files and folders for the base, metadata (environment variables, arguments), and other executables.
+   </p>
+   <h2>
+    Building Container Images
+    <a class="anchor-link" href="#building-container-images" id="building-container-images">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Before building a container image ourselves, let's step a little bit back and investigate how are other, well-known images built. We will use docker to pull Apache httpd image and we will take it apart to see what it contains.
+   </p>
+   <p>
+    Let's pull the image from the Docker registry:
+   </p>
+   <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~$ docker pull httpd
+Using default tag: latest
+latest: Pulling from library/httpd
+bd159e379b3b: Already exists
+36d838c2f6d6: Pull complete
+b55eda22bb18: Pull complete
+f6e6bfa28393: Pull complete
+a1b49b7ecb8a: Pull complete
+Digest: sha256:4400fb49c9d7d218d3c8109ef721e0ec1f3897028a3004b098af587d565f4ae5
+Status: Downloaded newer image for httpd:latest
+docker.io/library/httpd:latest
+</code></pre>
+   <p>
+    We can spin up a container based on this image and connect to a shell inside of it using the following command:
+   </p>
+   <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~$ docker run -it httpd /bin/bash
+</code></pre>
+   <p>
+    Having a shell we can navigate to the root of the image and list all the files and folders:
+   </p>
+   <pre><code class="language-bash">root@17556581d317:/usr/local/apache2# cd /
+root@17556581d317:/# ls -lart
+total 72
+drwxr-xr-x   2 root root 4096 Sep  3 12:10 home
+drwxr-xr-x   2 root root 4096 Sep  3 12:10 boot
+drwxr-xr-x   1 root root 4096 Oct  4 00:00 var
+drwxr-xr-x   1 root root 4096 Oct  4 00:00 usr
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 srv
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 sbin
+drwxr-xr-x   3 root root 4096 Oct  4 00:00 run
+drwx------   2 root root 4096 Oct  4 00:00 root
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 opt
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 mnt
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 media
+drwxr-xr-x   2 root root 4096 Oct  4 00:00 lib64
+drwxrwxrwt   1 root root 4096 Oct  5 04:09 tmp
+drwxr-xr-x   1 root root 4096 Oct  5 04:10 lib
+drwxr-xr-x   1 root root 4096 Oct  5 04:10 bin
+drwxr-xr-x   1 root root 4096 Oct 15 20:19 etc
+-rwxr-xr-x   1 root root    0 Oct 15 20:19 .dockerenv
+drwxr-xr-x   1 root root 4096 Oct 15 20:19 ..
+drwxr-xr-x   1 root root 4096 Oct 15 20:19 .
+dr-xr-xr-x  13 root root    0 Oct 15 20:19 sys
+dr-xr-xr-x 176 root root    0 Oct 15 20:19 proc
+drwxr-xr-x   5 root root  360 Oct 15 20:19 dev
+</code></pre>
+   <p>
+    The Apache http image we are using is based on a Debian base image. This means it has a filesystem similar to what we would expect from the Debian Linux distribution. It contains all the necessary files and folders which would be expected by the Apache webserver to run correctly.
+   </p>
+   <p>
+    Also, if we take another look at the output of the
+    <code>
+     docker pull
+    </code>
+    command, we can see that a bunch of layers are downloaded. Moreover, some layers are skipped with the message that they already exist on our host machine. Container images are made up of layers. Layers can be shared between images. The reason why a layer was skipped is that I already have downloaded another image (
+    <code>
+     nginx
+    </code>
+    ) on the host machine which is also based on Debian. Docker detected that the images share the same layer and it did not download it twice. Layers are used to save space and to speed up the build and pulls/pushes.
+   </p>
+   <p>
+    Layers are created when images are built. Usually, we build images using other base images. For example, we use
+    <code>
+     httpd
+    </code>
+    and copy our website on it, adding another layer on top of the base image. Base images also should come from somewhere, usually, they are built from a minimal Linux filesystem. As another example, the Alpine Linux resources downloaded and used for
+    <code>
+     chroot
+    </code>
+    , could be used as the base for a container image.
+   </p>
+   <p>
+    There are several ways to build images, the most popular would be the Docker approach with the usage of
+    <code>
+     Dockerfiles
+    </code>
+    . A minimal Dockerfile for using
+    <code>
+     httpd
+    </code>
+    as the base image would look like this:
+   </p>
+   <pre><code class="language-Dockerfile">FROM httpd:2.4
+RUN mkdir -p /usr/local/apache2/conf/sites/
+COPY my-httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY ./public-html/ /usr/local/apache2/htdocs/
+</code></pre>
+   <p>
+    Many possible commands can be used when building Docker images. For more information, we would want to check out the
+    <a href="https://docs.docker.com/engine/reference/builder/" target="_blank">
+     Docker documentation
+    </a>
+    . Some widely used commands from a Dockerfile would be the following:
+   </p>
+   <p>
+    <code>
+     FROM
+    </code>
+    : specifies the base image for the current build
+    <code>
+     ENV
+    </code>
+    : specifies an environment variable
+    <code>
+     RUN
+    </code>
+    : a command executed inside of the container while being built
+    <code>
+     COPY
+    </code>
+    : used to copy over files from the host machine to the container while it is being built
+    <code>
+     ENTRYPOINT
+    </code>
+    : specifies the initial process for the container
+    <code>
+     CMD
+    </code>
+    : sets the default parameters for the initial process
+   </p>
+   <h2>
+    Conclusions
+    <a class="anchor-link" href="#conclusions" id="conclusions">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In this article, we have seen what containers are. They are not virtual machines, they are essentially a group of isolated processes with their own isolated filesystem and networking. They are sharing the kernel modules with the host machine. Because of this, they are lightweight, compared to a fully-fledged virtual machine. They can be spawned up and torn down quickly.
+   </p>
+   <h2>
+    Links and References
+    <a class="anchor-link" href="#links-and-references" id="links-and-references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Install Docker Engine on Ubuntu:
+     <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank">
+      https://docs.docker.com/engine/install/ubuntu/
+     </a>
+    </li>
+    <li>
+     Linux Namespaces:
+     <a href="https://en.wikipedia.org/wiki/Linux_namespaces" target="_blank">
+      https://en.wikipedia.org/wiki/Linux_namespaces
+     </a>
+    </li>
+    <li>
+     Docker Container Network Namespace is Invisible:
+     <a href="https://www.baeldung.com/linux/docker-network-namespace-invisible" target="_blank">
+      https://www.baeldung.com/linux/docker-network-namespace-invisible
+     </a>
+    </li>
+    <li>
+     <code>
+      chroot
+     </code>
+     :
+     <a href="https://en.wikipedia.org/wiki/Chroot" target="_blank">
+      https://en.wikipedia.org/wiki/Chroot
+     </a>
+    </li>
+    <li>
+     Dockerfile reference:
+     <a href="https://docs.docker.com/engine/reference/builder/" target="_blank">
+      https://docs.docker.com/engine/reference/builder/
+     </a>
+    </li>
+   </ol>
+   <h2>
+    Additional Reading
+    <a class="anchor-link" href="#additional-reading" id="additional-reading">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Building containers by hand using namespaces: The net namespace:
+     <a href="https://www.redhat.com/sysadmin/net-namespaces" target="_blank">
+      https://www.redhat.com/sysadmin/net-namespaces
+     </a>
+    </li>
+    <li>
+     Basics of Container Isolation:
+     <a href="https://blog.devgenius.io/basics-of-container-isolation-5eabdb258409" target="_blank">
+      https://blog.devgenius.io/basics-of-container-isolation-5eabdb258409
+     </a>
+    </li>
+   </ol>
+   <p>
+    <em>
+     This article is heavily inspired from these 2 books:
+    </em>
+   </p>
+   <ol>
+    <li>
+     Alan Hohn -  The Book of Kubernetes:
+     <a href="https://www.amazon.com/Book-Kubernetes-Comprehensive-Container-Orchestration-ebook/dp/B09WJYZKHN" target="_blank">
+      https://www.amazon.com/Book-Kubernetes-Comprehensive-Container-Orchestration-ebook/dp/B09WJYZKHN
+     </a>
+    </li>
+    <li>
+     Liz Rice - Container Security: Fundamental Technology Concepts that Protect Containerized Applications:
+     <a href="https://www.amazon.com/Container-Security-Fundamental-Containerized-Applications-ebook/dp/B088B9KKGC" target="_blank">
+      https://www.amazon.com/Container-Security-Fundamental-Containerized-Applications-ebook/dp/B088B9KKGC
+     </a>
+    </li>
+   </ol>
+  </article>
+  <div class="utterances">
+  </div>
+  <footer>
+   <span>
+    Site generated with
+    <a href="https://github.com/Ernyoke/ssg" target="_blank">
+     ssg
+    </a>
+   </span>
+   <span>
+    |
+   </span>
+   <span>
+    <a href="https://ervinszilagyi.dev/privacy.html">
+     Privacy Policy
+    </a>
+   </span>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
