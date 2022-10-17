@@ -29,9 +29,21 @@ function createUtterancesIFrame() {
         scriptTag.setAttribute("repo", 'Ernyoke/ernyoke.github.io');
         scriptTag.setAttribute("issue-term", "url");
         scriptTag.setAttribute("label", "Comment");
-        scriptTag.setAttribute("theme", getCurrentTheme() == "dark" ? "github-dark" : "github-light");
+        scriptTag.setAttribute("theme", getCurrentTheme() === "dark" ? "github-dark" : "github-light");
         scriptTag.setAttribute("id", id);
         placeholder.parentNode.replaceChild(scriptTag, placeholder);
+    }
+}
+
+function setUtterancesTheme() {
+    const theme = getCurrentTheme() === 'dark' ? 'github-dark' : 'github-light'
+    const message = {
+        type: 'set-theme',
+        theme: theme
+    };
+    const iframe = document.querySelector('.utterances-frame');
+    if (iframe.contentWindow) {
+        iframe.contentWindow.postMessage(message, '*');
     }
 }
 
@@ -44,7 +56,7 @@ function switchTheme() {
         localStorage.setItem("theme", "dark");
     }
     setHighlightJsTheme();
-    createUtterancesIFrame();
+    setUtterancesTheme();
 }
 
 document.documentElement.setAttribute("data-theme", getCurrentTheme());

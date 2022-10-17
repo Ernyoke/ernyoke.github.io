@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+      <title>Ervin Szilágyi - Personal Site</title>
+      
+      <link rel="icon" type="image/png" href="images/logo48.png">
+      <link rel="stylesheet" href="styles/styles.css">
+      <link rel="stylesheet" href="styles/all.min.css">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+      <link rel="stylesheet" title="light" href="styles/atom-one.css">
+      <link rel="alternate stylesheet" title="dark" href="styles/atom-one-dark.css" disabled="disabled">
+      
+      <script src="scripts/scripts.js"></script>
+      <script defer data-domain="ervinszilagyi.dev" src="https://plausible.io/js/plausible.js"></script>
+
+      <meta charset="UTF-8">
+      <meta name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body class="light-mode">
+      <nav class="menu">
+            <div class="nav-left">
+                  <ul>
+                        <li>
+                              <a href="index.html">
+                                    <img class="logo" src="images/logo48.png" alt="logo"></img>
+                                    <span class="sitename">Ervin Szilágyi</span>
+                              </a>
+                        </li>
+                  </ul>
+            </div>
+            <div class="nav-right">
+                  <ul>
+                        <li>
+                              <a class="fa fa-moon" onclick="switchTheme()"></a>
+                        </li>
+                        <li>
+                              <a href="resume.html" aria-hidden="true">Résumé</a>
+                        </li>
+                        <li>
+                              <a href="projects.html" aria-hidden="true">Projects</a>
+                        </li>
+                        <li>
+                              <a href="blog.html" aria-hidden="true">Blog</a>
+                        </li>
+                  </ul>
+            </div>
+      </nav>
+      <article>
+            {{ content }}
+      </article>
+
+      <div class="utterances">
+      </div>
+
+      <footer>
+            <span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+            <span>|</span>
+            <span><a href="privacy.html">Privacy Policy</a></span>
+      </footer>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+      <script type="text/javascript" src="scripts/terraform.js"></script>
+      <script type="text/javascript" src="scripts/dockerfile.min.js"></script>
+      <script>
+            hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+            hljs.highlightAll();
+      </script>
+</body>
+
+</html>
