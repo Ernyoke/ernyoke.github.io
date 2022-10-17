@@ -56,7 +56,7 @@ function switchTheme() {
         localStorage.setItem("theme", "dark");
     }
     setHighlightJsTheme();
-    setUtterancesTheme();
+    createUtterancesIFrame();
 }
 
 document.documentElement.setAttribute("data-theme", getCurrentTheme());
