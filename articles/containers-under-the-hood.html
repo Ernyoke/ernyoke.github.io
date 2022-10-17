@@ -502,6 +502,191 @@ bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbi
     . Container images are ready-to-use bundles that contain all the required files and folders for the base filesystem, metadata (environment variables, arguments), and other executables.
    </p>
    <h2>
+    Resource Limiting
+    <a class="anchor-link" href="#resource-limiting" id="resource-limiting">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Until now we've seen how we can have process, networking, and filesystem isolation. There is one piece missing from the puzzle: hardware resource limiting. Even if our processes our entirely isolated, they still can "see" the host's CPU, memory, networking, and storage. In the following lines, we will discuss how can we guarantee, that a container is only using the resource allocated to it.
+   </p>
+   <p>
+    In the case of a Linux kernel the
+    <strong>
+     scheduler
+    </strong>
+    keeps a list of all the processes, from which it tracks all the ones that are ready to run and also how much time each process received. The scheduler is designed to be
+    <a href="https://en.wikipedia.org/wiki/Completely_Fair_Scheduler" target="_blank">
+     fair
+    </a>
+    , meaning it tries to give time to each process to run. It also accepts input regarding the priority of each process.
+   </p>
+   <p>
+    In terms of prioritization of processes, we can discuss processes about
+    <em>
+     real-time
+    </em>
+    and
+    <em>
+     non-real-time
+    </em>
+    policies. Real-time processes have to react fast ("in-real-time") to outside events, so these processes get a higher priority compared to non-real-time processes.
+   </p>
+   <p>
+    We can use
+    <code>
+     ps
+    </code>
+    Linux command to see which process is running in real-time or non-real-time:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-19-81:~# ps -e -o pid,class,rtprio,ni,comm
+    PID CLS RTPRIO  NI COMMAND
+      1 TS       -   0 systemd
+      2 TS       -   0 kthreadd
+      3 TS       - -20 rcu_gp
+      4 TS       - -20 rcu_par_gp
+      5 TS       - -20 netns
+      ...
+     15 FF      99   - migration/0
+     16 FF      50   - idle_inject/0
+     17 TS       -   0 kworker/0:1-events
+      ...
+   1374 TS       -   0 bash
+   1385 TS       -   0 ps
+</code></pre>
+   <p>
+    In the output above we can take a look at the
+    <code>
+     CLS
+    </code>
+    column, we can have the following values:
+   </p>
+   <ul>
+    <li>
+     <code>
+      TS
+     </code>
+     : time-sharing, non-real-time policy
+    </li>
+    <li>
+     <code>
+      FF
+     </code>
+     : FIFO (first in - first out), real-time policy
+    </li>
+    <li>
+     <code>
+      RR
+     </code>
+     : round-robin, also real-time-policy
+    </li>
+   </ul>
+   <p>
+    In the
+    <code>
+     RTPRIO
+    </code>
+    and
+    <code>
+     NI
+    </code>
+    columns, we can see the priority of some processes.
+    <code>
+     RTPRIO
+    </code>
+    (real-time priority) applies only to real-time processes, while
+    <code>
+     NI
+    </code>
+    ("nice" level) applies to non-real-time processes and can have a value between -20 (least nice, highest priority) to 20 (nicest, lowest priority).
+   </p>
+   <p>
+    Real-time processes are usually not computationally intensive, but when they need CPU, they need it immediately. For all real-time processes to get the CPU they require, the Linux kernel reserves slices of CPU time for each process. The ability to provide slices of CPU time to each process represents the basis of CPU resource isolation in the case of containers. This approach is preferred because one process can not influence the scheduler by requesting more processing time for certain computationally intensive tasks.
+   </p>
+   <p>
+    To manage container use of CPU cores, Linux uses
+    <strong>
+     control groups (
+     <code>
+      cgroups
+     </code>
+     )
+    </strong>
+    . Control groups can do, even more, to cite
+    <a href="https://en.wikipedia.org/wiki/Cgroups" target="_blank">
+     Wikipedia
+    </a>
+    :
+   </p>
+   <blockquote>
+    <p>
+     <code>
+      cgroups
+     </code>
+     is a Linux kernel feature that limits, accounts for, and isolates the resource usage (CPU, memory, disk I/O, network, etc.) of a collection of processes.
+    </p>
+   </blockquote>
+   <p>
+    We can add processes to
+    <code>
+     cgroups
+    </code>
+    . After a process is in a
+    <code>
+     cgroup
+    </code>
+    , the kernel automatically applies the controls from that group.
+   </p>
+   <p>
+    The creation and configuration of
+    <code>
+     cgroups
+    </code>
+    is handled through a specific
+kind of filesystem, which by default can be found under
+    <code>
+     /sys/fs/cgroup
+    </code>
+    path:
+   </p>
+   <pre><code class="language-bash">root@ip-172-31-19-81:/sys/fs/cgroup# ls -F -la
+total 0
+dr-xr-xr-x 11 root root 0 Oct 17 20:16 ./
+drwxr-xr-x  8 root root 0 Oct 17 20:16 ../
+-r--r--r--  1 root root 0 Oct 17 20:16 cgroup.controllers
+-rw-r--r--  1 root root 0 Oct 17 20:17 cgroup.max.depth
+-rw-r--r--  1 root root 0 Oct 17 20:17 cgroup.max.descendants
+-rw-r--r--  1 root root 0 Oct 17 20:16 cgroup.procs
+-r--r--r--  1 root root 0 Oct 17 20:17 cgroup.stat
+-rw-r--r--  1 root root 0 Oct 17 20:43 cgroup.subtree_control
+-rw-r--r--  1 root root 0 Oct 17 20:17 cgroup.threads
+-rw-r--r--  1 root root 0 Oct 17 20:17 cpu.pressure
+-r--r--r--  1 root root 0 Oct 17 20:17 cpu.stat
+-r--r--r--  1 root root 0 Oct 17 20:17 cpuset.cpus.effective
+-r--r--r--  1 root root 0 Oct 17 20:17 cpuset.mems.effective
+drwxr-xr-x  2 root root 0 Oct 17 20:17 dev-hugepages.mount/
+drwxr-xr-x  2 root root 0 Oct 17 20:17 dev-mqueue.mount/
+drwxr-xr-x  2 root root 0 Oct 17 20:16 init.scope/
+-rw-r--r--  1 root root 0 Oct 17 20:17 io.cost.model
+-rw-r--r--  1 root root 0 Oct 17 20:17 io.cost.qos
+-rw-r--r--  1 root root 0 Oct 17 20:17 io.pressure
+-rw-r--r--  1 root root 0 Oct 17 20:17 io.prio.class
+-r--r--r--  1 root root 0 Oct 17 20:17 io.stat
+-r--r--r--  1 root root 0 Oct 17 20:17 memory.numa_stat
+-rw-r--r--  1 root root 0 Oct 17 20:17 memory.pressure
+-r--r--r--  1 root root 0 Oct 17 20:17 memory.stat
+-r--r--r--  1 root root 0 Oct 17 20:17 misc.capacity
+drwxr-xr-x  2 root root 0 Oct 17 20:17 sys-fs-fuse-connections.mount/
+drwxr-xr-x  2 root root 0 Oct 17 20:17 sys-kernel-config.mount/
+drwxr-xr-x  2 root root 0 Oct 17 20:17 sys-kernel-debug.mount/
+drwxr-xr-x  2 root root 0 Oct 17 20:17 sys-kernel-tracing.mount/
+drwxr-xr-x 35 root root 0 Oct 17 20:43 system.slice/
+drwxr-xr-x  3 root root 0 Oct 17 20:20 user.slice/
+</code></pre>
+   <p>
+    Each of the entries from above defines the properties of a different resource. We can configure these properties by applying limits.
+   </p>
+   <h2>
     Building Container Images
     <a class="anchor-link" href="#building-container-images" id="building-container-images">
      &lt;&lt;
@@ -678,6 +863,21 @@ COPY ./public-html/ /usr/local/apache2/htdocs/
      :
      <a href="https://en.wikipedia.org/wiki/Chroot" target="_blank">
       https://en.wikipedia.org/wiki/Chroot
+     </a>
+    </li>
+    <li>
+     Completely Fair Scheduler:
+     <a href="https://en.wikipedia.org/wiki/Completely_Fair_Scheduler" target="_blank">
+      https://en.wikipedia.org/wiki/Completely_Fair_Scheduler
+     </a>
+    </li>
+    <li>
+     <code>
+      cgroups
+     </code>
+     :
+     <a href="https://en.wikipedia.org/wiki/Cgroups" target="_blank">
+      https://en.wikipedia.org/wiki/Cgroups
      </a>
     </li>
     <li>
