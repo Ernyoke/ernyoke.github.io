@@ -151,21 +151,46 @@
    <p>
     Imger is a collection of image processing algorithms implemented in Go. Example of algorithms:
    </p>
-   <pre><code>- Grayscale
-- Blend algorithms: AddScalarToGray, AddGray, AddGrayWeighted
-- Thresholding algorithms: Binary, BinaryInv, Trunc, ToZero, ToZeroInv, Otsu
-- Image padding: BorderConstant, BorderReplicate, BorderReflect
-- Convolution
-- Blur algorithms: Average - Box, Gaussian
-- Edge detection algorithms: Sobel, Laplacian, Canny
-- Resizing algorithms: Nearest Neighbour, Linear, Catmull-Rom, Lanczos
-- Effects: Pixelate, Sepia, Emboss, Sharpen, Invert
-- Transform algorithms: Rotate
-- Generate Gradients: LinearGradient, SigmoidalGradient
-</code></pre>
    <ul>
     <li>
-     Technologies used: Go
+     Grayscale
+    </li>
+    <li>
+     Blend algorithms: AddScalarToGray, AddGray, AddGrayWeighted
+    </li>
+    <li>
+     Thresholding algorithms: Binary, BinaryInv, Trunc, ToZero, ToZeroInv, Otsu
+    </li>
+    <li>
+     Image padding: BorderConstant, BorderReplicate, BorderReflect
+    </li>
+    <li>
+     Convolution
+    </li>
+    <li>
+     Blur algorithms: Average - Box, Gaussian
+    </li>
+    <li>
+     Edge detection algorithms: Sobel, Laplacian, Canny
+    </li>
+    <li>
+     Resizing algorithms: Nearest Neighbour, Linear, Catmull-Rom, Lanczos
+    </li>
+    <li>
+     Effects: Pixelate, Sepia, Emboss, Sharpen, Invert
+    </li>
+    <li>
+     Transform algorithms: Rotate
+    </li>
+    <li>
+     <p>
+      Generate Gradients: LinearGradient, SigmoidalGradient
+     </p>
+    </li>
+    <li>
+     <p>
+      Technologies used: Go
+     </p>
     </li>
     <li>
      Source code:
@@ -175,11 +200,14 @@
     </li>
    </ul>
    <h2>
-    Domain Recon
-    <a class="anchor-link" href="#domain-recon" id="domain-recon">
+    Recon Tools
+    <a class="anchor-link" href="#recon-tools" id="recon-tools">
      &lt;&lt;
     </a>
    </h2>
+   <h3>
+    domain-recon
+   </h3>
    <p>
     <code>
      domain-recon
@@ -189,6 +217,9 @@
      *.example.com
     </code>
     ). For these domains, it can use a word list to extend these wildcards by filling in words from the list and generate potential subdomains.
+   </p>
+   <p>
+    <img alt="domain-recon in action" src="images/domain-recon.gif"/>
    </p>
    <p>
     Read the full article here:
@@ -205,8 +236,25 @@
     </li>
     <li>
      Source code:
-     <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">
-      https://github.com/domain-recon/domain-recon-rs
+     <a href="https://github.com/recon-tools/domain-recon-rs" target="_blank">
+      https://github.com/recon-tools/domain-recon-rs
+     </a>
+    </li>
+   </ul>
+   <h3>
+    simple-port-scanner (sps)
+   </h3>
+   <p>
+    It is exactly what the name of the app says, a simple port scanner written in Rust. It is cross platform, it does TCP SYN or full TCP connect scans on hosts. It supports host discovery with TCP PING, ICMP PING and UDP PING. It is aiming to be simple to use and fast.
+   </p>
+   <ul>
+    <li>
+     Technologies used: Rust
+    </li>
+    <li>
+     Source code:
+     <a href="https://github.com/recon-tools/simple-port-scanner-rs" target="_blank">
+      https://github.com/recon-tools/simple-port-scanner-rs
      </a>
     </li>
    </ul>
