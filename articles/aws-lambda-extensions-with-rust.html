@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
+       Projects
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
+       Blog
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    AWS Lambda Extensions with Rust
+   </h1>
+   <h2>
+    What are Lambda Extensions?
+    <a class="anchor-link" href="#what-are-lambda-extensions" id="what-are-lambda-extensions">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    AWS Lambda Extensions
+    <a href="https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview" target="_blank">
+     were introduced
+    </a>
+    a while ago, with the purpose of providing a way to integrate with the Lambda execution lifecycle. They supply a solution for being able to enhance our Lambda functions with our existing monitoring, observability, security, and governance tools. This can be accomplished by developing some code that runs in parallel with our Lambda function and listens to events emitted by the Lambda runtime. These events can be lifecycle events such as
+    <code>
+     Init
+    </code>
+    ,
+    <code>
+     Invoke
+    </code>
+    ,
+    <code>
+     Shut Down
+    </code>
+    events, telemetry events, or even log events, generated each time the Lambda functions write a message to its standard output.
+   </p>
+   <p>
+    There is no complex installation or configuration for us to use Lambda Extensions. They are usually deployed as Lambda Layers, which can be easily attached to a Lambda function.
+   </p>
+   <p>
+    Some use cases for extensions are the following:
+   </p>
+   <ul>
+    <li>
+     capture diagnostic information before, during, and after function invocation;
+    </li>
+    <li>
+     code instrumentation without the needing to change our Lambda code;
+    </li>
+    <li>
+     fetching configurations, and secrets before the invocation of the function. Being able to cache these values between consecutive executions;
+    </li>
+    <li>
+     detecting and alerting on function activity through hardened security agents, which can run as separate processes from the function
+    </li>
+   </ul>
+   <p>
+    We can have
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-extensions-api.html" target="_blank">
+     2 types of extensions
+    </a>
+    :
+   </p>
+   <ul>
+    <li>
+     <strong>
+      Internal extensions
+     </strong>
+     : they are a type of extension that runs within the runtime process as a separate thread. The runtime controls the start and stops of the internal extension. An alternative approach for integrating with the Lambda environment is to utilize language-specific environment variables and
+     <a href="https://dev.to/aws-builders/getting-the-most-of-aws-lambda-free-compute-wrapper-scripts-3h4b" target="_blank">
+      wrapper scripts
+     </a>
+     .
+    </li>
+    <li>
+     <strong>
+      External extensions
+     </strong>
+     : they run in parallel with the function during its execution. They also continue running after the function execution has been completed, offering the ability to gather telemetry and monitoring information about the function. Their way of working is similar to the
+     <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar" target="_blank">
+      sidecar pattern
+     </a>
+     found in containerized and highly distributed systems.
+    </li>
+   </ul>
+   <p>
+    In the upcoming lines, we will discuss how to build external extensions for our functions. External extensions provide higher flexibility compared to internal extensions, but they also come with their caveats.
+   </p>
+   <h2>
+    Why Rust?
+    <a class="anchor-link" href="#why-rust" id="why-rust">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Extensions can be developed in any language of choice. Since external extensions run in parallel with the actual function, they can be written in an entirely different programming language compared to the one chosen for the lambda. While it's good to have this freedom of choice, AWS documentation recommends using a compiled language. The reasons for this are the following:
+   </p>
+   <ul>
+    <li>
+     extensions written in a compiled language are built as a self-contained binary. This is great since they can work with any Lambda runtime, as long as we pay attention to the architecture. We can build the same extension and deploy it to both
+     <code>
+      x86-64
+     </code>
+     and
+     <code>
+      arm64
+     </code>
+     ;
+    </li>
+    <li>
+     extensions can affect the performance of the Lambda function. They share resources with the Lambda Runtime, so it is recommended for them to be performant as possible to avoid interfering with the Lambda.
+    </li>
+   </ul>
+   <p>
+    Besides these two reasons, a third reason would be the presence of great tooling. While developing extensions on our local machine is still a challenge, we have some great open-source tools and libraries to alleviate some of the hurdles. In this blog post, we will use
+    <a href="https://github.com/cargo-lambda/cargo-lambda" target="_blank">
+     cargo-lambda
+    </a>
+    to bootstrap and deploy an extension project.
+   </p>
+   <h2>
+    Let's Bootstrap and Deploy an Extension
+    <a class="anchor-link" href="#let-s-bootstrap-and-deploy-an-extension" id="let-s-bootstrap-and-deploy-an-extension">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    We will use
+    <code>
+     cargo-lambda
+    </code>
+    for our extension.
+    <code>
+     cargo-lambda
+    </code>
+    is an open-source tool, the purpose of which is to help developers to build Lambda Functions and Lambda Extensions. It can generate and bootstrap Rust projects for both lambdas and extensions. It can help to build and compile those projects. This is important since lambdas and extensions need to be cross-compiled to a Linux executable binary.
+    <code>
+     cargo-lambda
+    </code>
+    makes this seamless from both Windows and macOS environments.
+   </p>
+   <p>
+    The first step would be to create a Rust project for our extension. This can be accomplished with the following
+    <code>
+     cargo-lambda
+    </code>
+    command:
+   </p>
+   <pre><code class="language-bash">cargo lambda new --extension project-name --logs
+</code></pre>
+   <p>
+    Notice that
+    <code>
+     --logs
+    </code>
+    flag at the end of the command. The presence of this flat will make
+    <code>
+     cargo-lambda
+    </code>
+    generate a project with events needed for the
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-logs-api.html" target="_blank">
+     Logs API
+    </a>
+    . Another option would be
+    <code>
+     --telemetry
+    </code>
+    flag, which would bootstrap a project with the
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-extensions-api.html" target="_blank">
+     telemetry API calls
+    </a>
+    . We can choose any of those, the main difference would be the initial, generated Rust code. Since all the required dependencies for the extension are in the same crate (which is added as a dependency), we can just simply transform our project as we wish afterward.
+   </p>
+   <p>
+    We can build our project using the following command:
+   </p>
+   <pre><code class="language-bash">cargo lambda build --extension --release
+</code></pre>
+   <p>
+    This will build our extension in release mode, targeting
+    <code>
+     x86-64
+    </code>
+    architecture (even if we are on a Mac M1). If we want to build it for
+    <code>
+     arm64
+    </code>
+    , we can add the
+    <code>
+     --arm
+    </code>
+    flag in the end.
+   </p>
+   <p>
+    Now that we have an existing binary built, we would want to deploy this binary to AWS. We can do this using another
+    <code>
+     cargo-lambda
+    </code>
+    command:
+   </p>
+   <pre><code class="language-bash">cargo lambda deploy --extension
+</code></pre>
+   <p>
+    This will deploy our extension to AWS in form of a Lambda Layer. As we've been discussing previously, our extension should be able to run beside any Lambda Runtime. By default, the
+    <code>
+     deploy
+    </code>
+    command will only enable compatibility for
+    <code>
+     provided.al2
+    </code>
+    runtime (essentially Rust, or any other compiled Lambda function). To enable it for other runtimes such as NodeJS or Python, we can add the
+    <code>
+     --compatible_runtimes
+    </code>
+    flag, for example:
+   </p>
+   <pre><code>cargo lambda deploy --extension --compatible_runtimes=provided.al2,nodejs16.x,python3.9
+</code></pre>
+   <p>
+    A whole list with all the compatible runtimes can be found in the
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime" target="_blank">
+     AWS documentation
+    </a>
+    . As a side note, I have to mention that this feature for supporting other runtimes, was implemented by myself for the
+    <code>
+     cargo-lambda
+    </code>
+    project. I hope that other people will find it as useful :)
+   </p>
+   <p>
+    The last step would be to attach our extension to an existing Lambda function. This can be done from the AWS console by simply attaching a Lambda Layer to a function.
+   </p>
+   <p>
+    By following these steps, we have created and deployed an extension that does essentially nothing useful. Moving on, we will develop an extension that listens to Lambda log messages and sends them to a Kinesis Firehose stream.
+   </p>
+   <h2>
+    Develop a Log Router Extension for Kinesis Firehose
+    <a class="anchor-link" href="#develop-a-log-router-extension-for-kinesis-firehose" id="develop-a-log-router-extension-for-kinesis-firehose">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Many organizations employ a log aggregator framework. The reason for this is to be able to have every log message in one place for easier operational and support tasks, debugging, or even legal purposes. By default, Lambda functions are using CloudWatch for logging. To integrate with another log aggregator, extensions are the perfect solution. In fact, many existing log aggregator products are already providing ready-to-use Lambda Extensions. For example, AWS partners such as Datadog, Dynatrace, Honeycomb, Sumo Logic, etc. have their extensions published publicly, some of them having their code open for everybody. A whole list of partners can be found in the
+    <a href="https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html" target="_blank">
+     AWS docs
+    </a>
+    .
+   </p>
+   <p>
+    In case we use an internally developed log aggregator, or the product employed does not provide an extension out of the box, we can create one ourselves. In the following lines, we will see how to build an extension that integrates with Kineses Firehose and saves our log messages into an S3 bucket.
+   </p>
+   <p>
+    In the previous sections, we've already seen how to bootstrap and deploy an extension. To be able to send messages to Kinesis, we can develop the following code:
+   </p>
+   <pre><code class="language-Rust">use aws_sdk_firehose::error::PutRecordError;
+use aws_sdk_firehose::model::Record;
+use aws_sdk_firehose::output::PutRecordOutput;
+use aws_sdk_firehose::types::{Blob, SdkError};
+use aws_sdk_firehose::Client;
+use lambda_extension::{service_fn, Error, Extension, LambdaLog, LambdaLogRecord, SharedService};
+use lazy_static::lazy_static;
+use std::env;
+
+static ENV_STREAM_NAME: &amp;str = "KINESIS_DELIVERY_STREAM";
+
+// Read the stream name from an environment variable
+lazy_static! {
+    static ref STREAM: String = env::var(ENV_STREAM_NAME).unwrap_or_else(|e| panic!(
+        "Could not read environment variable {}! Reason: {}",
+        ENV_STREAM_NAME, e
+    ));
+}
+
+#[tokio::main]
+async fn main() -&gt; Result&lt;(), Error&gt; {
+    println!("Loading extension...");
+    // Register the handler to our extension
+    let logs_processor = SharedService::new(service_fn(handler));
+
+    Extension::new()
+        .with_logs_processor(logs_processor)
+        .run()
+        .await?;
+
+    Ok(())
+}
+
+async fn handler(logs: Vec&lt;LambdaLog&gt;) -&gt; Result&lt;(), Error&gt; {
+    // Build the Kinesis Firehose client
+    let firehose_client = build_firehose_client().await;
+    // Listen to all the events emitted when a Lambda Function is logging something. Send these
+    // events to a Firehose delivery stream
+    for log in logs {
+        match log.record {
+            LambdaLogRecord::Function(record) | LambdaLogRecord::Extension(record) =&gt; {
+                put_record(&amp;firehose_client, STREAM.as_str(), &amp;record).await?;
+            }
+            _ =&gt; (),
+        }
+    }
+    Ok(())
+}
+
+// Build the Firehose client
+async fn build_firehose_client() -&gt; Client {
+    let region_provider = RegionProviderChain::default_provider();
+    let shared_config = aws_config::from_env().region(region_provider).load().await;
+    let client = Client::new(&amp;shared_config);
+    client
+}
+
+// Send a message to the Firehose stream
+async fn put_record(
+    client: &amp;Client,
+    stream: &amp;str,
+    data: &amp;str,
+) -&gt; Result&lt;PutRecordOutput, SdkError&lt;PutRecordError&gt;&gt; {
+    let blob = Blob::new(data);
+
+    client
+        .put_record()
+        .record(Record::builder().data(blob).build())
+        .delivery_stream_name(stream)
+        .send()
+        .await
+}
+</code></pre>
+   <p>
+    The code itself is pretty self-explanatory. Besides having some initial boilerplate code to register our extension handler, what we are doing is listening to log events and sending those events to a Firehose delivery stream. The stream will batch the incoming events and save them in an S3 bucket.
+   </p>
+   <p>
+    In terms of IAM permissions, we need to give Firehose write permission to the Lambda Function. We cannot give permissions to a Lambda Layer. Since our code for the extension is running beside the lambda, all the permissions applied to lambda are available for the extensions as well.
+   </p>
+   <h2>
+    Putting these all together
+    <a class="anchor-link" href="#putting-these-all-together" id="putting-these-all-together">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Developing and deploying Lambda Extensions can be tedious work as we have seen above. To make our life easier (and also for myself to provide a reproducible example of what I was talking about before), we can write some IaC Terraform code for the whole deployment process.
+   </p>
+   <p>
+    A working example of a Lambda Function with a Rust Extension can be found on my GitHub page:
+    <a href="https://github.com/Ernyoke/lambda-log-router" target="_blank">
+     https://github.com/Ernyoke/lambda-log-router
+    </a>
+    . It is a Terragrunt project requiring a current version of Terraform (&gt;1.3.0) and Rust (&gt;1.6.3).
+   </p>
+   <h2>
+    References
+    <a class="anchor-link" href="#references" id="references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     Introducing AWS Lambda Extensions:
+     <a href="https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview" target="_blank">
+      https://aws.amazon.com/blogs/compute/introducing-aws-lambda-extensions-in-preview
+     </a>
+    </li>
+    <li>
+     Lambda Extension API:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-extensions-api.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/runtimes-extensions-api.html
+     </a>
+    </li>
+    <li>
+     Getting the most of AWS Lambda free compute - wrapper scripts:
+     <a href="https://dev.to/aws-builders/getting-the-most-of-aws-lambda-free-compute-wrapper-scripts-3h4b" target="_blank">
+      https://dev.to/aws-builders/getting-the-most-of-aws-lambda-free-compute-wrapper-scripts-3h4b
+     </a>
+    </li>
+    <li>
+     Sidecar pattern:
+     <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar" target="_blank">
+      https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar
+     </a>
+    </li>
+    <li>
+     cargo-lambda:
+     <a href="https://github.com/cargo-lambda/cargo-lambda" target="_blank">
+      https://github.com/cargo-lambda/cargo-lambda
+     </a>
+    </li>
+    <li>
+     Lambda Logs API:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/runtimes-logs-api.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/runtimes-logs-api.html
+     </a>
+    </li>
+    <li>
+     Extension Partners:
+     <a href="https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html" target="_blank">
+      https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html
+     </a>
+    </li>
+   </ol>
+  </article>
+  <div class="utterances">
+  </div>
+  <footer>
+   <span>
+    Site generated with
+    <a href="https://github.com/Ernyoke/ssg" target="_blank">
+     ssg
+    </a>
+   </span>
+   <span>
+    |
+   </span>
+   <span>
+    <a href="https://ervinszilagyi.dev/privacy.html">
+     Privacy Policy
+    </a>
+   </span>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
