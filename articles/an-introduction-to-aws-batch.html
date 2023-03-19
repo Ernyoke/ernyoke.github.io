@@ -242,7 +242,7 @@
    <p>
     The first component of a batch job we will create will be the compute environment. Our batch job will be a managed job running on AWS Fargate. We can write the IaC code for the compute environment as follows:
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_batch_compute_environment" "compute_environment" {
+   <pre><code class="language-terraform">resource "aws_batch_compute_environment" "compute_environment" {
   compute_environment_name = var.module_name
 
   compute_resources {
@@ -271,7 +271,7 @@
     </a>
     the service role "allows AWS Batch to make calls to other AWS services on your behalf". With all respect to the people who wrote the documentation, for me personally, this statement does not offer a lot of information. In all fairness, Terraform documentation offers an example of this service role, which we will use in our project:
    </p>
-   <pre><code class="language-lang-hcl">data "aws_iam_policy_document" "assume_role" {
+   <pre><code class="language-terraform">data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
 
@@ -308,7 +308,7 @@ resource "aws_iam_role_policy_attachment" "service_role_attachment" {
     </a>
     , while a subnet is part of a virtual private network. Networking in AWS is a complex topic, and it falls outside the scope of this article. Since AWS Batch requires the presence of a minimal networking setup, this is what we can use for our purposes:
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_vpc" "vpc" {
+   <pre><code class="language-terraform">resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
 
   tags = {
@@ -396,7 +396,7 @@ resource "aws_route_table_association" "private_rt_association" {
    <p>
     Now, this may seem like a lot of code. What is happening here is that we create an entirely new VPC with 2 subnets (a private and a public one). We put our cluster behind a NAT to be able to make calls outside to the internet. This is required for our batch job to work properly since it has to communicate with the AWS Batch API. Last but not least, for the security group, we can use this:
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_security_group" "sg" {
+   <pre><code class="language-terraform">resource "aws_security_group" "sg" {
   name        = "${var.module_name}-sg"
   description = "Movies batch demo SG."
   vpc_id      = aws_vpc.vpc.id
@@ -439,7 +439,7 @@ resource "aws_route_table_association" "private_rt_association" {
    <p>
     For a job definition, we need a few things to specify. Let's see the resource definition first:
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_batch_job_definition" "job_definition" {
+   <pre><code class="language-terraform">resource "aws_batch_job_definition" "job_definition" {
   name = "${var.module_name}-job-definition"
   type = "container"
 
@@ -527,7 +527,7 @@ resource "aws_route_table_association" "private_rt_association" {
    <p>
     The service role grants permission for the ECS cluster (and the ECS Fargate agent) to do certain AWS API calls. These calls include getting the Docker image from an ECR repository or being able to create CloudWatch log streams.
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_iam_role" "ecs_task_execution_role" {
+   <pre><code class="language-terraform">resource "aws_iam_role" "ecs_task_execution_role" {
   name               = "${var.module_name}-ecs-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -558,7 +558,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
    <p>
     The job role will grant permissions to the running container itself. In our case, if we need to write entries to a DynamoDB table, we have to provide write permission to the job to that table. Likewise, if we read from an S3 bucket, we have to create a policy with S3 read permission as well.
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_iam_role" "job_role" {
+   <pre><code class="language-terraform">resource "aws_iam_role" "job_role" {
   name               = "${var.module_name}-job-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -635,7 +635,7 @@ resource "aws_iam_role_policy_attachment" "s3_readonly_policy_attachment" {
    <p>
     The code for the ECR is very simple:
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_ecr_repository" "repository" {
+   <pre><code class="language-terraform">resource "aws_ecr_repository" "repository" {
   name                 = var.repo_name
   image_tag_mutability = "MUTABLE"
 }
@@ -643,7 +643,7 @@ resource "aws_iam_role_policy_attachment" "s3_readonly_policy_attachment" {
    <p>
     I also create an output with the Docker repository URL:
    </p>
-   <pre><code class="language-lang-hcl">output "ecr_registry_url" {
+   <pre><code class="language-terraform">output "ecr_registry_url" {
   value = aws_ecr_repository.repository.repository_url
 }
 </code></pre>
@@ -795,7 +795,7 @@ CMD ["python3", "main.py"]
    <p>
     Step Functions are state machines used for serverless orchestration. They are a perfect candidate for managing running jobs, offering a way to easily see and monitor the running state of the job and report the finishing status of it. We can implement the states of a Step Function using some JSON code.
    </p>
-   <pre><code class="language-lang-hcl">resource "aws_sfn_state_machine" "sfn_state_machine" {
+   <pre><code class="language-terraform">resource "aws_sfn_state_machine" "sfn_state_machine" {
   name     = "${var.module_name}-sfn"
   role_arn = aws_iam_role.sfn_role.arn
 
@@ -827,7 +827,7 @@ EOF
     </a>
     .
    </p>
-   <pre><code class="language-lang-hcl">data "aws_iam_policy_document" "sfn_policy" {
+   <pre><code class="language-terraform">data "aws_iam_policy_document" "sfn_policy" {
   statement {
     actions = [
       "batch:SubmitJob",
