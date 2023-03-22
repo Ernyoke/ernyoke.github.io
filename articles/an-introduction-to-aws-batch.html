@@ -144,6 +144,17 @@
    <p>
     In addition to multi-node jobs, we can enhance the underlying EC2 instances with graphics cards (GPUs). This can be useful for operations relying on parallel processing, such as deep learning.
    </p>
+   <p>
+    AWS Batch also supports applications that use EFA. An
+    <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
+     Elastic Fabric Adapter (EFA)
+    </a>
+    is a network device used to accelerate High Performance Computing (HPC) applications using Message Passing Interface (MPI). Moreover, if we would like even better performance for parallel computing, we can have direct GPU-to-GPU communication via
+    <a href="https://aws.amazon.com/blogs/compute/optimizing-deep-learning-on-p3-and-p3dn-with-efa-part-1/" target="_blank">
+     NVIDIA Collective Communication Library (NCCL)
+    </a>
+    , which is also built on EFA.
+   </p>
    <h2>
     AWS Batch - When to use it?
     <a class="anchor-link" href="#aws-batch-when-to-use-it" id="aws-batch-when-to-use-it">
@@ -944,6 +955,18 @@ resource "aws_iam_role_policy_attachment" "sfn_policy_attachment" {
      Step Functions:
      <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">
       https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html
+     </a>
+    </li>
+    <li>
+     EFA for AWS Batch:
+     <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
+      https://docs.aws.amazon.com/batch/latest/userguide/efa.html
+     </a>
+    </li>
+    <li>
+     Optimizing deep learning on P3 and P3dn with EFA:
+     <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
+      https://docs.aws.amazon.com/batch/latest/userguide/efa.html
      </a>
     </li>
    </ol>
