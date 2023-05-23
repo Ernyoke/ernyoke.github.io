@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
+       Projects
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
+       Blog
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Expose our REST API on AWS with a Custom Domain
+   </h1>
+   <p>
+    DNS is hard.
+   </p>
+   <p>
+    This is absolutely true for huge enterprise networks and distributed systems. With a simple Google search, we can find many IT incidents caused by DNS issues.
+   </p>
+   <p>
+    But this is not the topic of this current article. Most of us are not in a position to deal with the DNS for enterprise systems. What we most likely encounter once in a while is "a simple" DNS setup for a REST API. Even in this case, DNS can be confusing for the uninitiated. The purpose of this article is to clear up certain misconceptions and to guide the reader through the steps of exposing a REST API publicly on AWS with a custom domain name.
+   </p>
+   <h2>
+    Get out own domain
+    <a class="anchor-link" href="#get-out-own-domain" id="get-out-own-domain">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    If we are thinking about making our API public to the world, we would want to purchase a custom domain. AWS provides a domain registrar where we can buy domains, but there are better third-party options out in the wild. Purchasing a domain can be an adventure in itself, with each registrar offering different prices depending on the length/wording/choice of the top-level domain. Myself, I own the domain of
+    <a href="https://ervinszilagyi.dev/">
+     <em>
+      ervinszilagyi.dev
+     </em>
+    </a>
+    , and I also have registered
+    <em>
+     ervinszilagyi.xyz
+    </em>
+    for this tutorial (and for my other projects as well). I'm using GoDaddy domain registrar for my domains, and I will be referring to them in this article. I have no affiliation with them, I just happened to use them for my domain purchases. To follow the steps of this tutorial, our domain registrar of choice should allow changing the nameservers, or if you want to delegate only a subdomain, then it should allow us to register NS records. If these concepts are not clear at this point, we should not worry too much, we will have explanations below.
+   </p>
+   <h2>
+    Hosted Zones and Records
+    <a class="anchor-link" href="#hosted-zones-and-records" id="hosted-zones-and-records">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In AWS, everything related to DNS is handled by Route 53 (the name it's a pun, DNS resolution is using port 53).
+   </p>
+   <p>
+    Route 53 works with
+    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html" target="_blank">
+     Hosted Zones
+    </a>
+    , which are "databases" or containers for storing and managing our records. We can have 2 types of Hosted Zones:
+   </p>
+   <ul>
+    <li>
+     <em>
+      Private Hosted Zones
+     </em>
+     : they are used for domains inside Amazon VPC (Virtual Private Cloud). They are not resolvable from the public internet. We won't use them in this tutorial, but it is important to be aware of them.
+    </li>
+    <li>
+     <em>
+      Public Hosted Zones
+     </em>
+     : they are used for storing records for publicly routable domains. We can access them from the public internet.
+    </li>
+   </ul>
+   <p>
+    Hosted Zones are used to manage
+    <a href="https://en.wikipedia.org/wiki/Domain_Name_System#Resource_records" target="_blank">
+     records
+    </a>
+    . Records are used to store information about our domain, for example: if our domain is mapped to an IP address pointing to our backend, we can specify a record with this IP address. There are many different
+    <a href="https://en.wikipedia.org/wiki/List_of_DNS_record_types" target="_blank">
+     types of records
+    </a>
+    , for our purposes it is enough if we know about a few of them:
+   </p>
+   <ul>
+    <li>
+     <em>
+      A record
+     </em>
+     (Address record): used to store IPv4 addresses
+    </li>
+    <li>
+     <em>
+      AAAA record
+     </em>
+     : used to store IPv6 addresses
+    </li>
+    <li>
+     <em>
+      CNAME record
+     </em>
+     : it points to another domain, in cases where we don't have or we simply can not use an IP address for our backend
+    </li>
+    <li>
+     <em>
+      TXT record
+     </em>
+     (Text record): used to store additional text information. This information can be for other humans or other systems (metadata information)
+    </li>
+    <li>
+     <em>
+      SOA record
+     </em>
+     : Specifies authoritative information about a DNS zone. Each Hosted Zone has one by default. It cannot be removed or modified.
+    </li>
+    <li>
+     <em>
+      NS record
+     </em>
+     (Name server record): identifies the name servers for the hosted zone. Each Hosted Zone automatically gets assigned an NS record with 4 nameservers.
+    </li>
+   </ul>
+   <p>
+    Hosted Zones can have
+    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html" target="_blank">
+     alias records
+    </a>
+    . Alias records are Amazon Route 53 specific records. The reason for their existence is to overcome a limitation of how DNS Zones work. For a DNS Zone, if we want to register a record pointing to the node of the DNS space (Apex domain), this record has to be either A or AAAA record (remember, both of them point to IP addresses). The problem with this is that in AWS we don't receive static IP addresses for a lot of services (such as S3, CloudFront, API Gateway, etc.). To work around this limitation, AWS introduced Alias records. We will use an Alias record for our REST API below.
+   </p>
+   <h2>
+    Configure a custom domain resolution with a Hosted Zone
+    <a class="anchor-link" href="#configure-a-custom-domain-resolution-with-a-hosted-zone" id="configure-a-custom-domain-resolution-with-a-hosted-zone">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Let's say we decided on our domain (which in my case is
+    <em>
+     ervinszilagyi.xyz
+    </em>
+    ) and now we would want to initiate its setup.
+   </p>
+   <p>
+    First, we need to create a
+    <em>
+     public
+    </em>
+    Hosted Zone in Route 53. We should make sure, the name of the Hosted Zone is the same as we have it for our domain.
+   </p>
+   <p>
+    In AWS Console we should go to Route 53 -&gt; Hosted Zones -&gt; and press the Create Hosted Zone button. We should be directed to the following form, where we have to fill in our domain name:
+   </p>
+   <p>
+    <img alt="Create Hosted Zone Form" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-hosted-zone.png"/>
+   </p>
+   <p>
+    We should make sure we select that we want to create a
+    <em>
+     public
+    </em>
+    Hosted Zone and we should press "Create Hosted Zone". After a few moments, our hosted zone should be up:
+   </p>
+   <p>
+    <img alt="Hosted Zone created with Records" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/records.png"/>
+   </p>
+   <p>
+    We can notice that we have an
+    <code>
+     SOA
+    </code>
+    record and an
+    <code>
+     NS
+    </code>
+    record with 4 nameservers. What we have to do next, is to go to our domain registrar (in my case GoDaddy) and change the nameservers for the domain we purchased:
+   </p>
+   <p>
+    <img alt="GoDaddy Nameservers" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/change-nameservers.png"/>
+   </p>
+   <p>
+    We should copy the nameservers from the Hosted Zone and add them to the GoDaddy settings:
+   </p>
+   <p>
+    <img alt="Set Nameservers" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/set-nameservers.png"/>
+   </p>
+   <p>
+    GoDaddy will warn us that changing the nameservers can be dangerous. We should not worry about these alert messages, our nameservers are managed by AWS, we should be fine.
+   </p>
+   <p>
+    This change of the nameservers can take up to 48 hours to take effect. From my experience, most of the time, the changes do take effect after a few minutes, but we could never know, so we have to wait until our domain is usable. To check if the changes did take effect, we can use the Unix
+    <code>
+     dig
+    </code>
+    command:
+   </p>
+   <pre><code class="language-bash">$ dig +short NS ervinszilagyi.xyz
+ns-1976.awsdns-55.co.uk.
+ns-832.awsdns-40.net.
+ns-47.awsdns-05.com.
+ns-1142.awsdns-14.org.
+</code></pre>
+   <p>
+    This query should return back the 4 nameservers, the ones we just configured.
+   </p>
+   <p>
+    At this point, we can move on to the next step where we request a TLS certificate for our domain (jump over to the next section, if you don't care about subdomain delegation).
+   </p>
+   <h2>
+    Delegate a custom subdomain resolution to a Hosted Zone
+    <a class="anchor-link" href="#delegate-a-custom-subdomain-resolution-to-a-hosted-zone" id="delegate-a-custom-subdomain-resolution-to-a-hosted-zone">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    I own
+    <a href="https://ervinszilagyi.dev/">
+     <em>
+      ervinszilagyi.dev
+     </em>
+    </a>
+    . This domain resolves to my personal website and blog. Obviously, I don't want to change this behavior, I would like other people to read my blog posts. I would still want to use this domain for my tutorials.
+   </p>
+   <p>
+    One way to make use of this domain is to create a subdomain under it and delegate the nameservers resolution for this subdomain to an AWS Hosted Zone. Let's say I would like to register my rest API using
+    <code>
+     rest.ervinszilagyi.dev
+    </code>
+    domain name.
+   </p>
+   <p>
+    As before, in the AWS console we should go to Route53 service and create a
+    <em>
+     public
+    </em>
+    Hosted Zone for
+    <code>
+     rest.ervinszilagyi.dev
+    </code>
+    :
+   </p>
+   <p>
+    <img alt="Create Hosted Zone for the Sub-Domain" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-subdomain.png"/>
+   </p>
+   <p>
+    When the Hosted Zone is created, we get the NS record with 4 namespaces:
+   </p>
+   <p>
+    <img alt="Hosted Zone Created for the Sub-Domain with Records" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/subdomain-records.png"/>
+   </p>
+   <p>
+    We have to grab the values from the NS record and navigate to GoDaddy. Selecting our purchased domain we have to create 4 NS records, one for each value:
+   </p>
+   <p>
+    <img alt="NS Records GoDaddy" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/ns-records-godaddy.png"/>
+   </p>
+   <p>
+    After we save the records, we should wait a little for the changes to take effect. We can use the
+    <code>
+     dig +short NS tutorial.ervinszilagyi.dev
+    </code>
+    command to check if our changes are in place.
+   </p>
+   <p>
+    We have seen how to set up nameservers for both domains and sub-domains. Moving on with this tutorial, we will use the Hosted Zone created for
+    <code>
+     ervinszilagyi.xyz
+    </code>
+    . Everything we do with this Hosted Zone will apply to the Hosted Zone created for the sub-domain as well.
+   </p>
+   <h2>
+    Request a TLS certificate for our domain
+    <a class="anchor-link" href="#request-a-tls-certificate-for-our-domain" id="request-a-tls-certificate-for-our-domain">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    TLS certificates are used for secure connectivity between our machine and a remote server. Our plan for this tutorial is to expose a REST API, for which we would use API Gateway. API Gateway enforces the usage of a valid certificate for the base path mapping (we will see what base path mapping is in detail below).
+   </p>
+   <p>
+    It is very easy to request a certificate with the usage of AWS Certificate Manager. We just have to go into the AWS certificate manager portal from our AWS console and press the request button. We will be redirected to this page:
+   </p>
+   <p>
+    <img alt="Request TLS Certificate" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/request-cert-1.png"/>
+   </p>
+   <p>
+    We need a public certificate, so we have to choose this option. Moving on, we will reach this page:
+   </p>
+   <p>
+    <img alt="Request TLS Certificate with Details" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/request-cert-2"/>
+   </p>
+   <p>
+    We have to introduce our domain and we should select
+    <code>
+     DNS validation
+    </code>
+    option. We have to be able to prove somehow that the domain name for which the certificate is issued is ours. With
+    <code>
+     DNS validation
+    </code>
+    , AWS will create a record in our Hosted Zone with this proof. For the validation record to be created we may also have to press the
+    <code>
+     Create Record
+    </code>
+    button after the certificate was issued:
+   </p>
+   <p>
+    <img alt="Create Record for Certificate Validation" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/cert-status-create-record.png"/>
+   </p>
+   <p>
+    If we go to our Hosted Zone, we should see the newly created record:
+   </p>
+   <p>
+    <img alt="Certificate Validation Record" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/cert-status-record-created.png"/>
+   </p>
+   <p>
+    We should make sure we have this record and our certificate validation status is green:
+   </p>
+   <p>
+    <img alt="Certificate Validation Status" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/certificate-status.png"/>
+   </p>
+   <h2>
+    Create a REST API
+    <a class="anchor-link" href="#create-a-rest-api" id="create-a-rest-api">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    The next step we would want to accomplish is to create the REST API itself. There are several ways of creating and exposing an API in AWS. In most of the cases what we would want to do is to build a REST API using
+    <a href="https://aws.amazon.com/api-gateway/" target="_blank">
+     Amazon API Gateway
+    </a>
+    . Amazon API Gateway is managed service built for managing APIs. It is a front-facing service standing between the user and our backend. It can handle authentication and authorization, TLS encryption, rate-limiting and quota enforcement, and many other things.
+   </p>
+   <p>
+    To create a REST API Gateway, from the console we should go to the API Gateway Service and select REST API:
+   </p>
+   <p>
+    <img alt="Create REST API" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-rest-api.png"/>
+   </p>
+   <p>
+    It is important to select the option with the
+    <em>
+     public
+    </em>
+    REST API. A private API Gateway is accessible only internally from a VPC. Since we want our API to be reachable from the internet, we need a public API Gateway.
+   </p>
+   <p>
+    By pressing
+    <em>
+     Build
+    </em>
+    we are redirected to a page where we should select the protocol for our API Gateway (we want REST, not WebSocket) and we have to give a name to our API Gateway.
+   </p>
+   <p>
+    <img alt="Create REST API settings" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/api-gw-protocol-and-settings.png"/>
+   </p>
+   <p>
+    After we press
+    <em>
+     Create API
+    </em>
+    , we should have our API Gateway up and running. We still need to add a method to handle incoming requests.
+   </p>
+   <p>
+    <img alt="Create REST Method" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-method.png"/>
+   </p>
+   <p>
+    A method is essentially an HTTP REST verb (GET, POST, PUT, etc.) that does exactly what we would expect, it handles REST API GET/POST/PUT/etc. requests. We can notice that methods can be nested inside resources creating more complex and lengthy request paths. For now, we will keep our path simple and we will place our method in the root of our API Gateway. If we press the tick symbol (✓), we are redirected to a page where we have to set the integration for our method. This is essentially a backend. We will build a
+    <em>
+     Mock
+    </em>
+    backend for this tutorial, which means that our API Gateway will respond with a static response each time. This is enough for our tutorial, but we can imagine that instead of a mock we could have a Lambda function or a microservice here in a production environment.
+   </p>
+   <p>
+    <img alt="Create GET Mock" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-mock.png"/>
+   </p>
+   <p>
+    Sadly, at this point, our mock will respond with no content. To have a response body, we need to set up an integration response. To do this we have to select
+    <em>
+     Integration Response
+    </em>
+    :
+   </p>
+   <p>
+    <img alt="Create Integration Response" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/integration-response.png"/>
+   </p>
+   <p>
+    From there we press the drop-down for the 200 response:
+   </p>
+   <p>
+    <img alt="Create Integration Response - Edit 200 Response" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/integration-response-edit-200.png"/>
+   </p>
+   <p>
+    Then we add a Mapping Template with the content type of
+    <code>
+     application/json
+    </code>
+    :
+   </p>
+   <p>
+    <img alt="Create Integration Response - Create Content Type" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/integration-respone-app-json.png"/>
+   </p>
+   <p>
+    If we press the tickmark, we should be able to input a response body for the template. We should paste in the following JSON:
+   </p>
+   <pre><code class="language-json">{
+    "statusCode": 200,
+    "message": "Works!"
+}
+</code></pre>
+   <p>
+    <img alt="Create Integration Response - Template" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/integration-response-template.png"/>
+   </p>
+   <p>
+    We should press
+    <em>
+     Save
+    </em>
+    .
+   </p>
+   <p>
+    Now we also have to
+    <strong>
+     Deploy
+    </strong>
+    our API Gateway. If we go to the
+    <em>
+     Actions
+    </em>
+    button, we will get a dropdown menu, from where we should select
+    <em>
+     Deploy API
+    </em>
+    :
+   </p>
+   <p>
+    <img alt="Deploy API Dropdown" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/deploy-api-dropdown.png"/>
+   </p>
+   <p>
+    We are asked to create a new Stage. We can name it however we want, so we will simply choose
+    <code>
+     dev
+    </code>
+    .
+   </p>
+   <p>
+    <img alt="Create Deployment Stage" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/deploy-api-stage.png"/>
+   </p>
+   <p>
+    We press
+    <em>
+     Deploy
+    </em>
+    and our REST API should be live. We also get a generated URL, where we can test our GET method with a
+    <code>
+     curl
+    </code>
+    request.
+   </p>
+   <p>
+    <img alt="Grab the generated URL" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/deployment-url.png"/>
+   </p>
+   <pre><code class="language-bash">$ curl https://ppwm7oataf.execute-api.us-east-1.amazonaws.com/dev
+{
+    "statusCode": 200,
+    "message": "Works!"
+}%
+</code></pre>
+   <p>
+    We should receive the body we configured above.
+   </p>
+   <h2>
+    Configure basepath mapping for the API
+    <a class="anchor-link" href="#configure-basepath-mapping-for-the-api" id="configure-basepath-mapping-for-the-api">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    At this point our REST API is live, but it only responds to the URL generated by AWS. Next, what we would want to configure the API to be used with our custom domain (
+    <code>
+     ervinszilagyi.xyz
+    </code>
+    ).
+   </p>
+   <p>
+    In the API Gateway console, on the top-left, we should select
+    <em>
+     Create domain names
+    </em>
+    . This will take us to another page, where we most likely should not have any domain configured yet in the list. We should press the
+    <em>
+     Create
+    </em>
+    button
+   </p>
+   <p>
+    <img alt="Create Custom Domain" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-custom-domain.png"/>
+   </p>
+   <p>
+    We are taken to another page, again. Here we have to make sure we introduce carefully the following information:
+   </p>
+   <ul>
+    <li>
+     Domain name: this is the domain we own, it should be the same as whatever we introduced for our Hosted Zone above.
+    </li>
+    <li>
+     We have a Regional API Gateway, we should leave that option as it is
+    </li>
+    <li>
+     For the certificate, we should select the one for our domain. We created a certificate before (
+     <em>
+      Request a TLS certificate for our domain
+     </em>
+     step). We should be able to see this certificate in the list.
+    </li>
+   </ul>
+   <p>
+    <img alt="Create Domain Name Settings" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-domain-name.png"/>
+   </p>
+   <p>
+    After pressing create, shortly we are taken to another page. What we have to do now is to set up base path mapping. We tested our API before with the generated URL (
+    <code>
+     https://ppwm7oataf.execute-api.us-east-1.amazonaws.com/dev
+    </code>
+    in my case). We want to configure our API to use our custom domain (
+    <code>
+     ervinszilagyi.xzy
+    </code>
+    in my case). To accomplish this, we should select the second tab (
+    <em>
+     API mappings
+    </em>
+    ) and press the
+    <em>
+     Configure API mappings
+    </em>
+    button:
+   </p>
+   <p>
+    <img alt="Configure API Mappings" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/configure-api-mappings.png"/>
+   </p>
+   <p>
+    We should select our API and the stage (
+    <code>
+     dev
+    </code>
+    in my case). For the
+    <em>
+     Path
+    </em>
+    we should leave it blank.
+   </p>
+   <p>
+    <img alt="Configure Mapping" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/configure-mapping.png"/>
+   </p>
+   <p>
+    This is it. We have the mapping set up. This is good, but at this point, we are still not finished yet. We need one more step to be able to have our REST API exposed with our custom domain. We need to create a record for our API in our Hosted Zone.
+   </p>
+   <h2>
+    Create an Alias record for our API
+    <a class="anchor-link" href="#create-an-alias-record-for-our-api" id="create-an-alias-record-for-our-api">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    We should navigate back to Route 53 and select our Hosted Zone. We want to create a record, so we should press the big orange
+    <em>
+     Create record
+    </em>
+    button.
+   </p>
+   <p>
+    We want to create an
+    <code>
+     A
+    </code>
+    record that is an
+    <em>
+     Alias
+    </em>
+    . We explained in the beginning what Alias records are, what we have to know now is that we can use an Alias record if we don't have an IP address for the
+    <code>
+     A
+    </code>
+    record. It is not recommended at all to rely on API addresses for AWS API Gateways, so we should enable the Alias tickbox.
+   </p>
+   <p>
+    For the
+    <em>
+     Route traffic
+    </em>
+    section, we need to select
+    <code>
+     Alias to API Gateway
+    </code>
+    and we will have to find our API Gateway in the region in which we are working.
+   </p>
+   <p>
+    <img alt="Configure Alias Record for the API Gateway" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-alias-record.png"/>
+   </p>
+   <p>
+    We leave the routing policy at the default simple routing option.
+   </p>
+   <p>
+    After pressing create, we should see our
+    <code>
+     A
+    </code>
+    record inside our Hosted Zone:
+   </p>
+   <p>
+    <img alt="API Gateway A Record" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/api-gw-a-record.png"/>
+   </p>
+   <p>
+    To check if our domain works, we can use the
+    <code>
+     dig
+    </code>
+    command:
+   </p>
+   <pre><code class="language-bash">$ dig ervinszilagyi.xyz
+
+; &lt;&lt;&gt;&gt; DiG 9.16.1-Ubuntu &lt;&lt;&gt;&gt; ervinszilagyi.xyz
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 52495
+;; flags: qr rd ad; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 0
+;; WARNING: recursion requested but not available
+
+;; QUESTION SECTION:
+;ervinszilagyi.xyz.             IN      A
+
+;; ANSWER SECTION:
+ervinszilagyi.xyz.      0       IN      A       34.202.63.112
+ervinszilagyi.xyz.      0       IN      A       54.209.119.225
+ervinszilagyi.xyz.      0       IN      A       3.86.19.75
+
+;; Query time: 50 msec
+;; SERVER: 172.24.80.1#53(172.24.80.1)
+;; WHEN: Sun May 21 18:56:53 EEST 2023
+;; MSG SIZE  rcvd: 100
+</code></pre>
+   <p>
+    We should be able to see three
+    <code>
+     A
+    </code>
+    records with IP addresses. These IP addresses are the public IP addresses for the API Gateway service and they are managed by AWS. They might be different for you, what is important is that we should be able to get some
+    <code>
+     A
+    </code>
+    records back when doing DNS resolution.
+   </p>
+   <p>
+    We should also do a
+    <code>
+     curl
+    </code>
+    request to see if we get a response from our REST API:
+   </p>
+   <pre><code class="language-bash">$ curl https://ervinszilagyi.xyz
+{
+    "statusCode": 200,
+    "message": "Works!"
+}%
+</code></pre>
+   <p>
+    We can notice that we get the same answer as above. This is great! We have our REST API exposed publicly using our custom domain.
+   </p>
+   <h2>
+    Automating all these steps
+    <a class="anchor-link" href="#automating-all-these-steps" id="automating-all-these-steps">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    We can agree on the fact that there are many steps to be taken to have a custom domain set up for a REST API. Fortunately, we can have our infrastructure configured quickly if we write some Terraform code with all these changes.
+   </p>
+   <p>
+    This is exactly what I've already done, making the code available for anybody on Github:
+    <a href="https://github.com/Ernyoke/aws-custom-domain-r53" target="_blank">
+     https://github.com/Ernyoke/aws-custom-domain-r53
+    </a>
+   </p>
+   <p>
+    This repository contains 3 Terraform projects (let's call them stacks):
+   </p>
+   <pre><code class="language-bash">tree
+.
+├── README.md
+├── api-gw
+│   ├── api-gw.tf
+│   ├── main.tf
+│   ├── output.tf
+│   ├── route53.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── certificate
+│   ├── main.tf
+│   ├── output.tf
+│   ├── terraform.tf
+│   └── variables.tf
+└── route53
+    ├── main.tf
+    ├── output.tf
+    ├── terraform.tf
+    └── variables.tf
+</code></pre>
+   <p>
+    The reason for this project structure is that setting up the nameservers on GoDaddy (or any other registrar) takes time and manual steps. So, if we would like to deploy the Terraform code from my project, the first thing we should do is go inside the
+    <code>
+     route53
+    </code>
+    folder and run the following commands:
+   </p>
+   <pre><code class="language-bash">terraform init
+terraform apply
+</code></pre>
+   <p>
+    After the plan is rolled out successfully, we should see the nameservers in the output. We should copy these nameservers and do the change for our domain in the registrar. We have to make sure our changes are propagated before moving on to the next step.
+   </p>
+   <p>
+    The
+    <code>
+     certificate
+    </code>
+    stack creates the TLS certificate and the validation for it. For the validation to succeed, our domain should point to the correct nameservers. The commands for the terraform rollout are the same as we've seen with the
+    <code>
+     route53
+    </code>
+    stack.
+   </p>
+   <p>
+    Last, we should roll out our REST API. After that is successful, we should be able to test it with a
+    <code>
+     curl
+    </code>
+    request.
+   </p>
+   <h2>
+    Conclusions
+    <a class="anchor-link" href="#conclusions" id="conclusions">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Setting up a custom domain for a REST API in AWS is not the most complicated procedure in the world. Certainly, it is not something, we may not do on a daily basis, so I think it is a good idea to have it documented.
+   </p>
+   <h2>
+    References
+    <a class="anchor-link" href="#references" id="references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    Working with hosted zones:
+    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html" target="_blank">
+     https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html
+    </a>
+    DNS Records:
+    <a href="https://en.wikipedia.org/wiki/Domain_Name_System#Resource_records" target="_blank">
+     https://en.wikipedia.org/wiki/Domain_Name_System#Resource_records
+    </a>
+    Choosing between alias and non-alias records:
+    <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html" target="_blank">
+     https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html
+    </a>
+    Amazon API Gateway -
+    <a href="https://aws.amazon.com/api-gateway/" target="_blank">
+     https://aws.amazon.com/api-gateway/
+    </a>
+   </p>
+  </article>
+  <div class="utterances">
+  </div>
+  <footer>
+   <span>
+    Site generated with
+    <a href="https://github.com/Ernyoke/ssg" target="_blank">
+     ssg
+    </a>
+   </span>
+   <span>
+    |
+   </span>
+   <span>
+    <a href="https://ervinszilagyi.dev/privacy.html">
+     Privacy Policy
+    </a>
+   </span>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
