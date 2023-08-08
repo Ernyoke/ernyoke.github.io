@@ -1,3 +1,6 @@
 User-agent: *
 Disallow: /webfonts
 Disallow: /scripts
+
+User-agent: GPTBot
+Disallow: /
