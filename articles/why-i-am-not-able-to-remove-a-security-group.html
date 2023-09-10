@@ -88,28 +88,28 @@
     <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">
      stateful firewall
     </a>
-    , the purpose of which is to control what kind of inbound and outbound traffic can be allowed for a resource in a VPC. A Security Group is always assigned to an ENI (
+    , the purpose of which is to control what kind of inbound and outbound traffic can be allowed for a resource in a VPC. A security group is always assigned to an ENI (
     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html" target="_blank">
      Elastic network interface
     </a>
-    ). This is true, even if the AWS Consol makes it seem like we assign Security Groups to all kinds of resources such as EC2 instances, load balancers, Lambda Functions, databases, etc. What is happening in the background is that one or more ENIs will be placed inside our VPC to whom the Security Group will be assigned. The ENIs will be used by our resource, hence the AWS Consol will show it like the Security Group is assigned to the resource itself.
+    ). This is true, even if the AWS Consol makes it seem like we assign security groups to all kinds of resources such as EC2 instances, load balancers, Lambda Functions, databases, etc. What is happening in the background is that one or more ENIs will be placed inside our VPC to whom the security group will be assigned. The ENIs will be used by our resource, hence the AWS Consol will show it like the security group is assigned to the resource itself.
    </p>
    <p>
-    A Security Group will be unable to be removed in the following cases:
+    A security group will be unable to be removed in the following cases:
    </p>
    <ul>
     <li>
-     It is assigned to one or more ENIs: a Security Group can be assigned to one or more ENIs, moreover an ENI can have
+     It is assigned to one or more ENIs: a security group can be assigned to one or more ENIs, moreover an ENI can have
      <a href="https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html#vpc-limits-security-groups" target="_blank">
-      up to 5
+      up to 5 security groups assigned
      </a>
-     Security Groups assigned to it (soft limit, by asking the AWS Support we can increase this limit to 16). If a Security Group is attached to at least one ENI, we need to either get rid of the ENI or try to de-assign the Security Group from it in order for the SG to be able to be removed.
+     to it (soft limit, by asking the AWS Support we can increase this limit to 16). If a security group is attached to at least one ENI, we need to either get rid of the ENI or try to de-assign the security group from it in order for the SG to be able to be removed.
     </li>
     <li>
-     It is referenced by a Security Group Rule: a Security Group can allow inbound/outbound traffic based on rules. We can use another SG as the source/destination for a rule. If an SG is referenced by a rule from another SG, it can not be removed until the rule is removed/changed.
+     It is referenced by a security group rule: a security group can allow inbound/outbound traffic based on rules. We can use another SG as the source/destination for a rule. If an SG is referenced by a rule from another SG, it can not be removed until the rule is removed/changed.
     </li>
     <li>
-     The SG is a default SG in a VPC: each VPC automatically gets a Security Group when it is created. We can get rid of this Security Group only if we remove the VPC.
+     The SG is a default SG in a VPC: each VPC automatically gets a security group when it is created. We can get rid of this security group only if we remove the VPC.
     </li>
     <li>
      We do not have the privileges to remove the SG: this can happen if the role we are using does not have the necessary permission to do
@@ -137,7 +137,7 @@
     </li>
    </ul>
    <p>
-    EC2 instances can have also secondary ENIs attached to them. These ENIs are provisioned independently, so we can change the Security Group assigned to them from the ENI console.
+    EC2 instances can have also secondary ENIs attached to them. These ENIs are provisioned independently, so we can change the security group assigned to them from the ENI console.
    </p>
    <ul>
     <li>
@@ -170,7 +170,7 @@
    </p>
    <ul>
     <li>
-     Security Groups are assigned to Network Interfaces. In most of the cases, an ENI cannot exist without a security group
+     Security groups are assigned to Network Interfaces. In most of the cases, an ENI cannot exist without a security group
     </li>
     <li>
      In most of the cases, ENIs are placed inside our VPC while we provision a resource. At the time of provisioning, we have to assign a security group to the ENI
@@ -197,7 +197,7 @@
     </a>
    </h2>
    <p>
-    We finally decided to remove a security group with a random funky name, that we don't remember creating. We suspect it is used by some resources, but we are not really sure which are those. In the AWS console, we navigate to the Security Group and press the
+    We finally decided to remove a security group with a random funky name, that we don't remember creating. We suspect it is used by some resources, but we are not really sure which are those. In the AWS console, we navigate to the security group and press the
     <code>
      Delete security groups
     </code>
