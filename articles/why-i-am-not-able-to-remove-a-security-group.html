@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+ <head>
+  <title>
+   Ervin Szilágyi - Personal Site
+  </title>
+  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
+  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
+  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
+  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
+  </script>
+  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
+  </script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
+  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="Ervin Szilágyi - Personal site" property="og:title"/>
+  <meta content="Personal web page and blog." property="og:description"/>
+  <meta content="https://ervinszilagyi.dev" property="og:url"/>
+  <meta content="https://ervinszilagyi.dev/images/glider-banner.jpg" property="og:image"/>
+ </head>
+ <body class="light-mode">
+  <nav class="menu">
+   <div class="nav-left">
+    <ul>
+     <li>
+      <a href="https://ervinszilagyi.dev/">
+       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
+       <span class="sitename">
+        Ervin Szilágyi
+       </span>
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="nav-right">
+    <ul>
+     <li>
+      <a class="fa fa-moon" onclick="switchTheme()">
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
+       Résumé
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
+       Projects
+      </a>
+     </li>
+     <li>
+      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
+       Blog
+      </a>
+     </li>
+    </ul>
+   </div>
+  </nav>
+  <article>
+   <h1>
+    Why I Am Not Able to Remove a Security Group?
+   </h1>
+   <p>
+    If you have a slightly more extended experience with IaC, more specifically with Terraform, you might have run into the following issue:
+   </p>
+   <p>
+    <img alt="Terraform Remove Security Group Attached to a Lambda" src="img-why-i-am-not-able-to-remove-a-security-group/tf.gif"/>
+   </p>
+   <p>
+    This usually happens when we are trying to remove a Lambda Function placed in a VPC. The reason for this is that the removal of the security group is temporarily blocked by one or more network interfaces.
+   </p>
+   <p>
+    In the upcoming lines, we will see how can we deal with cases when our security group seemingly cannot be removed. We will discuss what is causing these blockages, and how can we gracefully handle them.
+   </p>
+   <h2>
+    Why does a Security Group become unable to be removed?
+    <a class="anchor-link" href="#why-does-a-security-group-become-unable-to-be-removed" id="why-does-a-security-group-become-unable-to-be-removed">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    A security group is a
+    <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">
+     stateful firewall
+    </a>
+    , the purpose of which is to control what kind of inbound and outbound traffic can be allowed for a resource in a VPC. A Security Group is always assigned to an ENI (
+    <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html" target="_blank">
+     Elastic network interface
+    </a>
+    ). This is true, even if the AWS Consol makes it seem like we assign Security Groups to all kinds of resources such as EC2 instances, load balancers, Lambda Functions, databases, etc. What is happening in the background is that one or more ENIs will be placed inside our VPC to whom the Security Group will be assigned. The ENIs will be used by our resource, hence the AWS Consol will show it like the Security Group is assigned to the resource itself.
+   </p>
+   <p>
+    A Security Group will be unable to be removed in the following cases:
+   </p>
+   <ul>
+    <li>
+     It is assigned to one or more ENIs: a Security Group can be assigned to one or more ENIs, moreover an ENI can have
+     <a href="https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html#vpc-limits-security-groups" target="_blank">
+      up to 5
+     </a>
+     Security Groups assigned to it (soft limit, by asking the AWS Support we can increase this limit to 16). If a Security Group is attached to at least one ENI, we need to either get rid of the ENI or try to de-assign the Security Group from it in order for the SG to be able to be removed.
+    </li>
+    <li>
+     It is referenced by a Security Group Rule: a Security Group can allow inbound/outbound traffic based on rules. We can use another SG as the source/destination for a rule. If an SG is referenced by a rule from another SG, it can not be removed until the rule is removed/changed.
+    </li>
+    <li>
+     The SG is a default SG in a VPC: each VPC automatically gets a Security Group when it is created. We can get rid of this Security Group only if we remove the VPC.
+    </li>
+    <li>
+     We do not have the privileges to remove the SG: this can happen if the role we are using does not have the necessary permission to do
+     <code>
+      DeleteSecurityGroup
+     </code>
+     action.
+    </li>
+   </ul>
+   <h2>
+    The Security Group is Assigned to an ENI
+    <a class="anchor-link" href="#the-security-group-is-assigned-to-an-eni" id="the-security-group-is-assigned-to-an-eni">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    In case we assign a security group to an AWS resource (EC2, Lambda, RDS database, VPC Endpoint, etc.) the security group will always be assigned to a Network Interface (ENI). The AWS Console is somewhat misleading because it displays that the security group is assigned to the resource itself, but this is not the case. Since all of this ENI provisioning and SG assignment happens in the background, in most of the cases we are not allowed to temper with the ENI and the security group assignment. Sometimes it can be confusing what is happening under the hood when we do the resource provisioning, so let's see a few examples to understand what is AWS doing:
+   </p>
+   <ul>
+    <li>
+     <strong>
+      EC2 instances
+     </strong>
+     : whe we provision an EC2 instance, this will automatically receive a default ENI. This ENI cannot be detached from the instance, hence it cannot be removed. AWS expects us to assign a security group the the instance at the time of creation. If we want to remove this security group, we have to assign another security group to our EC2 instance. We can do this by either going to the ENI console and assigning a security group straight to the ENI, or by going to the EC2 instance and changing the security group in the Security Settings.
+    </li>
+   </ul>
+   <p>
+    EC2 instances can have also secondary ENIs attached to them. These ENIs are provisioned independently, so we can change the Security Group assigned to them from the ENI console.
+   </p>
+   <ul>
+    <li>
+     <p>
+      <strong>
+       Lambda Functions
+      </strong>
+      : Lambda Functions require a security group in case we want them to have connectivity to a VPC. If we choose it so, AWS will place an ENI in each subnet we specify, the security group will be assigned to each provisioned ENI. We can change the security group freely if we modify the Lambda Function configuration, but we cannot directly temper with the ENIs. If we decide to remove our functions, the ENIs will also be removed automatically. This removal usually happens with a delay of 10-15 minutes, essentially getting stuck temporarily. We just simply have to wait until the removal is finally completed. This can be annoying if we use Terraform IaC for our infrastructure since it will try to remove the security group over and over again (see the GIF from the beginning of the article). If this removal won't happen in time, we can easily end up with an inconsistent Terraform state. What we can do is simply wait and hope that Terraform won't time out.
+     </p>
+    </li>
+    <li>
+     <p>
+      <strong>
+       ECS Fargate Tasks
+      </strong>
+      : In the case of ECS tasks, each container from the task can have an ENI, depending on the network settings. These ENIs are managed by AWS and we cannot really temper with them. We can change the security groups on the task settings. When the containers are decommissioned if we decide to remove our task, the ENIs will be automatically removed. In most of the cases, this happens instantly, but in very rare instances we can manage to end up with a stuck ENI. If this happens, we could attempt to manually remove the ENI from the AWS console. If this is unsuccessful, we have to write to AWS Support.
+     </p>
+    </li>
+    <li>
+     <p>
+      <strong>
+       VPC Endpoints
+      </strong>
+      : VPC Endpoints have multiple benefits for our infrastructure. We can have endpoints for reaching AWS services such as S3, DynamoDB, etc. without the need to have outgoing connectivity to the public internet, or we can have one-to-one connectivity to any instance from a totally different VPC from another AWS account. The restriction is that PrivateLink, the service that powers VPC Endpoints, works at the availability zone level. This means our connecting subnet has to be in the same AZ as the other subnet that is exposing the endpoint. In terms of ENIs and security groups, the idea is the same as with other resources. We get an ENI in each subnet in which we place an endpoint. This ENI is managed by AWS. We can modify the security groups if we go to the VPC Endpoint settings. If we get rid of the VPC Endpoint, the ENI will be removed and the security group will be detached automatically.
+     </p>
+    </li>
+   </ul>
+   <p>
+    We can notice a pattern here. If we take any AWS-managed resource that needs access to a VPC, we will end up with a similar networking setup with ENI placement and security group assignment to the ENI. What is important to know are the following:
+   </p>
+   <ul>
+    <li>
+     Security Groups are assigned to Network Interfaces. In most of the cases, an ENI cannot exist without a security group
+    </li>
+    <li>
+     In most of the cases, ENIs are placed inside our VPC while we provision a resource. At the time of provisioning, we have to assign a security group to the ENI
+    </li>
+    <li>
+     Usually, we cannot temper with the ENI, meaning we cannot directly de-associate the security group from it. We can change the security group if we modify the AWS service which uses the ENI
+    </li>
+    <li>
+     If we want to remove a security group we have to either:
+     <ul>
+      <li>
+       Remove the AWS service which is using the ENI to which our security group is assigned;
+      </li>
+      <li>
+       Modify the service that is using the ENI, hence the security group, by assigning another security group to it and removing the one that we would like to remove.
+      </li>
+     </ul>
+    </li>
+   </ul>
+   <h2>
+    What is using my randomly named Security Group?
+    <a class="anchor-link" href="#what-is-using-my-randomly-named-security-group" id="what-is-using-my-randomly-named-security-group">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    We finally decided to remove a security group with a random funky name, that we don't remember creating. We suspect it is used by some resources, but we are not really sure which are those. In the AWS console, we navigate to the Security Group and press the
+    <code>
+     Delete security groups
+    </code>
+    button. We are greeted with this:
+   </p>
+   <p>
+    <img alt="Delete security group" src="img-why-i-am-not-able-to-remove-a-security-group/console-remove-sg.png"/>
+   </p>
+   <p>
+    The console tells us, that we cannot remove the security groups because it is used by one ore more network interfaces. It also conveniently gives us a link to a list with all of these network interfaces. We click on the link, we get the list of the network interfaces, and after a few moments, we realize we have no idea who is using these network interfaces.
+   </p>
+   <p>
+    Before moving on, you may think this scenario is unrealistic, it cannot happen to me, I know every resource I create in my account and I have good naming practices. In an ideal world, our infrastructure would be as clean as possible with well-defined naming conventions. In the real world unfortunately this is not always true. In case you had experience working in AWS accounts where multiple teams deploy their stuff, you may pretty easily end up with resources that do not adhere to any convention you predefined. Moreover, in many cases, the AWS console itself offers the opportunity to create security groups with semi-randomly generated names.
+   </p>
+   <p>
+    Coming back to our topic, we have a list with network interfaces, but unfortunately, the console does not help us showing who is using these network interfaces (as long as the ENI is not attached to an EC2 instance). The question is how can we proceed next?
+   </p>
+   <p>
+    There are a few tricks that we can use to detect who is using a network interface. In general, we can take a look at the description of the security ENI. This may contain an attachment ID or an ID to a resource. For example, in the case of a Lambda Function, we may have something like this in the description:
+    <code>
+     AWS Lambda VPC ENI-vpc-lambda-f8872d9f-745a-42dd-bca9-3ac0e87ac215
+    </code>
+    . Here the description tells us the ENI is used by a Lambda Function that is placed in a VPC, the name of the function is
+    <code>
+     ENI-vpc-lambda
+    </code>
+    and the identifier of the function is this uuid
+    <code>
+     f8872d9f-745a-42dd-bca9-3ac0e87ac215
+    </code>
+    . Unfortunately, this description format is not something standard and is not documented in the AWS documentation. For other resources, we may get a description using a different format (example:
+    <code>
+     [DO NOT DELETE] ENI managed by SageMaker for Studio Domain(d-vegsk0mcgrdp) - 946a4c21ed31356ee889a8dd95fde7cf
+    </code>
+    for a security group used by Sagemaker).
+   </p>
+   <p>
+    At this point, we may ask ourselves if there is a better solution to find out who is using an ENI. Scouring the internet, I did not find anything to help me out, so I decided to create a tool for myself. I want to introduce
+    <a href="https://github.com/cloud-crafts/sg-ripper" target="_blank">
+     <code>
+      sg-ripper
+     </code>
+    </a>
+    .
+   </p>
+   <p>
+    <code>
+     sg-ripper
+    </code>
+    is a CLI application, developed in Golang, whose purpose is to make our life easier in case we want to do a little bit of cleanup in our list of security groups. It can list all the security groups from an AWS account, it can grab all the ENIs for each security group, and it tries to locate all the other resources that might be relying on those ENIs.
+   </p>
+   <p>
+    For example:
+   </p>
+   <ul>
+    <li>
+     We can list all the security groups, their associated ENIs and the resources that are using those ENIs:
+    </li>
+   </ul>
+   <p>
+    <img alt="sg-ripper list security groups" src="img-why-i-am-not-able-to-remove-a-security-group/list-sg.gif"/>
+   </p>
+   <ul>
+    <li>
+     We can list all the ENIs directly. In this case, it will show which security group is using each ENI and also which other AWS resources are relying on the ENIs:
+    </li>
+   </ul>
+   <p>
+    <img alt="sg-ripper list security groups" src="img-why-i-am-not-able-to-remove-a-security-group/list-eni.gif"/>
+   </p>
+   <p>
+    With
+    <code>
+     sg-ripper
+    </code>
+    we can also apply a filter to see only certain security groups or ENI in case we don't want to grab all the existing ones from our account. Aside from showing which resource is using an ENI, it can display if security groups are available for removal. If it is not, it will also show some explanation why the is the removal blocked.
+   </p>
+   <p>
+    <code>
+     sg-ripper
+    </code>
+    is a work-in-progress project, the code itself is open-source and it can be found on GitHub:
+    <a href="https://github.com/cloud-crafts/sg-ripper" target="_blank">
+     https://github.com/cloud-crafts/sg-ripper
+    </a>
+    . Contributions are welcomed.
+   </p>
+   <h2>
+    Conclusions
+    <a class="anchor-link" href="#conclusions" id="conclusions">
+     &lt;&lt;
+    </a>
+   </h2>
+   <p>
+    As our infrastructure is evolving, we may tend to leave unused resources behind such as security groups. Security groups can be removed only if they are not used, not referenced or they are not default in a VPC.
+    <code>
+     sg-ripper
+    </code>
+    can make our life easier in detecting unused security groups, having an explanation of why a certain security group cannot be removed and point out which ENI/which resource is blocking us from removing it.
+   </p>
+   <h2>
+    References:
+    <a class="anchor-link" href="#references" id="references">
+     &lt;&lt;
+    </a>
+   </h2>
+   <ol>
+    <li>
+     <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">
+      Stateful Firewall
+     </a>
+    </li>
+    <li>
+     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html" target="_blank">
+      Elastic network interfaces
+     </a>
+    </li>
+    <li>
+     <a href="https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html#vpc-limits-security-groups" target="_blank">
+      Security groups Limits
+     </a>
+    </li>
+   </ol>
+  </article>
+  <div class="utterances">
+  </div>
+  <footer>
+   <span>
+    Site generated with
+    <a href="https://github.com/Ernyoke/ssg" target="_blank">
+     ssg
+    </a>
+   </span>
+   <span>
+    |
+   </span>
+   <span>
+    <a href="https://ervinszilagyi.dev/privacy.html">
+     Privacy Policy
+    </a>
+   </span>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
+  </script>
+  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
+  </script>
+  <script>
+   hljs.registerLanguage('terraform', window.hljsDefineTerraform);            hljs.highlightAll();
+  </script>
+ </body>
+</html>
