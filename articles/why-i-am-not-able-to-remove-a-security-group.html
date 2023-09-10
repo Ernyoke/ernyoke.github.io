@@ -145,7 +145,7 @@
       <strong>
        Lambda Functions
       </strong>
-      : Lambda Functions require a security group in case we want them to have connectivity to a VPC. If we choose it so, AWS will place an ENI in each subnet we specify, the security group will be assigned to each provisioned ENI. We can change the security group freely if we modify the Lambda Function configuration, but we cannot directly temper with the ENIs. If we decide to remove our functions, the ENIs will also be removed automatically. This removal usually happens with a delay of 10-15 minutes, essentially getting stuck temporarily. We just simply have to wait until the removal is finally completed. This can be annoying if we use Terraform IaC for our infrastructure since it will try to remove the security group over and over again (see the GIF from the beginning of the article). If this removal won't happen in time, we can easily end up with an inconsistent Terraform state. What we can do is simply wait and hope that Terraform won't time out.
+      : Lambda Functions require a security group in case we want them to have connectivity to a VPC. If we choose it so, AWS will place an ENI in each subnet we specify, the security group will be assigned to each provisioned ENI. We can change the security group freely if we modify the Lambda Function configuration, but we cannot directly temper with the ENIs. If we decide to remove our functions, the ENIs will also be removed automatically. This removal usually happens with a delay of 10-15 minutes, essentially getting stuck temporarily. We simply have to wait until the removal is finally completed. This can be annoying if we use Terraform IaC for our infrastructure since it will try to remove the security group over and over again (see the GIF from the beginning of the article). If this removal won't happen in time, we can easily end up with an inconsistent Terraform state. What we can do is simply wait and hope that Terraform won't time out.
      </p>
     </li>
     <li>
@@ -173,7 +173,7 @@
      Security groups are assigned to Network Interfaces. In most of the cases, an ENI cannot exist without a security group
     </li>
     <li>
-     In most of the cases, ENIs are placed inside our VPC while we provision a resource. At the time of provisioning, we have to assign a security group to the ENI
+     In most cases, ENIs are placed inside our VPC while we provision a resource. At the time of provisioning, we have to assign a security group to the ENI
     </li>
     <li>
      Usually, we cannot temper with the ENI, meaning we cannot directly de-associate the security group from it. We can change the security group if we modify the AWS service which uses the ENI
@@ -207,7 +207,7 @@
     <img alt="Delete security group" src="img-why-i-am-not-able-to-remove-a-security-group/console-remove-sg.png"/>
    </p>
    <p>
-    The console tells us, that we cannot remove the security groups because it is used by one ore more network interfaces. It also conveniently gives us a link to a list with all of these network interfaces. We click on the link, we get the list of the network interfaces, and after a few moments, we realize we have no idea who is using these network interfaces.
+    The console tells us, that we cannot remove the security groups because it is used by one or more network interfaces. It also conveniently gives us a link to a list with all of these network interfaces. We click on the link, we get the list of the network interfaces, and after a few moments, we realize we have no idea who is using these network interfaces.
    </p>
    <p>
     Before moving on, you may think this scenario is unrealistic, it cannot happen to me, I know every resource I create in my account and I have good naming practices. In an ideal world, our infrastructure would be as clean as possible with well-defined naming conventions. In the real world unfortunately this is not always true. In case you had experience working in AWS accounts where multiple teams deploy their stuff, you may pretty easily end up with resources that do not adhere to any convention you predefined. Moreover, in many cases, the AWS console itself offers the opportunity to create security groups with semi-randomly generated names.
@@ -273,13 +273,13 @@
     <code>
      sg-ripper
     </code>
-    we can also apply a filter to see only certain security groups or ENI in case we don't want to grab all the existing ones from our account. Aside from showing which resource is using an ENI, it can display if security groups are available for removal. If it is not, it will also show some explanation why the is the removal blocked.
+    we can also apply a filter to see only certain security groups or ENI in case we don't want to grab all the existing ones from our account. Aside from showing which resource is using an ENI, it can display if security groups are available for removal. If it is not, it will also show some explanation as to why the is the removal blocked.
    </p>
    <p>
     <code>
      sg-ripper
     </code>
-    is a work-in-progress project, the code itself is open-source and it can be found on GitHub:
+    is a work-in-progress project, the source code itself is open-source and it can be found on GitHub:
     <a href="https://github.com/cloud-crafts/sg-ripper" target="_blank">
      https://github.com/cloud-crafts/sg-ripper
     </a>
