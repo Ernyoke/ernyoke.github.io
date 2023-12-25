@@ -92,7 +92,7 @@
     <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html" target="_blank">
      Elastic network interface
     </a>
-    ). This is true, even if the AWS Consol makes it seem like we assign security groups to all kinds of resources such as EC2 instances, load balancers, Lambda Functions, databases, etc. What is happening in the background is that one or more ENIs will be placed inside our VPC to whom the security group will be assigned. The ENIs will be used by our resource, hence the AWS Consol will show it like the security group is assigned to the resource itself.
+    ). This is true, even if the AWS console makes it seem like we assign security groups to all kinds of resources such as EC2 instances, load balancers, Lambda Functions, databases, etc. What is happening in the background is that one or more ENIs will be placed inside our VPC to whom the security group will be assigned. The ENIs will be used by our resource, hence the AWS console will show it like the security group is assigned to the resource itself.
    </p>
    <p>
     A security group will be unable to be removed in the following cases:
@@ -126,7 +126,7 @@
     </a>
    </h2>
    <p>
-    In case we assign a security group to an AWS resource (EC2, Lambda, RDS database, VPC Endpoint, etc.) the security group will always be assigned to a Network Interface (ENI). The AWS Console is somewhat misleading because it displays that the security group is assigned to the resource itself, but this is not the case. Since all of this ENI provisioning and SG assignment happens in the background, in most of the cases we are not allowed to temper with the ENI and the security group assignment. Sometimes it can be confusing what is happening under the hood when we do the resource provisioning, so let's see a few examples to understand what is AWS doing:
+    In case we assign a security group to an AWS resource (EC2, Lambda, RDS database, VPC Endpoint, etc.) the security group will always be assigned to a Network Interface (ENI). The AWS console is somewhat misleading because it displays that the security group is assigned to the resource itself, but this is not the case. Since all of this ENI provisioning and SG assignment happens in the background, in most of the cases we are not allowed to temper with the ENI and the security group assignment. Sometimes it can be confusing what is happening under the hood when we do the resource provisioning, so let's see a few examples to understand what is AWS doing:
    </p>
    <ul>
     <li>
