@@ -109,10 +109,10 @@
    <p>
     A basic configuration file would look like this:
    </p>
-   <pre><code>[SERVICE]
-    Flush           5
-    Daemon          off
-    Log_Level       debug
+   <pre><code class="language-bash">[SERVICE]
+    Flush     5
+    Daemon    off
+    Log_Level debug
 
 [INPUT]
     Name cpu
@@ -426,9 +426,9 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     Aside from static fields, we can refer to environment variables as well.  For example, we can inject the current environment/AWS region in each record:
    </p>
    <pre><code class="language-bash">[FILTER]
-    Name                        modify
-    Add environment     ${ENVIRONMENT}
-    Add region                ${AWS_REGION}
+    Name            modify
+    Add environment ${ENVIRONMENT}
+    Add region      ${AWS_REGION}
 </code></pre>
    <p>
     <code>
@@ -444,10 +444,10 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     Additionally, the Modify FILTER supports conditional actions. For example, we could apply a renaming only if a certain condition is met, such as the field stars with a particular string:
    </p>
    <pre><code class="language-bash">[FILTER]
-    Name                              modify
-    Match                              *
-    Rename ecs_task_definition_family family
-    Condition Key_value_matches ecs_task_definition_family windows.*
+    Name                                   modify
+    Match                                  *
+    Rename    ecs_task_definition_family   family
+    Condition Key_value_matches            ecs_task_definition_family windows.*
 </code></pre>
    <p>
     The above FILTER will rename the
