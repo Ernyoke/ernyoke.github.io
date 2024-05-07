@@ -230,7 +230,11 @@
     <strong>
      stage
     </strong>
-    . While this is not that big of a deal, I prefer to have one environment per account. My proposal for a Terragrunt project setup would look like this:
+    . While this is not that big of a deal, I prefer to have one environment per account. My proposal for a Terragrunt project setup would look like this (GitHub repository for this example project can be found here:
+    <a href="https://github.com/Ernyoke/tg-multi-account" target="_blank">
+     https://github.com/Ernyoke/tg-multi-account
+    </a>
+    ):
    </p>
    <pre><code class="language-bash">tg-multi-account
 │   .gitignore
@@ -679,7 +683,10 @@ inputs = {
      : at the point of writing this post, it is still not generally available. It was not even considered by us back then, since it was in private preview and nobody had access to it. It might be a good choice in the future, but for now, it is not something we can use.
     </li>
     <li>
-     Terraform Workspaces: they are a similar approach to having different tfvars files per environment/region, a solution we were extensively using. We found that it is not the best choice since it scales poorly if the infrastructure gets bigger and bigger. However, If you start a project, I still recommend sticking to workspaces at the beginning and moving to something afterward, when it is needed.
+     <a href="https://developer.hashicorp.com/terraform/language/state/workspaces" target="_blank">
+      Terraform Workspaces
+     </a>
+     : they are a similar approach to having different tfvars files per environment/region, a solution we were extensively using. We found that it is not the best choice since it scales poorly if the infrastructure gets bigger and bigger. However, If you start a project, I still recommend sticking to workspaces at the beginning and moving to something afterward, when it is needed.
     </li>
     <li>
      Insert any other tool here: understandably there are many other options out there.  When making a decision for something that will have to be maintained by multiple people for a living, usually we go with the one tool that has to most support on the internet, it is known by most of the people from the team and generally has a good reputation.
@@ -698,7 +705,7 @@ inputs = {
     Should I use it for my next project?
 It depends. If you did not encounter some of the issues that are aimed to be solved by it, then you probably may not want to use it. It will add considerable maintenance baggage. To quote the Terragrunt author here
     <a href="https://www.reddit.com/r/Terraform/comments/15242e4/comment/jsmoedj/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button" target="_blank">
-     source
+     [source]
     </a>
     :
    </p>
