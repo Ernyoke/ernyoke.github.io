@@ -361,7 +361,7 @@
    <p>
     Now let's focus on the Terragrunt modules. If we open a configuration, for example for the VPC, a possible implementation would be the following:
    </p>
-   <pre><code class="language-lang-hcl">terraform {
+   <pre><code class="language-hcl">terraform {
   source = "tfr:///terraform-aws-modules/vpc/aws//.?version=5.8.1"
 }
 
@@ -450,7 +450,7 @@ inputs = {
    <p>
     The extracted file will look like this:
    </p>
-   <pre><code class="language-lang-hcl"># ./_env/vpc.hcl
+   <pre><code class="language-hcl"># ./_env/vpc.hcl
 
 terraform {
   source = "tfr:///terraform-aws-modules/vpc/aws//.?version=5.8.1"
@@ -477,7 +477,7 @@ inputs = {
    <p>
     In case our region is not from us-east-1, we can override the availability zones with sensible ones:
    </p>
-   <pre><code class="language-lang-hcl"># ./qa/eu-west-1/vpc/terragrunt.hcl
+   <pre><code class="language-hcl"># ./qa/eu-west-1/vpc/terragrunt.hcl
 
 include "root" {
   path = find_in_parent_folders()
