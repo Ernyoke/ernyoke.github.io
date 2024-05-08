@@ -125,7 +125,7 @@
      went from a few minutes to a few tens of minutes. Moreover, we run into so communication and deployment issues in terms of certain changes being deployed to production before we wanted them.
     </li>
     <li>
-     Our Terraform project got bigger and bigger. We decide to slice it somehow into smaller pieces. We introduced the internal concept of "stacks" (this was well before the introduction of Terraform Cloud Stacks). A "stack" essentially is a Terraform project deploying a part of our infrastructure. Each stack could use resources deployed by other stacks by relying on Terraform outputs and
+     Our Terraform project got bigger and bigger. We decide to slice it somehow into smaller pieces. We introduced the internal concept of "stacks" (this was well before the introduction of Terraform Cloud Stacks). From our point of view, a "stack" essentially was a Terraform project deploying a well-defined part of our infrastructure. Each stack could use resources deployed by other stacks by relying on Terraform outputs and
      <a href="https://developer.hashicorp.com/terraform/language/state/remote-state-data" target="_blank">
       <code>
        terraform_remote_state
@@ -144,13 +144,13 @@
     </li>
    </ol>
    <p>
-    To answer our initial question, we chose Terragrunt because:
-- It solved the dependency hell we encountered. With Terragrunt we have to be explicit in defining on who does our current module depends.
+    To answer the initial question, we chose Terragrunt because:
+- It solved the dependency hell we encountered. With Terragrunt we have to be explicit in defining on who our current module depends.
 - It fits the multi-region/multi-account approach. In case we dour our modules wisely, we use only the necessary modules for each region/environment. The catch here is that we have to modularize our code and we do it adequately, which might be not as easy as we would expect.
 - By introducing versioning for our modules, we could evolve different environments at their own pace.
    </p>
    <p>
-    Now, all of these come with a price: refactoring. Terragrunt relies on Terraform modules. Our initial code was not as modular as we might expected. So we had to do a lot of refactoring, which also came with an even bigger challenge: state management and transferring resources between states.
+    Now, all of these come with a price: refactoring. Terragrunt relies on Terraform modules. Our initial code was not as modular as we might expect. So we had to do a lot of refactoring, which also came with an even bigger challenge: state management and transferring resources between states.
    </p>
    <h2>
     How does Terragrunt Work?
@@ -237,97 +237,97 @@
     ):
    </p>
    <pre><code class="language-bash">tg-multi-account
-│   .gitignore
-│   global.hcl
-│   terragrunt.hcl
+│   .gitignore
+│   global.hcl
+│   terragrunt.hcl
 │
 ├───dev
-│   │   account.hcl
-│   │
-│   └───us-east-1
-│       │   region.hcl
-│       │
-│       ├───alb
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-cluster
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-services
-│       │   └───frontend
-│       │           terragrunt.hcl
-│       │
-│       └───vpc
+│   │   account.hcl
+│   │
+│   └───us-east-1
+│       │   region.hcl
+│       │
+│       ├───alb
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-cluster
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-services
+│       │   └───frontend
+│       │           terragrunt.hcl
+│       │
+│       └───vpc
 │               terragrunt.hcl
 │
 ├───prod
-│   │   account.hcl
-│   │
-│   ├───eu-west-1
-│   │   │   region.hcl
-│   │   │
-│   │   ├───alb
-│   │   │       terragrunt.hcl
-│   │   │
-│   │   ├───ecs-cluster
-│   │   │       terragrunt.hcl
-│   │   │
-│   │   ├───ecs-services
-│   │   │   └───frontend
-│   │   │           terragrunt.hcl
-│   │   │
-│   │   └───vpc
-│   │           terragrunt.hcl
-│   │
-│   └───us-east-1
-│       │   region.hcl
-│       │
-│       ├───alb
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-cluster
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-services
-│       │   └───frontend
-│       │           terragrunt.hcl
-│       │
-│       └───vpc
+│   │   account.hcl
+│   │
+│   ├───eu-west-1
+│   │   │   region.hcl
+│   │   │
+│   │   ├───alb
+│   │   │       terragrunt.hcl
+│   │   │
+│   │   ├───ecs-cluster
+│   │   │       terragrunt.hcl
+│   │   │
+│   │   ├───ecs-services
+│   │   │   └───frontend
+│   │   │           terragrunt.hcl
+│   │   │
+│   │   └───vpc
+│   │           terragrunt.hcl
+│   │
+│   └───us-east-1
+│       │   region.hcl
+│       │
+│       ├───alb
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-cluster
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-services
+│       │   └───frontend
+│       │           terragrunt.hcl
+│       │
+│       └───vpc
 │               terragrunt.hcl
 │
 ├───qa
-│   │   account.hcl
-│   │
-│   ├───eu-west-1
-│   │   │   region.hcl
-│   │   │
-│   │   ├───alb
-│   │   │       terragrunt.hcl
-│   │   │
-│   │   ├───ecs-cluster
-│   │   │       terragrunt.hcl
-│   │   │
-│   │   ├───ecs-services
-│   │   │   └───frontend
-│   │   │           terragrunt.hcl
-│   │   │
-│   │   └───vpc
-│   │           terragrunt.hcl
-│   │
-│   └───us-east-1
-│       │   region.hcl
-│       │
-│       ├───alb
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-cluster
-│       │       terragrunt.hcl
-│       │
-│       ├───ecs-services
-│       │   └───frontend
-│       │           terragrunt.hcl
-│       │
-│       └───vpc
+│   │   account.hcl
+│   │
+│   ├───eu-west-1
+│   │   │   region.hcl
+│   │   │
+│   │   ├───alb
+│   │   │       terragrunt.hcl
+│   │   │
+│   │   ├───ecs-cluster
+│   │   │       terragrunt.hcl
+│   │   │
+│   │   ├───ecs-services
+│   │   │   └───frontend
+│   │   │           terragrunt.hcl
+│   │   │
+│   │   └───vpc
+│   │           terragrunt.hcl
+│   │
+│   └───us-east-1
+│       │   region.hcl
+│       │
+│       ├───alb
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-cluster
+│       │       terragrunt.hcl
+│       │
+│       ├───ecs-services
+│       │   └───frontend
+│       │           terragrunt.hcl
+│       │
+│       └───vpc
 │               terragrunt.hcl
 │
 └───_env
@@ -383,9 +383,9 @@ inputs = {
   name = "${local.project_name}-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
@@ -404,7 +404,7 @@ inputs = {
      <a href="https://github.com/terraform-aws-modules/terraform-aws-vpc" target="_blank">
       terraform-aws-modules
      </a>
-     open source project. We don't necessarily need to rely on other people's code, we can use modules maintained by ourselves by providing a link to a remote Git repository, or we can even have it point to a local path on our drive.
+     open source project for which we either could use the URL of the repository, or we could use the URL provided by the Terragrunt registry. We don't necessarily need to rely on other people's code, we can use modules maintained by ourselves by providing a link to our remote Git repository, or we can even have it point to a local path on our drive.
     </li>
     <li>
      The
@@ -470,9 +470,9 @@ inputs = {
   name = "${local.project_name}-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
@@ -492,7 +492,7 @@ include "env" {
 }
 
 inputs = {
-  azs  = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  azs  = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
 }
 </code></pre>
    <p>
@@ -590,7 +590,15 @@ inputs = {
    </ol>
    <blockquote>
     <p>
-     [WARNING] Using run-all with plan is currently broken for certain use cases. If you have a stack of Terragrunt modules with dependencies between them—either via dependency blocks or
+     [WARNING] Using
+     <code>
+      run-all
+     </code>
+     with�
+     <code>
+      plan
+     </code>
+      is currently broken for certain use cases. If you have a stack of Terragrunt modules with dependencies between them—either via dependency blocks or
      <code>
       terraform_remote_state
      </code>
