@@ -331,7 +331,6 @@
 │               terragrunt.hcl
 │
 └───_env
-        alb.hcl
         frontend.hcl
         vpc.hcl
 </code></pre>
@@ -514,6 +513,32 @@ inputs = {
      </code>
     </a>
     ).
+   </p>
+   <p>
+    <strong>
+     LATER UPDATE
+    </strong>
+    : It seems like it is not really possible to execute
+    <code>
+     run-all apply
+    </code>
+    from the root of the project in this current example. Terragrunt will fail to find either
+    <code>
+     globals.hcl
+    </code>
+    or
+    <code>
+     account.hcl
+    </code>
+    . It appears strange to be unable to find
+    <code>
+     globals.hcl
+    </code>
+    , but it is understandable to not be able to locate
+    <code>
+     account.hcl
+    </code>
+    , since this file is not in a parent folder. It was an oversight on my part while building the example project for this article and I apologize for that. Deploying from an environment should work as it is presented in the upcoming lines.
    </p>
    <p>
     In case we don't want to deploy everything everywhere at once, we can simply navigate into the folder of the environment/region where we want to provision resources, and we can execute the command there.
