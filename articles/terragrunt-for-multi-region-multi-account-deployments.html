@@ -101,7 +101,7 @@
     </a>
    </h2>
    <p>
-    To understand why Terragrunt was chosen, it would make sense to go through a timeline of challenges we encountered.Â
+    To understand why Terragrunt was chosen, it would make sense to go through a timeline of challenges we encountered.
    </p>
    <p>
     Let's assume we have an application spanning through a few micro-services with an SQL database, some static assets, and a few ETL jobs bringing in some data from external providers. We decide we want to migrate everything to the AWS. Our users are from all over the globe, but our main focus is Europe and the US. We have to offer different data to the EU users and the US users, moreover, we would like to reduce the latency of the responses. So it makes sense to deploy the whole stack on 2 different regions. We also want to have the application deployed separately for development and testing, for which we can use different AWS accounts.
@@ -191,7 +191,7 @@
     <a href="https://github.com/gruntwork-io/terragrunt-infrastructure-live-example" target="_blank">
      repository
     </a>
-    on GitHub providing an example project on how the creators recommend setting up Terragrunt. I certainly recommend going through that repository, because it is a good reference for a starting point. Having that said, I like to structure mine a little bit differently. My recommendation is to have different AWS accounts for each environment. Getting a new account usually is relatively easy to accomplish even if we are working in a corporate environment (your workplace most likely is using AWS Organizations to manage accounts). The existence of multiple accounts does not require additional costs, we only pay for what we use.Â
+    on GitHub providing an example project on how the creators recommend setting up Terragrunt. I certainly recommend going through that repository, because it is a good reference for a starting point. Having that said, I like to structure mine a little bit differently. My recommendation is to have different AWS accounts for each environment. Getting a new account usually is relatively easy to accomplish even if we are working in a corporate environment (your workplace most likely is using AWS Organizations to manage accounts). The existence of multiple accounts does not require additional costs, we only pay for what we use.
    </p>
    <p>
     In the
@@ -449,7 +449,7 @@ inputs = {
     <code>
      _env
     </code>
-    , and rely on the inheritance feature discussed before.Â
+    , and rely on the inheritance feature discussed before.
    </p>
    <p>
     The extracted file will look like this:
@@ -566,7 +566,7 @@ inputs = {
       <strong>
        Steep learning curve and complexity of usage
       </strong>
-      : if we are new to Terragrunt, we may get easily overwhelmed by all the new concepts we are introduced to. As we get more familiar with it, we are faced with other challenges, such as configuration inheritance. Having to adhere to practices that make our configuration DRY, can also make it more challenging to understand and follow.Â
+      : if we are new to Terragrunt, we may get easily overwhelmed by all the new concepts we are introduced to. As we get more familiar with it, we are faced with other challenges, such as configuration inheritance. Having to adhere to practices that make our configuration DRY, can also make it more challenging to understand and follow.
      </p>
     </li>
     <li>
@@ -594,7 +594,7 @@ inputs = {
      <code>
       run-all
      </code>
-     withÂ
+     with
      <code>
       plan
      </code>
@@ -602,7 +602,7 @@ inputs = {
      <code>
       terraform_remote_state
      </code>
-     data sourcesâ€”and youâ€™ve never deployed them, thenÂ
+     data sourcesâ€”and youâ€™ve never deployed them, then
      <code>
       run-allÂ plan
      </code>
@@ -642,7 +642,7 @@ inputs = {
     <code>
      apply
     </code>
-    without the silent auto-approve flag.Â
+    without the silent auto-approve flag.
    </p>
    <p>
     Also, Terragrunt is meant to be used with multiple environments in mind. Having a successful rollout in a non-prod environment should make us confident and prepared for the production rollout.
@@ -707,7 +707,7 @@ inputs = {
     </a>
    </h2>
    <p>
-    In conclusion, Terragrunt is a powerful tool with many functionalities. It is an opinionated way of working with infrastructure. It might not be the best choice for everyone.Â
+    In conclusion, Terragrunt is a powerful tool with many functionalities. It is an opinionated way of working with infrastructure. It might not be the best choice for everyone.
    </p>
    <p>
     Should I use it for my next project?
