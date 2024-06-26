@@ -518,7 +518,7 @@ inputs = {
     <strong>
      LATER UPDATE
     </strong>
-    : It seems like it is not really possible to execute
+    : It seems like it is not possible to execute
     <code>
      run-all apply
     </code>
@@ -534,11 +534,19 @@ inputs = {
     <code>
      globals.hcl
     </code>
-    , but it is understandable to not be able to locate
+    since this file is in the same directory together with the
+    <code>
+     terragrunt.hcl
+    </code>
+    configuration file from where it is referenced. It might be understandable to not be able to locate
     <code>
      account.hcl
     </code>
-    , since this file is not in a parent folder. It was an oversight on my part while building the example project for this article and I apologize for that. Deploying from an environment should work as it is presented in the upcoming lines.
+    . This file is not in the current root folder, it is in a child folder relative to the root, so
+    <code>
+     find_in_parent_folders
+    </code>
+    will fail to locate it. This was an oversight on my part while building the example project for this article and I want to apologize for that. Deploying from an environment should work as it is presented in the upcoming lines.
    </p>
    <p>
     In case we don't want to deploy everything everywhere at once, we can simply navigate into the folder of the environment/region where we want to provision resources, and we can execute the command there.
