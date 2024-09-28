@@ -119,124 +119,187 @@
    </h3>
    <p>
     For the exam, you need to have a clear understanding of some basic concepts related to cloud computing, such as:
-- Cloud vs on-prem: what are the advantages, what are the drawbacks of both
-- Public vs private cloud
-- Pricing of cloud services: one important keyword that you will encounter is
-    <strong>
-     on-demand
-    </strong>
-    . Everything in the cloud is pay-per-use, you only pay for what you use. Whenever you see a question talking about pricing, as a rule of thumb, you can default to the answer that mentions the
-    <strong>
-     on-demand
-    </strong>
-    keyword. Of course, there might be exceptions, so use your best judgment.
    </p>
+   <ul>
+    <li>
+     Cloud vs on-prem: what are the advantages, what are the drawbacks of both
+    </li>
+    <li>
+     Public vs private cloud
+    </li>
+    <li>
+     Pricing of cloud services: one important keyword that you will encounter is
+     <strong>
+      on-demand
+     </strong>
+     . Everything in the cloud is pay-per-use, you only pay for what you use. Whenever you see a question talking about pricing, as a rule of thumb, you can default to the answer that mentions the
+     <strong>
+      on-demand
+     </strong>
+     keyword. Of course, there might be exceptions, so use your best judgment.
+    </li>
+   </ul>
    <h3>
     2. Basic Machine Learning Concepts
    </h3>
    <p>
     For the exam, you will need to have surface-level knowledge about machine learning concepts and algorithms. It is not expected to have any in-depth knowledge about these topics, but you should be able to recognize them and know their usage. The concepts are the following:
-- AI/Machine learning: what is AI and what is machine learning? What use cases are solved by AI systems?
-- AI application components: data layer, ML algorithms, model layer, application layer.
-- Neural Networks: what are neural networks? Also, you should know about their components: neurons, layers, activation functions, and loss functions.
-- You should understand what backpropagation is: the process of updating the weights in the network to minimize the loss function
-- Deep Learning: understand what it is and for what is used. Remember the keyword
-    <strong>
-     convolution
-    </strong>
-    , it is used for a type of deep learning network (named convolutional networks) of which main use cases are computer vision and image recognition.
-- GenAI: what is generative AI and what is it used for?
-- Transformer Models/Diffusion Models/Multi-Modal Models: these are "GenAI" models. There is a high chance that you will see some questions asking about some properties of these models, so it is recommended that you have a minimal understanding of them. Other than that, you probably won't need to go into details about their inner working.
-- Supervised vs. Unsupervised learning: you should know the difference between them and you should know when one is better to use compared to the other.
-- Reinforcement Learning (RL): how does it work? What is used for (again, important to know some use cases)
-- Machine learning model training and evaluation:
-    - Model fit: the exam also goes into some more technical topics such as
-    <strong>
-     underfitting
-    </strong>
-    and
-    <strong>
-     overfitting
-    </strong>
-    . These two concepts are used while training a model. A model is underfitting if it does not perform well on the training data. It is overfitting if it does perform well on the training data but it does perform poorly on the evaluation/real world data. If none of these applies to your model, then we can assume you have a
-    <strong>
-     balanced
-    </strong>
-    model.
-    -
-    <strong>
-     Bias
-    </strong>
-    and
-    <strong>
-     variance
-    </strong>
-    : both of these are errors that are introduced by your model. A model is biased, when it constantly makes the same error in the result. This comes from erroneous assumptions in the learning. The variance of a model comes from its sensitivity to small fluctuations in the input data. For the exam, you should be able to detect whether a model is highly biased or it has a high variance. Also, you should know how bias and variance relate to the model fit. As an example, a model that has a high variance will also overfit. Similarly, a model with a high bias will probably underfit.
-    - Model evaluation metrics: it is expected that you are familiar with concepts of how to evaluate a model. It is not required to know the math behind those concepts, but it expects you to know when you should use one metric versus another. These metrics are the following:
-        - Metrics used for classification models:
-            -
-    <strong>
-     Confusion Matrix
-    </strong>
-    : used to evaluate the performance of classification models. It is usually structured as a square matrix, where rows represent the actual classes, and columns represent the predicted classes.
-            -
-    <strong>
-     Accuracy
-    </strong>
-    : measures the fraction of correct prediction.
-            -
-    <strong>
-     Recall (or Sensitivity)
-    </strong>
-    : measures the true positive rates of the predictions.
-            -
-    <strong>
-     Precision
-    </strong>
-    : measures the correct positive rate.
-            -
-    <strong>
-     Specificity
-    </strong>
-    : measures the true negative rate.
-            -
-    <strong>
-     F1 score
-    </strong>
-    : combines precision and recall into a final score. Use it when both precision and recall are considered important for evaluating your model.
-        - Metrics used for regression models: similar to the metrics from the classification models, you don't need to know the formulas and mathematics behind these metrics. What you should know for the exam is to recognize them and know if they can be used with a presented model or not:
-            -
-    <strong>
-     MAE (Mean Absolute Error)
-    </strong>
-    : measures the average magnitude of errors between the predicted values and the actual values.
-            -
-    <strong>
-     MAPE (Mean Absolute Percentage Error)
-    </strong>
-    : used to assess the accuracy of a predictive model by calculating the average percentage error between the predicted values and the actual values. MAPE expresses the error as a percentage.
-            -
-    <strong>
-     RMSE (Root Mean Squared Error)
-    </strong>
-    : measures the average magnitude of the error between the predicted values and the actual values, with a higher emphasis on larger errors.
-            -
-    <strong>
-     R Squared
-    </strong>
-    : explains variance in our model. R2 close to 1 means predictions are good.
-        - Metrics used to evaluate LLMs - the exam might ask you about evaluating the performance of a large language model. In this case, you would want to know about these:
-            -
-    <strong>
-     Perplexity loss
-    </strong>
-    : measures how well the model can predict the next word in a sequence of text
-            -
-    <strong>
-     Recall-Oriented Understudy for Gisting Evaluation (ROUGE)
-    </strong>
-    : a set of metrics used in the field of natural language processing to evaluate the quality of machine-generated text.
    </p>
+   <ul>
+    <li>
+     AI/Machine learning: what is AI and what is machine learning? What use cases are solved by AI systems?
+    </li>
+    <li>
+     AI application components: data layer, ML algorithms, model layer, application layer.
+    </li>
+    <li>
+     Neural Networks: what are neural networks? Also, you should know about their components: neurons, layers, activation functions, and loss functions.
+    </li>
+    <li>
+     You should understand what backpropagation is: the process of updating the weights in the network to minimize the loss function
+    </li>
+    <li>
+     Deep Learning: understand what it is and for what is used. Remember the keyword
+     <strong>
+      convolution
+     </strong>
+     , it is used for a type of deep learning network (named convolutional networks) of which main use cases are computer vision and image recognition.
+    </li>
+    <li>
+     GenAI: what is generative AI and what is it used for?
+    </li>
+    <li>
+     Transformer Models/Diffusion Models/Multi-Modal Models: these are "GenAI" models. There is a high chance that you will see some questions asking about some properties of these models, so it is recommended that you have a minimal understanding of them. Other than that, you probably won't need to go into details about their inner working.
+    </li>
+    <li>
+     Supervised vs. Unsupervised learning: you should know the difference between them and you should know when one is better to use compared to the other.
+    </li>
+    <li>
+     Reinforcement Learning (RL): how does it work? What is used for (again, important to know some use cases)
+    </li>
+    <li>
+     Machine learning model training and evaluation:
+     <ul>
+      <li>
+       Model fit: the exam also goes into some more technical topics such as
+       <strong>
+        underfitting
+       </strong>
+       and
+       <strong>
+        overfitting
+       </strong>
+       . These two concepts are used while training a model. A model is underfitting if it does not perform well on the training data. It is overfitting if it does perform well on the training data but it does perform poorly on the evaluation/real world data. If none of these applies to your model, then we can assume you have a
+       <strong>
+        balanced
+       </strong>
+       model.
+      </li>
+      <li>
+       <strong>
+        Bias
+       </strong>
+       and
+       <strong>
+        variance
+       </strong>
+       : both of these are errors that are introduced by your model. A model is biased, when it constantly makes the same error in the result. This comes from erroneous assumptions in the learning. The variance of a model comes from its sensitivity to small fluctuations in the input data. For the exam, you should be able to detect whether a model is highly biased or it has a high variance. Also, you should know how bias and variance relate to the model fit. As an example, a model that has a high variance will also overfit. Similarly, a model with a high bias will probably underfit.
+      </li>
+      <li>
+       Model evaluation metrics: it is expected that you are familiar with concepts of how to evaluate a model. It is not required to know the math behind those concepts, but it expects you to know when you should use one metric versus another. These metrics are the following:
+       <ul>
+        <li>
+         Metrics used for classification models:
+         <ul>
+          <li>
+           <strong>
+            Confusion Matrix
+           </strong>
+           : used to evaluate the performance of classification models. It is usually structured as a square matrix, where rows represent the actual classes, and columns represent the predicted classes.
+          </li>
+          <li>
+           <strong>
+            Accuracy
+           </strong>
+           : measures the fraction of correct prediction.
+          </li>
+          <li>
+           <strong>
+            Recall (or Sensitivity)
+           </strong>
+           : measures the true positive rates of the predictions.
+          </li>
+          <li>
+           <strong>
+            Precision
+           </strong>
+           : measures the correct positive rate.
+          </li>
+          <li>
+           <strong>
+            Specificity
+           </strong>
+           : measures the true negative rate.
+          </li>
+          <li>
+           <strong>
+            F1 score
+           </strong>
+           : combines precision and recall into a final score. Use it when both precision and recall are considered important for evaluating your model.
+          </li>
+         </ul>
+        </li>
+        <li>
+         Metrics used for regression models: similar to the metrics from the classification models, you don't need to know the formulas and mathematics behind these metrics. What you should know for the exam is to recognize them and know if they can be used with a presented model or not:
+         <ul>
+          <li>
+           <strong>
+            MAE (Mean Absolute Error)
+           </strong>
+           : measures the average magnitude of errors between the predicted values and the actual values.
+          </li>
+          <li>
+           <strong>
+            MAPE (Mean Absolute Percentage Error)
+           </strong>
+           : used to assess the accuracy of a predictive model by calculating the average percentage error between the predicted values and the actual values. MAPE expresses the error as a percentage.
+          </li>
+          <li>
+           <strong>
+            RMSE (Root Mean Squared Error)
+           </strong>
+           : measures the average magnitude of the error between the predicted values and the actual values, with a higher emphasis on larger errors.
+          </li>
+          <li>
+           <strong>
+            R Squared
+           </strong>
+           : explains variance in our model. R2 close to 1 means predictions are good.
+          </li>
+         </ul>
+        </li>
+        <li>
+         Metrics used to evaluate LLMs - the exam might ask you about evaluating the performance of a large language model. In this case, you would want to know about these:
+         <ul>
+          <li>
+           <strong>
+            Perplexity loss
+           </strong>
+           : measures how well the model can predict the next word in a sequence of text
+          </li>
+          <li>
+           <strong>
+            Recall-Oriented Understudy for Gisting Evaluation (ROUGE)
+           </strong>
+           : a set of metrics used in the field of natural language processing to evaluate the quality of machine-generated text.
+          </li>
+         </ul>
+        </li>
+       </ul>
+      </li>
+     </ul>
+    </li>
+   </ul>
    <h3>
     3. Generative AI and AWS Services for GenAI
    </h3>
