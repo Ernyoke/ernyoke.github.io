@@ -82,7 +82,7 @@
     As a disclaimer before going into the technicalities of building a bot:
    </p>
    <p>
-    Social media bots, especially in the context of Twitter, have a negative connotation. That is because many people are abusing them. In this article, I don't want to promote that. A bot, a client that automatically can share/re-share content on social media, can be useful. Many organizations rely on automatically posting information with a single click on multiple social media sites. I strongly condemn bots that have malicious intent in the messaging they spread, spam bots whose reason is to create as many posts as possible regardless of whether the content they share is meaningful or not, and scam bots
+    Social media bots, especially in the context of Twitter, have a negative connotation. That is because many people are abusing them. In this article, I don't want to promote that. A bot, a client that automatically can share/re-share content on social media, can be useful. Many organizations rely on bots and/or external clients for automatically sharing information on multiple social media sites at once. In the other hand, I strongly condemn bots that have malicious intent in the messaging they spread, spam bots whose reason is to create as many posts as possible regardless of whether the content they share is meaningful or not, and scam bots.
    </p>
    <h2>
     The Idea for a Bot
@@ -344,7 +344,7 @@
 }
 </code></pre>
    <p>
-    In the case of the Deprecation Lambda, I have to deal with other limitations. Since AWS decided to limit my account to 20 invocations of a base model from Bedrock, I decided to use the poor man's approach to Lambda rate limiting: setting the reserved concurrency at 1. This will allow only one instance of my function to be executed at the same time. I'm aware that with this I still can hit the rate limit imposed by Bedrock, but I feel like at this point there is not much I can do. Also, important to notice, that in this case
+    In the case of the Deprecation Lambda, I have to deal with other limitations. Since AWS decided to limit my account to 20 invocations per minute of a base model from Bedrock, I decided to use the poor man's approach to Lambda rate limiting: setting the reserved concurrency at 1. This will allow only one instance of my function to be executed at the same time. I'm aware that with this I still can hit the rate limit imposed by Bedrock, but I feel like at this point there is not much I can do. Also, important to notice, that in this case
     <code>
      maximum_concurrency
     </code>
