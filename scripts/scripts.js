@@ -79,9 +79,9 @@ window.onload = () => {
 
     if (themeSelector) {
         if (getCurrentTheme() == "dark") {
-            themeSelector.classList.add("fa-moon");
-        } else {
             themeSelector.classList.add("fa-sun");
+        } else {
+            themeSelector.classList.add("fa-moon");
         }
     }
 };
