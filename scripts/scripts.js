@@ -60,11 +60,11 @@ function switchTheme() {
 
     if (document.documentElement.getAttribute("data-theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "light");
-        themeSelector.classList.replace("fa-moon", "fa-sun");
+        themeSelector.classList.replace("fa-sun", "fa-moon");
         localStorage.setItem("theme", "light");
     } else {
         document.documentElement.setAttribute("data-theme", "dark");
-        themeSelector.classList.replace("fa-sun", "fa-moon");
+        themeSelector.classList.replace("fa-moon", "fa-sun");
         localStorage.setItem("theme", "dark");
     }
 
@@ -74,4 +74,14 @@ function switchTheme() {
 window.onload = () => {
     setHighlightJsTheme();
     createUtterancesIFrame();
+
+    const themeSelector = document.getElementById("themeSwitcher");
+
+    if (themeSelector) {
+        if (getCurrentTheme() == "dark") {
+            themeSelector.classList.add("fa-moon");
+        } else {
+            themeSelector.classList.add("fa-sun");
+        }
+    }
 };
