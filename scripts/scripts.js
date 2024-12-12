@@ -78,6 +78,7 @@ window.onload = () => {
     const themeSelector = document.getElementById("themeSwitcher");
 
     if (themeSelector) {
+        themeSelector.classList.remove("fa-circle");
         if (getCurrentTheme() == "dark") {
             themeSelector.classList.add("fa-sun");
         } else {
