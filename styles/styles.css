@@ -178,6 +178,10 @@ nav ul li {
     line-height: 2em;
 }
 
+#themeSwitcher {
+    
+}
+
 nav div ul li a {
     color: var(--fg) !important;
     line-height: 2em;

@@ -3,7 +3,15 @@ function getCurrentTheme() {
 
     if (currentTheme) {
         return currentTheme;
+    } else {
+        // try to detect default colorscheme of the system
+        const isDarkMode = () =>
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDarkMode()) {
+            return "dark";
+        }
     }
+
     return "light";
 }
 
@@ -48,18 +56,21 @@ function setUtterancesTheme() {
 }
 
 function switchTheme() {
+    const themeSelector = document.getElementById("themeSwitcher");
+
     if (document.documentElement.getAttribute("data-theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "light");
+        themeSelector.classList.replace("fa-moon", "fa-sun");
         localStorage.setItem("theme", "light");
     } else {
         document.documentElement.setAttribute("data-theme", "dark");
+        themeSelector.classList.replace("fa-sun", "fa-moon");
         localStorage.setItem("theme", "dark");
     }
-    setHighlightJsTheme();
-    createUtterancesIFrame();
+
+    document.documentElement.setAttribute("data-theme", getCurrentTheme());
 }
 
-document.documentElement.setAttribute("data-theme", getCurrentTheme());
 window.onload = () => {
     setHighlightJsTheme();
     createUtterancesIFrame();

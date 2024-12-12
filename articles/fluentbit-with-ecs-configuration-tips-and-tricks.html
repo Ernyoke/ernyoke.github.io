@@ -18,6 +18,14 @@
    <meta charset="utf-8"/>
    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
    <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
+   <script>
+    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let theme = localStorage.getItem("theme");
+        if (!theme) {
+            theme = isDarkMode() ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+   </script>
   </link>
   <meta content="Fluent Bit with ECS: Configuration Tips and Tricks" property="og:title"/>
   <meta content="Personal web page and blog." property="og:description"/>
@@ -47,7 +55,7 @@
    <div class="nav-right">
     <ul>
      <li>
-      <a class="fa fa-moon" onclick="switchTheme()">
+      <a class="fa fa-moon" id="themeSwitcher" onclick="switchTheme()">
       </a>
      </li>
      <li>
@@ -972,7 +980,7 @@ end
   </script>
   <script>
    hljs.registerLanguage('terraform', window.hljsDefineTerraform);
-            hljs.highlightAll();
+        hljs.highlightAll();
   </script>
  </body>
 </html>
