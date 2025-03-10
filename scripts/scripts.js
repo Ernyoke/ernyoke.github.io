@@ -70,6 +70,7 @@ function switchTheme() {
 
     document.documentElement.setAttribute("data-theme", getCurrentTheme());
     setHighlightJsTheme();
+    setUtterancesTheme();
 }
 
 window.onload = () => {
