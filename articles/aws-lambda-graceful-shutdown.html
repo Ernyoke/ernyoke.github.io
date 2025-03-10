@@ -65,11 +65,11 @@
 <h2>Intro<a class="anchor-link" href="#intro" id="intro">&lt;&lt;</a>
 </h2>
 <p>A common optimization technique for Lambda functions recommended by AWS is to <a href="https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html" target="_blank">take advantage of execution environment reuse to improve the performance of your function</a>. This means, for example, in case we have a database connection, it is recommended for these connections to be initialized before the function handler. In case of a cold start, the Lambda execution environment will run the full initialization of the connectivity (essentially all the code before the handler will be executed), while in case of warm starts, this execution will be avoided, and the already initialized state being cached and reused.</p>
-<p>The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be torn down gracefully. In the case of database connections, it would be a best practice to disconnect and end existing connections if we know we won't use them anymore. For a long time, there were no recommended solutions for building a graceful shutdown mechanism. But happily, we can find some examples for graceful shutdown in the official <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">aws-samples</a> GitHub repositories.</p>
+<p>The problem with this approach is that as long as something takes time and effort to be initialized, it usually also requires time and effort to be torn down gracefully. In the case of database connections, it would be a best practice to disconnect and end existing connections if we know we won’t use them anymore. For a long time, there were no recommended solutions for building a graceful shutdown mechanism. But happily, we can find some examples for graceful shutdown in the official <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">aws-samples</a> GitHub repositories.</p>
 <h2>Graceful Shutdown with Lambda<a class="anchor-link" href="#graceful-shutdown-with-lambda" id="graceful-shutdown-with-lambda">&lt;&lt;</a>
 </h2>
 <p>Actually, it is pretty simple to achieve a graceful shutdown, although it may seem a little hacky. In the case of a Lambda function <strong>which is registered with an external extension</strong>, the Lambda environment allocates 300-500 milliseconds of cleanup for the runtime process. When Lambda service is about to shut down the runtime, it will send a <code>SIGTERM</code> signal to the runtime and then a <code>SHUTDOWN</code> event to each registered external extension. We can catch the <code>SIGTERM</code> signal in our Lambda functions and execute some cleanup logic.</p>
-<p>Let's see an example of a Lambda using NodeJS which listens to <code>SIGTERM</code> signal and attempts to do some cleanup:</p>
+<p>Let’s see an example of a Lambda using NodeJS which listens to <code>SIGTERM</code> signal and attempts to do some cleanup:</p>
 <pre><code class="language-javascript">const connectionPromise = mysql.createConnection({...});
 
 // Handler
@@ -167,7 +167,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 </code></pre>
 <h2>Conclusion<a class="anchor-link" href="#conclusion" id="conclusion">&lt;&lt;</a>
 </h2>
-<p>In this article, we've seen how we can have a graceful shutdown for Lambda functions that rely on environment re-use. We built a function using the NodeJS environment. Examples for other execution environments can be found in the <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">AWS samples</a> project mentioned before.</p>
+<p>In this article, we’ve seen how we can have a graceful shutdown for Lambda functions that rely on environment re-use. We built a function using the NodeJS environment. Examples for other execution environments can be found in the <a href="https://github.com/aws-samples/graceful-shutdown-with-aws-lambda" target="_blank">AWS samples</a> project mentioned before.</p>
 <h2>References:<a class="anchor-link" href="#references" id="references">&lt;&lt;</a>
 </h2>
 <ol>

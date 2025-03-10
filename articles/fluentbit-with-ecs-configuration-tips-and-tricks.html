@@ -62,7 +62,7 @@
 </div>
 </nav>
 <article id="main-content"><h1>Fluent Bit with ECS: Configuration Tips and Tricks</h1>
-<p>A while ago I wrote a <a href="./ecs-custom-logging-with-fluentbit.html">blog post</a> about Fluent Bit integration with containers running in an ECS cluster. According to my statistics, this post is one of the most viewed on my blog, so I was determined to write a follow-up for it. I've been using FluentBit with ECS for more than a year in a business application running in production. During this period I had the chance to make use of and even abuse several features provided by Fluent Bit.</p>
+<p>A while ago I wrote a <a href="./ecs-custom-logging-with-fluentbit.html">blog post</a> about Fluent Bit integration with containers running in an ECS cluster. According to my statistics, this post is one of the most viewed on my blog, so I was determined to write a follow-up for it. I’ve been using FluentBit with ECS for more than a year in a business application running in production. During this period I had the chance to make use of and even abuse several features provided by Fluent Bit.</p>
 <p>Generally speaking my experience with Fluent Bit in the last year was positive. In many cases, I found that it had a steep learning curve, and several times I felt I was doing things that I should not supposed to be doing. In the end, I managed to reconcile myself with how it operates and I can say for sure that it is a fast and very polished product that can handle huge production workloads.</p>
 <p>In this blog post, I will talk about certain tips and tricks for the Fluent Bit configuration file that I found useful. Some of them might be trivial if you already have experience with it. Nevertheless, I think that they might be helpful for anybody interested in introducing Fluent Bit to their cluster of services.</p>
 <p>This post will not provide a guideline on how to set up Fluent Bit. If you are interested in that, please read my previous post on this topic: <a href="./ecs-custom-logging-with-fluentbit.html">ECS Fargate Custom Logging with Fluent Bit</a>. Moreover, there are several useful articles from AWS, such as this one: <a href="https://aws.amazon.com/blogs/opensource/centralized-container-logging-fluent-bit/" target="_blank">Centralized Container Logging with Fluent Bit</a>.</p>
@@ -104,7 +104,7 @@
 <h2>Debugging and Troubleshooting Fluent Bit Configuration File<a class="anchor-link" href="#debugging-and-troubleshooting-fluent-bit-configuration-file" id="debugging-and-troubleshooting-fluent-bit-configuration-file">&lt;&lt;</a>
 </h2>
 <p>While working with Fluent Bit I found myself losing a lot of time with deployments. If I wanted to see the effects of certain changes I made in the configuration file, I had to rebuild the Fluent Bit image, push it to an ECR repo, restart the main service which will load the newest version of the sidecar container, and then just wait for the log messages to arrive while hoping to see some meaningful change. This laborious process can be very annoying. It is way wiser to attempt to run the container locally and provide some test input for validating a modification in the configuration file.</p>
-<p>We mentioned that we can have several types of <code>INPUT</code>s. One of them, having the name of <code>dummy</code>, was purposefully implemented for quick testig. It accepts a pre-defined JSON as input. It will repeatedly send this input for processing over and over again, simulating a stream of data. Additionally, if we set the <code>OUTPUT</code> to be <code>stdout</code>, we will create a way of doing "printf debugging".</p>
+<p>We mentioned that we can have several types of <code>INPUT</code>s. One of them, having the name of <code>dummy</code>, was purposefully implemented for quick testig. It accepts a pre-defined JSON as input. It will repeatedly send this input for processing over and over again, simulating a stream of data. Additionally, if we set the <code>OUTPUT</code> to be <code>stdout</code>, we will create a way of doing “printf debugging”.</p>
 <p>For example:</p>
 <p>We create a <code>fluent-bit.conf</code> file with the following content:</p>
 <pre><code class="language-bash">[INPUT]
@@ -172,7 +172,7 @@ Fluent Bit v1.9.10
 }
 </code></pre>
 <p>We could provide this JSON document as a one-liner and call it a day. In my opinion, it would be ideal if we could put this into a file, and point the input to use the content of that file to generate records. Unfortunately, <code>dummy</code> input is dummy and does not support reading stuff from a file. </p>
-<p>A workaround that I've been using to overcome this limitation, is to have <code>exec</code> instead of <code>dummy</code>. <code>exec</code> can take the content from the standard output of a script and generate records based on that.</p>
+<p>A workaround that I’ve been using to overcome this limitation, is to have <code>exec</code> instead of <code>dummy</code>. <code>exec</code> can take the content from the standard output of a script and generate records based on that.</p>
 <p>We can provide a simple bash script that reads and outputs the content of a file:</p>
 <pre><code class="language-bash">#!/bin/bash
 
@@ -265,7 +265,7 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     Add   brand   AMD
     Add   mark    Ryzen
 </code></pre>
-<p>Each record tagged with <code>cpu_usage</code> will have a <code>brand</code> and a <code>mark</code> field. In case we add another input for collecting the memory usage and we tag these records with <code>mem_usage</code>, the records originating from the memory INPUT won't receive the <code>brand</code> and <code>mark</code> fields. </p>
+<p>Each record tagged with <code>cpu_usage</code> will have a <code>brand</code> and a <code>mark</code> field. In case we add another input for collecting the memory usage and we tag these records with <code>mem_usage</code>, the records originating from the memory INPUT won’t receive the <code>brand</code> and <code>mark</code> fields. </p>
 <p>Similarly, we can create multiple outputs possessing the <code>Match</code> property. As an example, we can create an OUTPUT to match everything with <code>cpu_usage</code> only and build a CloudWatch metric based on this information, while we also could save every event in an S3 bucket:</p>
 <pre><code class="language-bash">[OUTPUT]
     Name              cloudwatch_logs
@@ -289,7 +289,7 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
 <p>Note, <code>Match</code> accepts a regular expression. We can have a wildcard (<code>*</code>) to match everything.</p>
 <h2>Nest and Lift<a class="anchor-link" href="#nest-and-lift" id="nest-and-lift">&lt;&lt;</a>
 </h2>
-<p>When working with Fluent Bit on ECS, generally it is a good idea to configure our services to log in JSON format. Most of the logging libraries support this out of the box. Assuming we are logging everything in JSON format, let's imagine our service generates the following log messages:</p>
+<p>When working with Fluent Bit on ECS, generally it is a good idea to configure our services to log in JSON format. Most of the logging libraries support this out of the box. Assuming we are logging everything in JSON format, let’s imagine our service generates the following log messages:</p>
 <pre><code class="language-json">{
     "type": "error",
     "message": "Something happened!"
@@ -311,7 +311,7 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     "ecs_task_definition_family": "windows-app-task"
 }
 </code></pre>
-<p>We decided we don't like our log content to be embedded under <code>"log"</code> property, so we want everything to be on the root level of the record. To do this, we can use the <code>Nest</code> FILTER. This filter has two operations, the first one being <code>Nest</code> (again, confusing I know), and the second one is <code>Lift</code>. In case we want to lift out fields to the root level, we can do the following:</p>
+<p>We decided we don’t like our log content to be embedded under <code>"log"</code> property, so we want everything to be on the root level of the record. To do this, we can use the <code>Nest</code> FILTER. This filter has two operations, the first one being <code>Nest</code> (again, confusing I know), and the second one is <code>Lift</code>. In case we want to lift out fields to the root level, we can do the following:</p>
 <pre><code class="language-bash">[FILTER]
     Name         nest
     Match        *
@@ -336,11 +336,11 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
 <p>The output after adding this section to the configuration will look similar to this:</p>
 <pre><code class="language-bash">[3] dummy.input: [1703451786.500213512, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "log"=&gt;{"type"=&gt;"error", "message"=&gt;"Something happened!"}, "ecs_task_definition_family"=&gt;"windows-app-task", "log"=&gt;{"NESTED_container_id"=&gt;"61f5e6EXAMPLE"}}]
 </code></pre>
-<p>We can notice that this output is a little bit funky, since it appears there are two <code>"log"</code> objects. This is a <a href="https://github.com/fluent/fluent-bit/issues/1177" target="_blank">"bug"</a> in the Fluent Bit version used for this blog post. The demos and examples presented in this post are using the latest Fluent Bit docker image maintained by AWS, which at the moment of writing, is based on Fluent Bit <code>1.9.10</code>. Technically, this issue was <a href="https://github.com/fluent/fluent-bit/commit/1d148860a8825d5f80aef40efd0d6d2812419740" target="_blank">fixed</a> in a later version of Fluent Bit. The fix consists of maintaining only the latest key in the table, resulting in an effective overwrite in case the key existed before.</p>
+<p>We can notice that this output is a little bit funky, since it appears there are two <code>"log"</code> objects. This is a <a href="https://github.com/fluent/fluent-bit/issues/1177" target="_blank">“bug”</a> in the Fluent Bit version used for this blog post. The demos and examples presented in this post are using the latest Fluent Bit docker image maintained by AWS, which at the moment of writing, is based on Fluent Bit <code>1.9.10</code>. Technically, this issue was <a href="https://github.com/fluent/fluent-bit/commit/1d148860a8825d5f80aef40efd0d6d2812419740" target="_blank">fixed</a> in a later version of Fluent Bit. The fix consists of maintaining only the latest key in the table, resulting in an effective overwrite in case the key existed before.</p>
 <p>So, we can enumerate a few caveats for Nest and Lift:</p>
 <ul>
-<li>As we have seen before, if we would like to nest a field into an already existing field, that is not really possible, even if the receiving field itself is a nested object. Personally, I would have preferred a possibility to merge them, but I'm fully aware that this will come with its own baggage of challenges and edge cases.</li>
-<li>Let's say we have a deeply nested object such as this:</li>
+<li>As we have seen before, if we would like to nest a field into an already existing field, that is not really possible, even if the receiving field itself is a nested object. Personally, I would have preferred a possibility to merge them, but I’m fully aware that this will come with its own baggage of challenges and edge cases.</li>
+<li>Let’s say we have a deeply nested object such as this:</li>
 </ul>
 <pre><code class="language-json">{
     "source": "stdout",

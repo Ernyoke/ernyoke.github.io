@@ -1,6 +1,6 @@
 <html data-theme="light" lang="en">
 <head>
-<title>Generate "low poly" images using Delaunay triangulation - ervinszilagyi.dev</title>
+<title>Generate “low poly” images using Delaunay triangulation - ervinszilagyi.dev</title>
 <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
 <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
 <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
@@ -21,11 +21,11 @@
         }
         document.documentElement.setAttribute("data-theme", theme);
     </script>
-<meta content='Generate "low poly" images using Delaunay triangulation' property="og:title">
+<meta content="Generate “low poly” images using Delaunay triangulation" property="og:title">
 <meta content="Personal web page and blog." property="og:description">
 <meta content="https://ervinszilagyi.dev/generate-low-poly-images-using-del-triangulation.html" property="og:url">
 <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
-<meta content='Generate "low poly" images using Delaunay triangulation' property="twitter:title">
+<meta content="Generate “low poly” images using Delaunay triangulation" property="twitter:title">
 <meta content="Personal web page and blog." property="twitter:description">
 <meta content="@ervin_szilagyi" property="twitter:site">
 <meta content="@ervin_szilagyi" property="twitter:creator">
@@ -61,21 +61,21 @@
 </ul>
 </div>
 </nav>
-<article id="main-content"><h1>Generate "low poly" images using Delaunay triangulation</h1>
+<article id="main-content"><h1>Generate “low poly” images using Delaunay triangulation</h1>
 <h2>Intro<a class="anchor-link" href="#intro" id="intro">&lt;&lt;</a>
 </h2>
-<p>According to <a href="https://www.sessions.edu/notes-on-design/whats-the-deal-with-low-poly-art/#:~:text=Simple%20geometric%20shapes%20placed%20side,early%20days%20of%203D%20animation." target="_blank">sessions.edu</a> a "low poly" image is an image composed from: </p>
+<p>According to <a href="https://www.sessions.edu/notes-on-design/whats-the-deal-with-low-poly-art/#:~:text=Simple%20geometric%20shapes%20placed%20side,early%20days%20of%203D%20animation." target="_blank">sessions.edu</a> a “low poly” image is an image composed from: </p>
 <blockquote>
 <p>Simple geometric shapes placed side-by-side to create angular, often minimalist, compositions. </p>
 </blockquote>
-<p>To give an example, the following image is considered to be "low poly":
+<p>To give an example, the following image is considered to be “low poly”:
 <img alt='"Low poly" portrait of Leonardo DiCaprio' src="img-generate-low-poly-images/leo.jpeg"></p>
-<p>The roots of "low poly" art goes back to the early days of computer graphics, where the lack of performant hardware forced computer scientists and game designers to present their idea using as few polygons as possible. Nowadays, this is not really an issue, but the artistic nature of having more edges than curves is still present, representing a somewhat niche artistic style.</p>
+<p>The roots of “low poly” art goes back to the early days of computer graphics, where the lack of performant hardware forced computer scientists and game designers to present their idea using as few polygons as possible. Nowadays, this is not really an issue, but the artistic nature of having more edges than curves is still present, representing a somewhat niche artistic style.</p>
 <p><a href="https://www.youtube.com/watch?v=XuTXzLZMLUE&amp;ab_channel=ThinMatrix" target="_blank"><img alt="Equilinox" src="http://img.youtube.com/vi/XuTXzLZMLUE/0.jpg"></a></p>
-<p>Being fascinated by this style, one might ask how could we generate images like this? More specifically, how could we transform an arbitrary image into a "low poly" one? One solution would be Delaunay triangulation, which will be presented below.</p>
+<p>Being fascinated by this style, one might ask how could we generate images like this? More specifically, how could we transform an arbitrary image into a “low poly” one? One solution would be Delaunay triangulation, which will be presented below.</p>
 <h2>Delaunay triangulation<a class="anchor-link" href="#delaunay-triangulation" id="delaunay-triangulation">&lt;&lt;</a>
 </h2>
-<p>Let's imagine the following challenge: we are given a set of points in a 2D space. From this set of points we should create a mesh having the following properties:
+<p>Let’s imagine the following challenge: we are given a set of points in a 2D space. From this set of points we should create a mesh having the following properties:
 - the mesh should be composed of triangles
 - no overlapping triangles are allowed
 - the mesh should be pleasing to the eye:
@@ -85,7 +85,7 @@
 <blockquote>
 <p>In mathematics and computational geometry, a Delaunay triangulation (also known as a Delone triangulation) for a given set P of discrete points in a plane is a triangulation DT(P) such that no point in P is inside the circumcircle of any triangle in DT(P).</p>
 </blockquote>
-<p>Let's break this down. First, let's see what is the circumcircle of a triangle?
+<p>Let’s break this down. First, let’s see what is the circumcircle of a triangle?
 The circumcircle of a triangle is basically a circle that can be drawn around the triangle in such a way that every vertex of the triangle touches the circle itself.</p>
 <p>Example:
 <img alt="Alt Text" src="img-generate-low-poly-images/circumcirlce.png"></p>
@@ -94,7 +94,7 @@ The circumcircle of a triangle is basically a circle that can be drawn around th
 <p>Where <code>U(x, y)</code> represents the center of the circle in cartesian coordinates, and <code>A(x, y)</code>, <code>B(x, y)</code> and <code>C(x, y)</code> are the vertices of the triangle.
 The radius of the circumcircle can be calculated as follows:</p>
 <p><img alt="Alt Text" src="img-generate-low-poly-images/formula2.png"></p>
-<p>As we see a lot of formulas here, the good thing is that they are pretty straightforward to implement, and relatively easy to unit tests, given the fact that there are a lot of only circumcircle calculators out there. Let's see some code here:</p>
+<p>As we see a lot of formulas here, the good thing is that they are pretty straightforward to implement, and relatively easy to unit tests, given the fact that there are a lot of only circumcircle calculators out there. Let’s see some code here:</p>
 <pre><code class="language-Java">// https://en.wikipedia.org/wiki/Circumscribed_circle#Triangles
 private static Circle calculateCircumCircle(Point a, Point b, Point c) {
     double d = 2 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
@@ -111,7 +111,7 @@ private static Circle calculateCircumCircle(Point a, Point b, Point c) {
     return new Circle(new Point(centerX, centerY), r);
 }
 </code></pre>
-<p>Now that we know what a circumcircle is, let's reformulate the initial definition. The definition states that we have a set of points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex that is inside of another triangle's circumcircle. The vertex can and should be on a circumcircle, but should not be inside in another triangle's circumcircle:</p>
+<p>Now that we know what a circumcircle is, let’s reformulate the initial definition. The definition states that we have a set of points in a 2D space and we incorporate them into triangles in such a way that no triangle has a vertex that is inside of another triangle’s circumcircle. The vertex can and should be on a circumcircle, but should not be inside in another triangle’s circumcircle:</p>
 <p><img alt="Alt Text" src="img-generate-low-poly-images/triangulation.png"></p>
 <p>Moving forward there are several categories of algorithms used for Delaunay triangulation. Probably to be the easier to understand and implement is the one called <a href="https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm" target="_blank">Bowyer-Watson</a> algorithm. This algorithm is an incremental algorithm, meaning that we try to add each point one by one to the final result. If one point will not suffice the Delaunay triangulation definition, we try to re-triangulate all the affected areas of the final result. The steps of the algorithm are the following:</p>
 <pre><code class="language-Bash">function BowyerWatson (pointList)
@@ -221,7 +221,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
 <li>Feed the output to the Delaunay triangulation algorithm to get a set of triangles forming the Delaunay mesh.</li>
 <li>Reconstruct the image from the mesh.</li>
 </ol>
-<p>Moving forward, let's break these steps down by having an in-depth discussion about some implementation details. Every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case, I've decided to use a third-party library, namely <a href="https://github.com/openpnp/opencv" target="_blank">openpnp/opencv</a>, which is a Java wrapper around the already established <a href="https://opencv.org/" target="_blank">OpenCV</a> image processing library.</p>
+<p>Moving forward, let’s break these steps down by having an in-depth discussion about some implementation details. Every step involves some kind of image manipulation algorithm. Although it would be fun to manually implement all of them, in this case, I’ve decided to use a third-party library, namely <a href="https://github.com/openpnp/opencv" target="_blank">openpnp/opencv</a>, which is a Java wrapper around the already established <a href="https://opencv.org/" target="_blank">OpenCV</a> image processing library.</p>
 <ol>
 <li>
 <h3>Apply a blurring filter to the image:</h3>
@@ -230,7 +230,7 @@ private List&lt;Triangle&gt; bowyerWatson(List&lt;Point&gt; edgePoints, Size ima
 <p>A common way to blur images is by applying a <a href="https://en.wikipedia.org/wiki/Gaussian_blur" target="_blank">Gaussian filter</a> to the image. A Gaussian filter is basically an <code>NxN</code> matrix that gets <a href="https://en.wikipedia.org/wiki/Convolution" target="_blank">convolved</a> with the RGB pixel values of the image. Using OpenCV, this can be done by a simple function call:</p>
 <pre><code class="language-Java">Imgproc.GaussianBlur(originalImage, blurredImage, new Size(arguments.getBlurKernelSize(), arguments.getBlurKernelSize()), 0);
 </code></pre>
-<p>The size of the kernel aka filter determines how "blurry" the image will be. To not lose a lot of information regarding the characteristics of an image, I recommend sticking to smaller kernel sizes. This is important since it will have a significant impact on the final result.</p>
+<p>The size of the kernel aka filter determines how “blurry” the image will be. To not lose a lot of information regarding the characteristics of an image, I recommend sticking to smaller kernel sizes. This is important since it will have a significant impact on the final result.</p>
 <p>Besides Gaussian blur approach, there are other solutions for getting a blurry image, (example. <a href="http://incubator.quasimondo.com/processing/fast_blur_deluxe.php" target="_blank">Stack-blur</a>). Usually, the tendency is faster blurring procedures will result in a lower quality blur, but in our case, this does not really affect the final result. I simply went with the Gaussian algorithm, because OpenCV provides an implementation for it.</p>
 <ol start="2">
 <li>

@@ -69,10 +69,10 @@
 <p>Coming back to my initial idea that Lambda functions should be slim, if we want to have the slimmest Lambda, we should not use Docker at all. We should just package and upload our code or our executable to AWS and we are good. By default, the inner working of a Lambda environment is hidden from us, although, most likely the same base image is used in this case as well.</p>
 <h2>Distroless Containers<a class="anchor-link" href="#distroless-containers" id="distroless-containers">&lt;&lt;</a>
 </h2>
-<p>Hunting for the slimmest possible container image, we will most likely run into a variant of an alpine-based image. The base alpine image has around 5 MB, which is pretty small, but we can have even a smaller option. Enter "distroless" containers.</p>
+<p>Hunting for the slimmest possible container image, we will most likely run into a variant of an alpine-based image. The base alpine image has around 5 MB, which is pretty small, but we can have even a smaller option. Enter “distroless” containers.</p>
 <p><a href="https://github.com/GoogleContainerTools/distroless" target="_blank">Distroless containers</a> were first introduced by Google a while ago, according to them:</p>
 <blockquote>
-<p>"Distroless" images contain only your application and its runtime dependencies. They do not contain package managers, shells, or any other programs you would expect to find in a standard Linux distribution.</p>
+<p>“Distroless” images contain only your application and its runtime dependencies. They do not contain package managers, shells, or any other programs you would expect to find in a standard Linux distribution.</p>
 </blockquote>
 <p>Also, there is a very informative talk on distroless containers on youtube that can be watched <a href="https://youtu.be/lviLZFciDv4" target="_blank">here</a>.</p>
 <h2>Build a Distroless Container Image<a class="anchor-link" href="#build-a-distroless-container-image" id="build-a-distroless-container-image">&lt;&lt;</a>
@@ -148,7 +148,7 @@ ENTRYPOINT [ "./bootstrap" ]
 <p>Changing the <code>--platform</code> argument to <code>linux/amd64</code>, we can build ARM-based containers as well. We could use the usual <code>docker build</code> command, but this will target the systems architecture, which can be <code>x86-64</code> for most PC/laptop devices and <code>arm64</code> for ARM-based devices such as M1 Macs.</p>
 <h2>Performance Gains<a class="anchor-link" href="#performance-gains" id="performance-gains">&lt;&lt;</a>
 </h2>
-<p>Having this thin image, we might wonder what kind of performance gain can we achieve. Our code itself won't run faster regardless of the image. On the other hand, theoretically, we should achieve a certain amount of reduction of the initialization period during a cold start of the Lambda function. Our image should be agile in terms of startup time, the image should be able to be fetched quickly and can be cached easily. </p>
+<p>Having this thin image, we might wonder what kind of performance gain can we achieve. Our code itself won’t run faster regardless of the image. On the other hand, theoretically, we should achieve a certain amount of reduction of the initialization period during a cold start of the Lambda function. Our image should be agile in terms of startup time, the image should be able to be fetched quickly and can be cached easily. </p>
 <p>To check if there are any performance gains to be found, I decided to run the Lambda making sure I will run into a cold start. I repeated this 5 times, while I was extracting the initialization period of the Lambda function from the CloudWatch Logs.</p>
 <p>The measured results are the following:</p>
 <table>
@@ -195,13 +195,13 @@ ENTRYPOINT [ "./bootstrap" ]
 <h3>Should we use distroless containers?</h3>
 <p>It depends on what our goals are. In case we have a statically built executable, like a Lambda function written in Rust, Go, C++, etc. then I think it is a fantastic option. Luckily, storage is cheap nowadays, and being able to save a few megs here and there can be still a good thing to do.</p>
 <h3>When not to use them?</h3>
-<p>Distroless containers are hard to work with in case we need to install additional dependencies, pre-compiled libraries, etc. Distroless images don't have a shell, consequently, they don't come with a package manager. We can add something like a busybox shell if we really want to alter things inside of it, but this kind of defies the purpose of using distroless images.</p>
+<p>Distroless containers are hard to work with in case we need to install additional dependencies, pre-compiled libraries, etc. Distroless images don’t have a shell, consequently, they don’t come with a package manager. We can add something like a busybox shell if we really want to alter things inside of it, but this kind of defies the purpose of using distroless images.</p>
 <p>In certain cases we might want to have larger images with a bunch of tools, an obvious example being when we are doing development. In this case, we should probably go with an image with a full operating system.</p>
 <h2>Links and References<a class="anchor-link" href="#links-and-references" id="links-and-references">&lt;&lt;</a>
 </h2>
 <ol>
 <li>Running Serverless Lambdas with Rust on AWS: <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">ervinszilagyi.dev</a> </li>
-<li>"Distroless" Container Images - <a href="https://github.com/GoogleContainerTools/distroless" target="_blank">GitHub</a>
+<li>“Distroless” Container Images - <a href="https://github.com/GoogleContainerTools/distroless" target="_blank">GitHub</a>
 </li>
 <li>Distroless Docker: Containerizing Apps, not VMs - Matthew Moore: <a href="https://youtu.be/lviLZFciDv4" target="_blank">YouTube</a>
 </li>

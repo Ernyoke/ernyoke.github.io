@@ -157,7 +157,7 @@
 <h2>Recon Tools<a class="anchor-link" href="#recon-tools" id="recon-tools">&lt;&lt;</a>
 </h2>
 <h3><em>domain-recon</em></h3>
-<p><code>domain-recon</code> is a tool which can be used for passive host reconnaissance. It helps extend the attack surface by fetching all the available active certificates for the host. Using certificate parsing, it extracts all available domains from "Common Name" and "Matching Identities" fields. Moreover, in a lot of cases, it may encounter certificates issued for wildcard domains (<code>example: *.example.com</code>). For these domains, it can use a word list to extend these wildcards by filling in words from the list and generate new potential subdomains.</p>
+<p><code>domain-recon</code> is a tool which can be used for passive host reconnaissance. It helps extend the attack surface by fetching all the available active certificates for the host. Using certificate parsing, it extracts all available domains from “Common Name” and “Matching Identities” fields. Moreover, in a lot of cases, it may encounter certificates issued for wildcard domains (<code>example: *.example.com</code>). For these domains, it can use a word list to extend these wildcards by filling in words from the list and generate new potential subdomains.</p>
 <p><img alt="domain-recon in action" src="images/domain-recon.gif"></p>
 <p>Read the full article here: <a href="articles/certificate-parsing-with-domain-recon">Certificate Parsing with <code>domain-recon</code></a></p>
 <ul>
@@ -181,7 +181,7 @@
 </ul>
 <h2>Static Site Generator (ssg) + This Site<a class="anchor-link" href="#static-site-generator-ssg-this-site" id="static-site-generator-ssg-this-site">&lt;&lt;</a>
 </h2>
-<p>At a certain point I wanted to have my own personal site where I can share and document what I am working on and my own experience about tech. My idea was to write everything in simple markdown files and transform them to static HTML pages. Although there are many existing solutions out there, I found everything either way too complicated to learn or having way more overhead than what I need. I decided to write a simple Python script, which can transform markdown pages to HTML. That is how <code>ssg</code> was born. It is opinionated, developed mainly for this site and not intended to be used by everyone else. But it works for me, which is good enough...</p>
+<p>At a certain point I wanted to have my own personal site where I can share and document what I am working on and my own experience about tech. My idea was to write everything in simple markdown files and transform them to static HTML pages. Although there are many existing solutions out there, I found everything either way too complicated to learn or having way more overhead than what I need. I decided to write a simple Python script, which can transform markdown pages to HTML. That is how <code>ssg</code> was born. It is opinionated, developed mainly for this site and not intended to be used by everyone else. But it works for me, which is good enough…</p>
 <ul>
 <li>Technologies used: Python</li>
 <li>Source code: <a href="https://github.com/Ernyoke/ssg" target="_blank">https://github.com/Ernyoke/ssg</a>
