@@ -1,167 +1,86 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   Building Super Slim Containerized Lambdas on AWS - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
-   <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-   <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-   <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-   </script>
-   <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-   </script>
-   <meta charset="utf-8"/>
-   <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-   <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-   <script>
-    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>Building Super Slim Containerized Lambdas on AWS - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-   </script>
-  </link>
-  <meta content="Building Super Slim Containerized Lambdas on AWS" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev/building-super-slim-containerized-lambdas.html" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image"/>
-  <meta content="Building Super Slim Containerized Lambdas on AWS" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev/">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szil√°gyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       R√©sum√©
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    Building Super Slim Containerized Lambdas on AWS
-   </h1>
-   <h2>
-    Motivation
-    <a class="anchor-link" href="#motivation" id="motivation">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    AWS Lambda functions should be fast, slim and they should do one thing. At least this is how I think about them. While I was working on my previous
-    <a href="running-serverless-lambdas-with-rust-aws.html">
-     article
-    </a>
-    , I noticed that after a Lambda container is built, its size gets larger than one would expect. For example, the base image used to run the Rust Lambda executable,
-    <code>
-     public.ecr.aws/lambda/provided:al2
-    </code>
-    has a size of 309 MB, in addition to which we add our own executable. This gets even worse with an image built provided for running JavaScript or Python code. Currently, the latest
-    <code>
-     public.ecr.aws/lambda/nodejs
-    </code>
-    has 485 MB. The size increase can be attributed to the NodeJS runtime which can be over 150 MB. Similarly, the latest Python image is 595 MB in size. In my opinion, it just feels wrong to deploy such monstrosities to run a limited amount of lines of code.
-   </p>
-   <p>
-    My goal is to bring the size of a containerized Lambda down as much as I can. There are a few limitations and gotchas to accomplish this. Certainly, we cannot have a thinner Lambda than our code size/built executable. Moreover, we cannot have a container with 0 additional overhead. But we can have something really thin.
-   </p>
-   <p>
-    Coming back to my initial idea that Lambda functions should be slim, if we want to have the slimmest Lambda, we should not use Docker at all. We should just package and upload our code or our executable to AWS and we are good. By default, the inner working of a Lambda environment is hidden from us, although, most likely the same base image is used in this case as well.
-   </p>
-   <h2>
-    Distroless Containers
-    <a class="anchor-link" href="#distroless-containers" id="distroless-containers">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Hunting for the slimmest possible container image, we will most likely run into a variant of an alpine-based image. The base alpine image has around 5 MB, which is pretty small, but we can have even a smaller option. Enter "distroless" containers.
-   </p>
-   <p>
-    <a href="https://github.com/GoogleContainerTools/distroless" target="_blank">
-     Distroless containers
-    </a>
-    were first introduced by Google a while ago, according to them:
-   </p>
-   <blockquote>
-    <p>
-     "Distroless" images contain only your application and its runtime dependencies. They do not contain package managers, shells, or any other programs you would expect to find in a standard Linux distribution.
-    </p>
-   </blockquote>
-   <p>
-    Also, there is a very informative talk on distroless containers on youtube that can be watched
-    <a href="https://youtu.be/lviLZFciDv4" target="_blank">
-     here
-    </a>
-    .
-   </p>
-   <h2>
-    Build a Distroless Container Image
-    <a class="anchor-link" href="#build-a-distroless-container-image" id="build-a-distroless-container-image">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    For my previous
-    <a href="running-serverless-lambdas-with-rust-aws.html">
-     article
-    </a>
-    we built a Lambda function in Rust for testing and benchmarking. This application would be a perfect choice for being deployed in a distroless environment. The container we are planning to use to deploy this executable is
-    <code>
-     gcr.io/distroless/static
-    </code>
-    provided by Google container registry. The container has around 2.4 MB uncompressed. It was specifically created for statically compiled applications, which is exactly what we are looking for in the case of a Rust Lambda.
-   </p>
-   <p>
-    In the following lines, we will define a Dockerfile to use distrloless with a Rust Lambda executable. This Dockerfile will have a multistage definition, the first stage will be doing the compilation and building of the application, while the second stage will be the execution stage that gets deployed on AWS.
-   </p>
-   <p>
-    The Dockerfile for an
-    <code>
-     x86-64
-    </code>
-    Lambda would look something like this:
-   </p>
-   <pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
+    </script>
+<meta content="Building Super Slim Containerized Lambdas on AWS" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/building-super-slim-containerized-lambdas.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
+<meta content="Building Super Slim Containerized Lambdas on AWS" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev/">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szil√°gyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">R√©sum√©</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Building Super Slim Containerized Lambdas on AWS</h1>
+<h2>Motivation<a class="anchor-link" href="#motivation" id="motivation">&lt;&lt;</a>
+</h2>
+<p>AWS Lambda functions should be fast, slim and they should do one thing. At least this is how I think about them. While I was working on my previous <a href="running-serverless-lambdas-with-rust-aws.html">article</a>, I noticed that after a Lambda container is built, its size gets larger than one would expect. For example, the base image used to run the Rust Lambda executable, <code>public.ecr.aws/lambda/provided:al2</code> has a size of 309 MB, in addition to which we add our own executable. This gets even worse with an image built provided for running JavaScript or Python code. Currently, the latest <code>public.ecr.aws/lambda/nodejs</code> has 485 MB. The size increase can be attributed to the NodeJS runtime which can be over 150 MB. Similarly, the latest Python image is 595 MB in size. In my opinion, it just feels wrong to deploy such monstrosities to run a limited amount of lines of code.</p>
+<p>My goal is to bring the size of a containerized Lambda down as much as I can. There are a few limitations and gotchas to accomplish this. Certainly, we cannot have a thinner Lambda than our code size/built executable. Moreover, we cannot have a container with 0 additional overhead. But we can have something really thin. </p>
+<p>Coming back to my initial idea that Lambda functions should be slim, if we want to have the slimmest Lambda, we should not use Docker at all. We should just package and upload our code or our executable to AWS and we are good. By default, the inner working of a Lambda environment is hidden from us, although, most likely the same base image is used in this case as well.</p>
+<h2>Distroless Containers<a class="anchor-link" href="#distroless-containers" id="distroless-containers">&lt;&lt;</a>
+</h2>
+<p>Hunting for the slimmest possible container image, we will most likely run into a variant of an alpine-based image. The base alpine image has around 5 MB, which is pretty small, but we can have even a smaller option. Enter ìdistrolessî containers.</p>
+<p><a href="https://github.com/GoogleContainerTools/distroless" target="_blank">Distroless containers</a> were first introduced by Google a while ago, according to them:</p>
+<blockquote>
+<p>ìDistrolessî images contain only your application and its runtime dependencies. They do not contain package managers, shells, or any other programs you would expect to find in a standard Linux distribution.</p>
+</blockquote>
+<p>Also, there is a very informative talk on distroless containers on youtube that can be watched <a href="https://youtu.be/lviLZFciDv4" target="_blank">here</a>.</p>
+<h2>Build a Distroless Container Image<a class="anchor-link" href="#build-a-distroless-container-image" id="build-a-distroless-container-image">&lt;&lt;</a>
+</h2>
+<p>For my previous <a href="running-serverless-lambdas-with-rust-aws.html">article</a> we built a Lambda function in Rust for testing and benchmarking. This application would be a perfect choice for being deployed in a distroless environment. The container we are planning to use to deploy this executable is <code>gcr.io/distroless/static</code> provided by Google container registry. The container has around 2.4 MB uncompressed. It was specifically created for statically compiled applications, which is exactly what we are looking for in the case of a Rust Lambda.</p>
+<p>In the following lines, we will define a Dockerfile to use distrloless with a Rust Lambda executable. This Dockerfile will have a multistage definition, the first stage will be doing the compilation and building of the application, while the second stage will be the execution stage that gets deployed on AWS.</p>
+<p>The Dockerfile for an <code>x86-64</code> Lambda would look something like this:</p>
+<pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
 
 FROM rust:1.63-buster as builder
 
@@ -191,14 +110,8 @@ COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bo
 
 ENTRYPOINT [ "./bootstrap" ]
 </code></pre>
-   <p>
-    With slight adjustments we can create an
-    <code>
-     arm64
-    </code>
-    Docker container as well:
-   </p>
-   <pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
+<p>With slight adjustments we can create an <code>arm64</code> Docker container as well:</p>
+<pre><code class="language-dockerfile">ARG FUNCTION_DIR="/function"
 
 FROM rust:1.63-buster as builder
 
@@ -228,260 +141,90 @@ COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/bootstrap b
 
 ENTRYPOINT [ "./bootstrap" ]
 </code></pre>
-   <p>
-    Both of these images can be built with
-    <code>
-     docker buildx
-    </code>
-    command:
-   </p>
-   <pre><code class="language-bash">docker buildx build --progress=plain --platform linux/arm64 -t rust-arm64 -f Dockerfile-distroless-x86-64 .
+<p>Both of these images can be built with <code>docker buildx</code> command:</p>
+<pre><code class="language-bash">docker buildx build --progress=plain --platform linux/arm64 -t rust-arm64 -f Dockerfile-distroless-x86-64 .
 </code></pre>
-   <p>
-    The whole Lambda project can be found on
-    <a href="https://github.com/Ernyoke/aws-lambda-benchmarks" target="_blank">
-     GitHub
-    </a>
-    .
-   </p>
-   <p>
-    Changing the
-    <code>
-     --platform
-    </code>
-    argument to
-    <code>
-     linux/amd64
-    </code>
-    , we can build ARM-based containers as well. We could use the usual
-    <code>
-     docker build
-    </code>
-    command, but this will target the systems architecture, which can be
-    <code>
-     x86-64
-    </code>
-    for most PC/laptop devices and
-    <code>
-     arm64
-    </code>
-    for ARM-based devices such as M1 Macs.
-   </p>
-   <h2>
-    Performance Gains
-    <a class="anchor-link" href="#performance-gains" id="performance-gains">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Having this thin image, we might wonder what kind of performance gain can we achieve. Our code itself won't run faster regardless of the image. On the other hand, theoretically, we should achieve a certain amount of reduction of the initialization period during a cold start of the Lambda function. Our image should be agile in terms of startup time, the image should be able to be fetched quickly and can be cached easily.
-   </p>
-   <p>
-    To check if there are any performance gains to be found, I decided to run the Lambda making sure I will run into a cold start. I repeated this 5 times, while I was extracting the initialization period of the Lambda function from the CloudWatch Logs.
-   </p>
-   <p>
-    The measured results are the following:
-   </p>
-   <table>
-    <thead>
-     <tr>
-      <th>
-       Arch
-      </th>
-      <th>
-       Init - exec 1
-      </th>
-      <th>
-       Init - exec 2
-      </th>
-      <th>
-       Init - exec 3
-      </th>
-      <th>
-       Init - exec 4
-      </th>
-      <th>
-       Init - exec 5
-      </th>
-     </tr>
-    </thead>
-    <tbody>
-     <tr>
-      <td>
-       x86-64
-      </td>
-      <td>
-       6.29 ms
-      </td>
-      <td>
-       7.70 ms
-      </td>
-      <td>
-       42.19 ms
-      </td>
-      <td>
-       49.21 ms
-      </td>
-      <td>
-       33.22 ms
-      </td>
-     </tr>
-     <tr>
-      <td>
-       arm64
-      </td>
-      <td>
-       33.41 ms
-      </td>
-      <td>
-       24.93 ms
-      </td>
-      <td>
-       5.43 ms
-      </td>
-      <td>
-       5.11 ms
-      </td>
-      <td>
-       52.16 ms
-      </td>
-     </tr>
-    </tbody>
-   </table>
-   <p>
-    All of these measurements were done in
-    <code>
-     us-east-1
-    </code>
-    region. The Lambda had the minimum possible size of RAM allocated (128 MB).
-   </p>
-   <p>
-    Comparing the init times with the the ones of the same Lambda running inside the AWS provided `ecr.aws/lambda/provided:al2 image, we get the following:
-   </p>
-   <p>
-    <img alt="AWS Provided container init times and distroless init times comparison chart" src="img-build-super-slim-containerized-lambdas/aws-vs-distroless.png"/>
-   </p>
-   <p>
-    The init times measured above are certainly great. They are way below 100 ms, in many cases below 10 ms. But we should not attribute this to the fact that we are using a distroless base image. In the comparison chart we can see that they are similar to the ones of an container image provided by AWS. What this proves is that the AWS Lambda container cache works as expected by pro-actively caching larger base images as well, but unfortunately we were not able to see meaning gains for a smaller image.
-   </p>
-   <h2>
-    Other Gains?
-    <a class="anchor-link" href="#other-gains" id="other-gains">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    As we saw, we can not see a significant decrease in running time in the case of distroless Docker containers. We might be able to see speed-ups elsewhere. Small containers are easier to build and pass around. Assuming we are using a deployment pipeline, we might have a faster build/upload time.
-   </p>
-   <p>
-    Even if storage is cheap today, we might be able to save a few pennies on ECR storage. Having a bunch of containers, these savings might add up.
-   </p>
-   <p>
-    Ultimately, the Dockerfile presented by this article adheres to AWS recommended
-    <a href="https://aws.amazon.com/blogs/compute/optimizing-lambda-functions-packaged-as-container-images/" target="_blank">
-     best practices
-    </a>
-    (aside from being a base image not provided by AWS) and general
-    <a href="https://www.youtube.com/watch?v=vlS5EiapiII" target="_blank">
-     Docker best practices
-    </a>
-    . It relies on multi-stage images with a build phase, it uses caching of layers and build artifacts and it is small as it can be.
-   </p>
-   <h2>
-    Final Thoughts
-    <a class="anchor-link" href="#final-thoughts" id="final-thoughts">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    Should we use distroless containers?
-   </h3>
-   <p>
-    It depends on what our goals are. In case we have a statically built executable, like a Lambda function written in Rust, Go, C++, etc. then I think it is a fantastic option. Luckily, storage is cheap nowadays, and being able to save a few megs here and there can be still a good thing to do.
-   </p>
-   <h3>
-    When not to use them?
-   </h3>
-   <p>
-    Distroless containers are hard to work with in case we need to install additional dependencies, pre-compiled libraries, etc. Distroless images don't have a shell, consequently, they don't come with a package manager. We can add something like a busybox shell if we really want to alter things inside of it, but this kind of defies the purpose of using distroless images.
-   </p>
-   <p>
-    In certain cases we might want to have larger images with a bunch of tools, an obvious example being when we are doing development. In this case, we should probably go with an image with a full operating system.
-   </p>
-   <h2>
-    Links and References
-    <a class="anchor-link" href="#links-and-references" id="links-and-references">
-     &lt;&lt;
-    </a>
-   </h2>
-   <ol>
-    <li>
-     Running Serverless Lambdas with Rust on AWS:
-     <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">
-      ervinszilagyi.dev
-     </a>
-    </li>
-    <li>
-     "Distroless" Container Images -
-     <a href="https://github.com/GoogleContainerTools/distroless" target="_blank">
-      GitHub
-     </a>
-    </li>
-    <li>
-     Distroless Docker: Containerizing Apps, not VMs - Matthew Moore:
-     <a href="https://youtu.be/lviLZFciDv4" target="_blank">
-      YouTube
-     </a>
-    </li>
-    <li>
-     Optimizing Lambda functions packaged as container images:
-     <a href="https://aws.amazon.com/blogs/compute/optimizing-lambda-functions-packaged-as-container-images" target="_blank">
-      AWS blogs
-     </a>
-    </li>
-    <li>
-     Creating Effective Docker Images:
-     <a href="https://www.youtube.com/watch?v=vlS5EiapiII" target="_blank">
-      YouTube
-     </a>
-    </li>
-   </ol>
-  </article>
-  <div class="utterances">
-  </div>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+<p>The whole Lambda project can be found on <a href="https://github.com/Ernyoke/aws-lambda-benchmarks" target="_blank">GitHub</a>.</p>
+<p>Changing the <code>--platform</code> argument to <code>linux/amd64</code>, we can build ARM-based containers as well. We could use the usual <code>docker build</code> command, but this will target the systems architecture, which can be <code>x86-64</code> for most PC/laptop devices and <code>arm64</code> for ARM-based devices such as M1 Macs.</p>
+<h2>Performance Gains<a class="anchor-link" href="#performance-gains" id="performance-gains">&lt;&lt;</a>
+</h2>
+<p>Having this thin image, we might wonder what kind of performance gain can we achieve. Our code itself wonít run faster regardless of the image. On the other hand, theoretically, we should achieve a certain amount of reduction of the initialization period during a cold start of the Lambda function. Our image should be agile in terms of startup time, the image should be able to be fetched quickly and can be cached easily. </p>
+<p>To check if there are any performance gains to be found, I decided to run the Lambda making sure I will run into a cold start. I repeated this 5 times, while I was extracting the initialization period of the Lambda function from the CloudWatch Logs.</p>
+<p>The measured results are the following:</p>
+<table>
+<thead>
+<tr>
+<th>Arch</th>
+<th>Init - exec 1</th>
+<th>Init - exec 2</th>
+<th>Init - exec 3</th>
+<th>Init - exec 4</th>
+<th>Init - exec 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x86-64</td>
+<td>6.29 ms</td>
+<td>7.70 ms</td>
+<td>42.19 ms</td>
+<td>49.21 ms</td>
+<td>33.22 ms</td>
+</tr>
+<tr>
+<td>arm64</td>
+<td>33.41 ms</td>
+<td>24.93 ms</td>
+<td>5.43 ms</td>
+<td>5.11 ms</td>
+<td>52.16 ms</td>
+</tr>
+</tbody>
+</table>
+<p>All of these measurements were done in <code>us-east-1</code> region. The Lambda had the minimum possible size of RAM allocated (128 MB).</p>
+<p>Comparing the init times with the the ones of the same Lambda running inside the AWS provided `ecr.aws/lambda/provided:al2 image, we get the following:</p>
+<p><img alt="AWS Provided container init times and distroless init times comparison chart" src="img-build-super-slim-containerized-lambdas/aws-vs-distroless.png"></p>
+<p>The init times measured above are certainly great. They are way below 100 ms, in many cases below 10 ms. But we should not attribute this to the fact that we are using a distroless base image. In the comparison chart we can see that they are similar to the ones of an container image provided by AWS. What this proves is that the AWS Lambda container cache works as expected by pro-actively caching larger base images as well, but unfortunately we were not able to see meaning gains for a smaller image.</p>
+<h2>Other Gains?<a class="anchor-link" href="#other-gains" id="other-gains">&lt;&lt;</a>
+</h2>
+<p>As we saw, we can not see a significant decrease in running time in the case of distroless Docker containers. We might be able to see speed-ups elsewhere. Small containers are easier to build and pass around. Assuming we are using a deployment pipeline, we might have a faster build/upload time.</p>
+<p>Even if storage is cheap today, we might be able to save a few pennies on ECR storage. Having a bunch of containers, these savings might add up.</p>
+<p>Ultimately, the Dockerfile presented by this article adheres to AWS recommended <a href="https://aws.amazon.com/blogs/compute/optimizing-lambda-functions-packaged-as-container-images/" target="_blank">best practices</a> (aside from being a base image not provided by AWS) and general <a href="https://www.youtube.com/watch?v=vlS5EiapiII" target="_blank">Docker best practices</a>. It relies on multi-stage images with a build phase, it uses caching of layers and build artifacts and it is small as it can be.</p>
+<h2>Final Thoughts<a class="anchor-link" href="#final-thoughts" id="final-thoughts">&lt;&lt;</a>
+</h2>
+<h3>Should we use distroless containers?</h3>
+<p>It depends on what our goals are. In case we have a statically built executable, like a Lambda function written in Rust, Go, C++, etc. then I think it is a fantastic option. Luckily, storage is cheap nowadays, and being able to save a few megs here and there can be still a good thing to do.</p>
+<h3>When not to use them?</h3>
+<p>Distroless containers are hard to work with in case we need to install additional dependencies, pre-compiled libraries, etc. Distroless images donít have a shell, consequently, they donít come with a package manager. We can add something like a busybox shell if we really want to alter things inside of it, but this kind of defies the purpose of using distroless images.</p>
+<p>In certain cases we might want to have larger images with a bunch of tools, an obvious example being when we are doing development. In this case, we should probably go with an image with a full operating system.</p>
+<h2>Links and References<a class="anchor-link" href="#links-and-references" id="links-and-references">&lt;&lt;</a>
+</h2>
+<ol>
+<li>Running Serverless Lambdas with Rust on AWS: <a href="https://ervinszilagyi.dev/articles/running-serverless-lambdas-with-rust-aws.html">ervinszilagyi.dev</a> </li>
+<li>ìDistrolessî Container Images - <a href="https://github.com/GoogleContainerTools/distroless" target="_blank">GitHub</a>
+</li>
+<li>Distroless Docker: Containerizing Apps, not VMs - Matthew Moore: <a href="https://youtu.be/lviLZFciDv4" target="_blank">YouTube</a>
+</li>
+<li>Optimizing Lambda functions packaged as container images: <a href="https://aws.amazon.com/blogs/compute/optimizing-lambda-functions-packaged-as-container-images" target="_blank">AWS blogs</a>
+</li>
+<li>Creating Effective Docker Images: <a href="https://www.youtube.com/watch?v=vlS5EiapiII" target="_blank">YouTube</a>
+</li>
+</ol></article>
+<div class="utterances">
+</div>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>

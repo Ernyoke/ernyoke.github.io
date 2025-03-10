@@ -1,33 +1,28 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   Résumé - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
-   <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-   <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-   <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-   </script>
-   <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-   </script>
-   <meta charset="utf-8"/>
-   <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-   <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-   <script>
-    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>Résumé - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-   </script>
-   <style media="print" type="text/css">
-    @media print {
+    </script>
+<style media="print" type="text/css">
+        @media print {
             @page {
                 margin-top: 0;
                 margin-bottom: 0;
@@ -38,940 +33,389 @@
                 padding-bottom: 72px;
             }
         }
-   </style>
-  </link>
-  <meta content="Résumé" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image"/>
-  <meta content="Résumé" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szilágyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       Résumé
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    Ervin Szilágyi
-   </h1>
-   <h2>
-    Software Engineer
-    <a class="anchor-link" href="#software-engineer" id="software-engineer">
-     &lt;&lt;
-    </a>
-   </h2>
-   <hr/>
-   <p>
-    <img align="right" src="images/small.jpeg" style="padding:1em"/>
-   </p>
-   <h2>
-    About Me
-    <a class="anchor-link" href="#about-me" id="about-me">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Experienced software engineer having a wide interest in highly scalable and distributed systems, software and cloud architecture, and DevOps practices.
-   </p>
-   <p>
-    I am an
-    <a href="https://aws.amazon.com/developer/community/community-builders/community-builders-directory/?cb-cards.sort-by=item.additionalFields.cbName&amp;cb-cards.sort-order=asc&amp;awsf.builder-category=*all&amp;awsf.location=*all&amp;awsf.year=*all&amp;cb-cards.q=ervin&amp;cb-cards.q_operator=AND" target="_blank">
-     AWS Community Builder
-    </a>
-    in the Containers Category.
-   </p>
-   <p>
-    I consider myself an advocate of open-source technology. Some of my open-source projects I worked on in the past can be found on
-    <a href="projects.html">
-     Projects
-    </a>
-    page and on my
-    <a href="https://github.com/Ernyoke" target="_blank">
-     GitHub
-    </a>
-    .
-   </p>
-   <h3>
-    Contact
-   </h3>
-   <ul>
-    <li>
-     Email:
-     <em>
-      ervin_szilagyi[at]outlook.com
-     </em>
-    </li>
-   </ul>
-   <h3>
-    Social
-   </h3>
-   <ul>
-    <li>
-     Website:
-     <a href="https://ervinszilagyi.dev/">
-      ervinszilagyi.dev
-     </a>
-    </li>
-    <li>
-     LinkedIn:
-     <a href="https://www.linkedin.com/in/szilagyiervin/" target="_blank">
-      in/szilagyiervin
-     </a>
-    </li>
-    <li>
-     Twitter:
-     <a href="https://twitter.com/ervin_szilagyi" target="_blank">
-      @ervin_szilagyi
-     </a>
-    </li>
-    <li>
-     BlueSky:
-     <a href="https://bsky.app/profile/ervinszilagyi.dev" target="_blank">
-      @ervinszilagyi.dev
-     </a>
-    </li>
-    <li>
-     StackOverflow:
-     <a href="https://stackoverflow.com/users/7661119/ervin-szilagyi" target="_blank">
-      ervin-szilagyi
-     </a>
-     (15K+ reputation, part of
-     <a href="https://data.stackexchange.com/stackoverflow/query/1625946/my-position-from-romanian-users" target="_blank">
-      top 100 Romanian users
-     </a>
-     )
-    </li>
-    <li>
-     DevOps StackExchange:
-     <a href="https://devops.stackexchange.com/users/27214/ervin-szilagyi" target="_blank">
-      ervin-szilagyi
-     </a>
-    </li>
-    <li>
-     GitHub:
-     <a href="https://github.com/Ernyoke" target="_blank">
-      ernyoke
-     </a>
-    </li>
-    <li>
-     dev.to:
-     <a href="https://dev.to/ervin_szilagyi" target="_blank">
-      dev.to/ervin_szilagyi
-     </a>
-    </li>
-   </ul>
-   <h3>
-    Personal Information
-   </h3>
-   <ul>
-    <li>
-     Address:
-     <em>
-      Târgu Mureș, Romania
-     </em>
-    </li>
-    <li>
-     Date of birth:
-     <em>
-      15/01/1993
-     </em>
-    </li>
-    <li>
-     Nationality:
-     <em>
-      Romanian
-     </em>
-    </li>
-    <li>
-     Languages:
-     <em>
-      English,
-     </em>
-     <em>
-      Hungarian,
-     </em>
-     <em>
-      Romanian
-     </em>
-    </li>
-   </ul>
-   <hr/>
-   <h2>
-    Work Experience
-    <a class="anchor-link" href="#work-experience" id="work-experience">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    Accenture Romania
-   </h3>
-   <ul>
-    <li>
-     <h4>
-      <strong>
-       Software Product &amp; Platform Engineering Associate Manager
-      </strong>
-     </h4>
-     <p>
-      <em>
-       From December 2022 until now
-      </em>
-     </p>
-     <ul>
-      <li>
-       <em>
-        Platform Engineer/Solutions Architect
-       </em>
-       primarily working on AWS infrastructure within the automotive industry.
-      </li>
-      <li>
-       Main areas of experience:
-       <ul>
-        <li>
-         System design for highly available software product: our system was serving more then 10 millions of requests from vehicles all around the globe;
-        </li>
-        <li>
-         Big data ingestion and ETL workflows:
-         <ul>
-          <li>
-           Built ingestion pipelines to provide analytics based on the system to support business needs;
-          </li>
-          <li>
-           Ingested terabytes of data each month, with this data being stored in S3/Athena tables;
-          </li>
-          <li>
-           Developed dashboards for visualizing key metrics using Amazon QuickSight.
-          </li>
-         </ul>
-        </li>
-        <li>
-         Working with large language models and deploying specialized AI agents for internal use:
-         <ul>
-          <li>
-           Built several AI agents on top of LLM models such as Azure OpenAI and Anthropic Claude. The purpose of these agents was to enhance productivity;
-          </li>
-          <li>
-           Created knowledge bases using company-owned internal data to enable Retrieval-Augmented Generation (RAG);
-          </li>
-          <li>
-           The main technology stack included AWS Lambda with LangChain and LangGraph (for chaining and tool calling), LanceDB (serverless vector store), OpenSearch, and Splunk.
-          </li>
-         </ul>
-        </li>
-       </ul>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <h4>
-      <strong>
-       Software Product &amp; Platform Engineering Specialist
-      </strong>
-     </h4>
-     <p>
-      <em>
-       From August 2021 until the November 2022
-      </em>
-     </p>
-     <ul>
-      <li>
-       <em>
-        Platform Engineer/Solutions Architect
-       </em>
-       primarily working on AWS infrastructure within the automotive industry.
-      </li>
-      <li>
-       Assist in architecting complex end-to-end cloud-based solutions tailored to client needs. These solutions involve designing secure and user-friendly APIs, as well as highly available and secure networks for the relevant services.
-      </li>
-      <li>
-       Participate in the end-to-end development of a suite of microservices, along with the necessary infrastructure requirements. (Main technology stack: API Gateway, networking (AWS VPC, Route53, Elastic Load Balancers), AWS Lambda (Python, JavaScript, Go), Java microservices (ECS, Docker)).
-      </li>
-      <li>
-       Perform cloud automation and monitoring using CloudWatch, EventBridge, and Lambda.
-      </li>
-      <li>
-       Develop, design, and refactor cloud-based infrastructure using Infrastructure-as-Code (IaC) tools such as Terraform.
-      </li>
-      <li>
-       Design and implement disaster recovery plans for services and platforms operating on a global scale.
-      </li>
-      <li>
-       Support a range of ETL jobs, including maintenance, optimization, and monitoring. (Main technology stack: AWS Batch/AWS Lambda with Python, S3, AWS RDS, Redis).
-      </li>
-      <li>
-       Manage relational databases deployed on AWS RDS, including planning and leading migrations from older platforms to more modern and up-to-date versions. Build highly available solutions by implementing replication.
-      </li>
-     </ul>
-    </li>
-   </ul>
-   <h3>
-    RIA Solutions Group
-   </h3>
-   <ul>
-    <li>
-     <h4>
-      <strong>
-       Senior Software Engineer
-      </strong>
-     </h4>
-     <p>
-      <em>
-       From December 2019 until August 2021
-      </em>
-     </p>
-     <ul>
-      <li>
-       Doing mainly integration work for a client in the logistics industry. Apply enterprise integration patterns to achieve highly flexible and easily maintainable solutions.
-      </li>
-      <li>
-       Main technology stack for integration consisted of Spring Integration and Java EE technologies such as JBoss for the underlying web server, Java EE 8, JMS (ActiveMQ, IBM MQ), and JPA (EclipseLink).
-      </li>
-      <li>
-       Participate in architecture design and implementation. Discuss and present technical solutions for clients.
-      </li>
-     </ul>
-    </li>
-    <li>
-     <h4>
-      <strong>
-       Software Engineer/Team Leader
-      </strong>
-     </h4>
-     <p>
-      <em>
-       From August 2019 until November 2019
-      </em>
-     </p>
-     <ul>
-      <li>
-       Participate in the development of cloud-based solutions for clients from the logistics industry.
-      </li>
-      <li>
-       Apply domain-driven design principles to implement new libraries using micro-services architecture.
-      </li>
-      <li>
-       Implement and maintain multiple services using both event sourcing (Apache Kafka) and REST APIs as a way of communication. The stack of technologies used for service development includes languages that run on JVM, Java 8, and Groovy with the usage of Spring Boot and other Spring libraries (Spring MVC, Spring Data, Spring AOC, Spring Batch, etc.). It also includes NodeJS with the usage of JavaScript ES6 features.
-      </li>
-      <li>
-       Develop and integrate several features which require handling both relational and non-relational data. The technology stack implies heavy usage of Elasticsearch for indexing and searching huge amounts of client data. Besides, several services use MySQL/MariaDB databases for relational data and Apache Cassandra databases for non-relational data.
-      </li>
-      <li>
-       Work with real-time data streams using Amazon SQS and big data processing using Spring Batch.
-      </li>
-      <li>
-       Participate in front-end development as well, implementing several features visible to the end user. The front-end stack implies the usage of HTML5, CSS3, and JavaScript with the usage of the AngularJS framework.
-      </li>
-      <li>
-       Practice test-driven development (TDD), and implement unit tests/integration tests for code changes where testing was feasible. Have in-depth experience with the Spock framework, as well as with JUnit4 and Mochito.
-      </li>
-      <li>
-       Work in an agile framework, collaborating with the client and business in story grooming, and reviewing story/acceptance criteria and performance metrics.
-      </li>
-      <li>
-       Participate in interviewing new software engineer candidates.
-      </li>
-      <li>
-       Provide mentorship and guidance for new joiners and junior colleagues.
-      </li>
-     </ul>
-    </li>
-   </ul>
-   <h3>
-    Endava Romania
-   </h3>
-   <ul>
-    <li>
-     <h4>
-      <strong>
-       Software Engineer
-      </strong>
-     </h4>
-     <p>
-      <em>
-       From August 2017 to September 2019
-      </em>
-     </p>
-     <ul>
-      <li>
-       Develop and maintain multiple full-stack business applications, working in agile teams. During my work the following technologies were used:
-       <ul>
-        <li>
-         Back-end based on Java stack: Java 8, Maven, JAX-WS, JAX-RS, Spring/Spring Boot (Spring Core, Spring MVC, Spring AOP, Spring Security, Spring Data, Spring Batch, Spring Test), Tomcat, JBoss
-        </li>
-        <li>
-         Persistence: extensively used both SQL (Oracle database with Hibernate JPA, Liquibase for migrations) and noSQL type databases (MarkLogic 8 with JSON documents. For interaction/querying we used server-side Javascript).
-        </li>
-        <li>
-         Front-end: AngularJS (which implies heavy usage of Javascript[ES5])/Angular 4 (TypeScript), HTML5, CSS3 (Sass) + Twitter Bootstrap 3, package-managers (npm, Bower).
-        </li>
-        <li>
-         Deployment/DevOps: Jenkins, Docker, Maven, Grunt, Gulp, npm
-        </li>
-        <li>
-         Testing/Unit testing frameworks: JUnit, Mockito, Karma, Jasmin, Protractor, Roxy
-        </li>
-        <li>
-         Dev environments: IntelliJ, WebStorm, VSCode, VIM, MarkLogic query console, SQL Developer
-        </li>
-        <li>
-         Source control: git
-        </li>
-        <li>
-         Scripting/automation: Bash, NodeJS,
-        </li>
-        <li>
-         Other libraries/frameworks: Google Guava, Apache commons, Lombok, Dozer mapper, lodash;
-        </li>
-       </ul>
-      </li>
-      <li>
-       Gather requirements from the external clients, actively participate in client and internal agile meetings;
-      </li>
-      <li>
-       Develop REST-based Web Services used by third parties and implement REST end-points;
-      </li>
-      <li>
-       Secure REST endpoints using Spring Security. Write and generate documentation for these end-points using Swagger;
-      </li>
-      <li>
-       Initiate extensive code refactoring initiatives for older functionalities, focus on the usage of design patterns;
-      </li>
-      <li>
-       Integrate with the external services which were exposing both REST and SOAP end-points;
-      </li>
-      <li>
-       Create user-friendly GUIs using HTML, CSS and Javascript, implement single-page front-end applications using Angular;
-      </li>
-      <li>
-       Extensively involved in code reviews (platforms used: BitBucket);
-      </li>
-      <li>
-       Actively involved in release management/product delivery (platforms uses: AWS EC2, AWS S3);
-      </li>
-      <li>
-       Supervise summer internship attendees
-      </li>
-     </ul>
-    </li>
-   </ul>
-   <h3>
-    Accenture Industrial Software Solutions Romania
-   </h3>
-   <ul>
-    <li>
-     <h3>
-      <strong>
-       Software Engineering Associate
-      </strong>
-     </h3>
-     <p>
-      <em>
-       From May 2015 to July 2017
-      </em>
-     </p>
-     <ul>
-      <li>
-       Develop and maintain a Railway Automation project using C++ (MFC, Boost), Visual Basic and
-Python environments;
-      </li>
-      <li>
-       Work in a regulated environment, the components developed by us were graded between SIL 0 and SIL 2 safety-integrity level;
-      </li>
-      <li>
-       Develop and maintain unit tests using GTEST and GMOCK libraries;
-      </li>
-      <li>
-       Implement regression and UI tests using AutoIT and Python languages;
-      </li>
-      <li>
-       Configure and maintain Jenkins - continuous integration system, develop batch scripts for automatic builds;
-      </li>
-      <li>
-       Write software documentation (use cases, release notes) and testing documentation (test cases);
-      </li>
-      <li>
-       Actively collaborate with clients and other teams;
-      </li>
-      <li>
-       Actively attend Scrum meetings;
-      </li>
-      <li>
-       Supervise summer internship attendees.
-      </li>
-      <li>
-       Other technologies used: IBM Rational Synergy (version control system), IBM Rational Doors (software documentation), PVCS Merant Tracker (bugs and tickets), Citrix, Oracle Virtual Box (virtualization and working remotely on the client's network), AutoIT (used for UI and regression/integration testing), Parasoft Static Analysis for C and C++.
-      </li>
-     </ul>
-    </li>
-   </ul>
-   <hr/>
-   <h2>
-    Internships
-    <a class="anchor-link" href="#internships" id="internships">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    Android Developer at
-    <em>
-     Smartsoft
-    </em>
-   </h3>
-   <p>
-    <em>
-     From July 2014 to August 2014
-    </em>
-   </p>
-   <h3>
-    Software Engineer at
-    <em>
-     Evoline
-    </em>
-   </h3>
-   <p>
-    <em>
-     From July 2013 to August 2013
-    </em>
-   </p>
-   <hr/>
-   <h2>
-    Education
-    <a class="anchor-link" href="#education" id="education">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    <strong>
-     Master's Degree in Software Development
-    </strong>
-    at
-    <em>
-     Sapientia Hungarian University of Transylvania [Târgu-Mureş, Romania]
-    </em>
-   </h3>
-   <p>
-    <em>
-     From September 2015 to June 2017
-    </em>
-   </p>
-   <ul>
-    <li>
-     <strong>
-      Studied
-     </strong>
-     : Agile Methodologies, Numerical Math and Statistics, Virtual Reality and Game Development, Genetic Algorithms, Concurrent Computing (CUDA), Distributed Systems (Java EE), Software Verification and Synthesis, Software Testing, Modern Databases, Component-Based Software Development
-    </li>
-    <li>
-     <strong>
-      Final grade
-     </strong>
-     : 10/10
-    </li>
-    <li>
-     <strong>
-      Thesis
-     </strong>
-     : Parallel Artistic Style Transfer using Deep Convolutional Neural Networks
-    </li>
-   </ul>
-   <h3>
-    <strong>
-     Bachelor's Degree in Computer Science
-    </strong>
-    at
-    <em>
-     Sapientia Hungarian University of Transylvania [Târgu-Mureş, Romania]
-    </em>
-   </h3>
-   <p>
-    <em>
-     From September 2011 to June 2015
-    </em>
-   </p>
-   <ul>
-    <li>
-     <strong>
-      Studied
-     </strong>
-     : Algorithms and Data Structures, Programming Languages, Web Technologies, Operating Systems, Databases, Computer Networks, Distributed Systems, Artificial Intelligence, Object Oriented Programming, Java Technologies, Android Programming, Image Processing, Computer Architecture, Assembly Programming, Microcontrollers, Programmable Digital Systems, Digital Signal Processing
-    </li>
-    <li>
-     <strong>
-      Final grade
-     </strong>
-     : 10/10
-    </li>
-    <li>
-     <strong>
-      Thesis
-     </strong>
-     : WLAN based conference system
-    </li>
-    <li>
-     <strong>
-      Honors
-     </strong>
-     :
-     <ul>
-      <li>
-       <em>
-        16th Scientific Student Conference of Technical Science - XVI. Műszaki Erdélyi Tudományos Diakköri Konferencia,
-       </em>
-       Second place in Computer Science and Applied Informatics section with the project of
-       <em>
-        "WLAN based Conference System"
-       </em>
-       .
-      </li>
-      <li>
-       <em>
-        XIV Scientific Students' Associations Conference - XIV. Tudományos Diákköri Konferencia (Sapientia TDK),
-       </em>
-       First place in Computer Science and Software Development Section section with the project: "WLAN based Conference System".
-      </li>
-     </ul>
-    </li>
-   </ul>
-   <hr/>
-   <h2>
-    Certifications
-    <a class="anchor-link" href="#certifications" id="certifications">
-     &lt;&lt;
-    </a>
-   </h2>
-   <ul>
-    <li>
-     <strong>
-      Oracle Certified Professional: Java SE 17 Developer
-     </strong>
-     <ul>
-      <li>
-       since January 2023
-      </li>
-      <li>
-       Badge:
-       <a href="https://catalog-education.oracle.com/pls/certview/sharebadge?id=41EBAA12010D28FC38171A53C685CD1445389E2BF5E8FCA2E4EE694B673E21D7" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Oracle Certified Professional: Java SE 11 Developer
-     </strong>
-     <ul>
-      <li>
-       since January 2021
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/d24ba586-7589-488b-ac86-2b5ae49e994a/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified Developer – Associate
-     </strong>
-     <ul>
-      <li>
-       valid between February 2021 and May 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/d507de98-aa20-425b-9211-15b4918c5308/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified Solutions Architect – Associate
-     </strong>
-     <ul>
-      <li>
-       valid between March 2021 and August 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/6a70adfa-ac41-484c-b015-2b869410853c/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified SysOps Administrator – Associate
-     </strong>
-     <ul>
-      <li>
-       valid between April 2021 and May 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/466e33cb-32ab-4217-9127-5e8f7e94de0c/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified DevOps Engineer – Professional
-     </strong>
-     <ul>
-      <li>
-       valid between May 2021 and May 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/b294e430-9829-4550-bff3-ed5d893ae99e/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified Solutions Architect – Professional
-     </strong>
-     <ul>
-      <li>
-       valid between August 2021 and August 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/cf39c076-d21f-4cc1-a033-954718fe87d6/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified Advanced Networking – Specialty
-     </strong>
-     <ul>
-      <li>
-       valid between December 2021 and December 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/8c68b90f-3aeb-4a45-a205-bd9428889702/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified Machine Learning – Specialty
-     </strong>
-     <ul>
-      <li>
-       valid between February 2024 and February 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/f0099e97-f4ab-47c5-a809-eab1e6b8def0/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      AWS Certified AI Practitioner
-     </strong>
-     <ul>
-      <li>
-       valid between September 2024 and September 2027
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/57789cb3-6896-4ab0-be6a-e1b8c19c6f38/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Microsoft Certified: Azure Fundamentals
-     </strong>
-     <ul>
-      <li>
-       since September 2020
-      </li>
-      <li>
-       Badge:
-       <a href="https://www.credly.com/badges/3e2a89c1-0ef3-4a45-9e22-ccd54ac6e0ef/public_url" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Microsoft Certified: Azure Developer Associate
-     </strong>
-     <ul>
-      <li>
-       valid between October 2020 and October 2022
-      </li>
-      <li>
-       Badge:
-       <a href="https://learn.microsoft.com/en-gb/users/ervinszilagyi-2278/credentials/b2f3afc499fc533c" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Associate Cloud Engineer
-     </strong>
-     <ul>
-      <li>
-       valid between August 2022 and August 2024
-      </li>
-      <li>
-       Badge and certification:
-       <a href="https://www.credential.net/9056a79b-89f1-4fb7-b824-76b4f752dd57" target="_blank">
-        verify
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Software Security / License AFRP6UPJZ5 - Coursera Verified Certificates
-     </strong>
-     <ul>
-      <li>
-       since December 2015
-      </li>
-      <li>
-       <a href="https://www.coursera.org/account/accomplishments/verify/AFRP6UPJZ5" target="_blank">
-        https://www.coursera.org/account/accomplishments/verify/AFRP6UPJZ5
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Programming Mobile Applications for Android Handheld Systems / License U4KVNZF6NS - Coursera Verified Certificates
-     </strong>
-     <ul>
-      <li>
-       since December 2014
-      </li>
-      <li>
-       <a href="https://www.coursera.org/account/accomplishments/verify/U4KVNZF6NS" target="_blank">
-        https://www.coursera.org/account/accomplishments/verify/U4KVNZF6NS
-       </a>
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Scrum, Kanban, Lean and Story Writing / Sprint Consulting Llc
-     </strong>
-     <ul>
-      <li>
-       since February 2016
-      </li>
-     </ul>
-    </li>
-    <li>
-     <strong>
-      Cambridge English: First (FCE)
-     </strong>
-     <ul>
-      <li>
-       since July 2016
-      </li>
-     </ul>
-    </li>
-   </ul>
-  </article>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+    </style>
+<meta content="Résumé" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev" property="og:url">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
+<meta content="Résumé" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szilágyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">Résumé</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Ervin Szilágyi</h1>
+<h2>Software Engineer<a class="anchor-link" href="#software-engineer" id="software-engineer">&lt;&lt;</a>
+</h2>
+<hr>
+<p><img align="right" src="images/small.jpeg" style="padding:1em"></p>
+<h2>About Me<a class="anchor-link" href="#about-me" id="about-me">&lt;&lt;</a>
+</h2>
+<p>Experienced software engineer having a wide interest in highly scalable and distributed systems, software and cloud architecture, and DevOps practices.</p>
+<p>I am an <a href="https://aws.amazon.com/developer/community/community-builders/community-builders-directory/?cb-cards.sort-by=item.additionalFields.cbName&amp;cb-cards.sort-order=asc&amp;awsf.builder-category=*all&amp;awsf.location=*all&amp;awsf.year=*all&amp;cb-cards.q=ervin&amp;cb-cards.q_operator=AND" target="_blank">AWS Community Builder</a> in the Containers Category.</p>
+<p>I consider myself an advocate of open-source technology. Some of my open-source projects I worked on in the past can be found on <a href="projects.html">Projects</a> page and on my <a href="https://github.com/Ernyoke" target="_blank">GitHub</a>. </p>
+<h3>Contact</h3>
+<ul>
+<li>Email: <em>ervin_szilagyi[at]outlook.com</em>
+</li>
+</ul>
+<h3>Social</h3>
+<ul>
+<li>Website: <a href="https://ervinszilagyi.dev/">ervinszilagyi.dev</a>
+</li>
+<li>LinkedIn: <a href="https://www.linkedin.com/in/szilagyiervin/" target="_blank">in/szilagyiervin</a>
+</li>
+<li>Twitter: <a href="https://twitter.com/ervin_szilagyi" target="_blank">@ervin_szilagyi</a>
+</li>
+<li>BlueSky: <a href="https://bsky.app/profile/ervinszilagyi.dev" target="_blank">@ervinszilagyi.dev</a>
+</li>
+<li>StackOverflow: <a href="https://stackoverflow.com/users/7661119/ervin-szilagyi" target="_blank">ervin-szilagyi</a> (15K+ reputation, part of <a href="https://data.stackexchange.com/stackoverflow/query/1625946/my-position-from-romanian-users" target="_blank">top 100 Romanian users</a>)</li>
+<li>DevOps StackExchange: <a href="https://devops.stackexchange.com/users/27214/ervin-szilagyi" target="_blank">ervin-szilagyi</a>
+</li>
+<li>GitHub: <a href="https://github.com/Ernyoke" target="_blank">ernyoke</a>
+</li>
+<li>dev.to: <a href="https://dev.to/ervin_szilagyi" target="_blank">dev.to/ervin_szilagyi</a>
+</li>
+</ul>
+<h3>Personal Information</h3>
+<ul>
+<li>Address: <em>Târgu Mureș, Romania</em>
+</li>
+<li>Date of birth: <em>15/01/1993</em>
+</li>
+<li>Nationality: <em>Romanian</em>
+</li>
+<li>Languages: <em>English,</em> <em>Hungarian,</em> <em>Romanian</em>
+</li>
+</ul>
+<hr>
+<h2>Work Experience<a class="anchor-link" href="#work-experience" id="work-experience">&lt;&lt;</a>
+</h2>
+<h3>Accenture Romania</h3>
+<ul>
+<li>
+<h4><strong>Software Product &amp; Platform Engineering Associate Manager</strong></h4>
+<p><em>From December 2022 until now</em></p>
+<ul>
+<li>
+<em>Platform Engineer/Solutions Architect</em> primarily working on AWS infrastructure within the automotive industry.</li>
+<li>Main areas of experience: <ul>
+<li>System design for highly available software product: our system was serving more then 10 millions of requests from vehicles all around the globe;</li>
+<li>Big data ingestion and ETL workflows: <ul>
+<li>Built ingestion pipelines to provide analytics based on the system to support business needs;</li>
+<li>Ingested terabytes of data each month, with this data being stored in S3/Athena tables;</li>
+<li>Developed dashboards for visualizing key metrics using Amazon QuickSight.</li>
+</ul>
+</li>
+<li>Working with large language models and deploying specialized AI agents for internal use:<ul>
+<li>Built several AI agents on top of LLM models such as Azure OpenAI and Anthropic Claude. The purpose of these agents was to enhance productivity;</li>
+<li>Created knowledge bases using company-owned internal data to enable Retrieval-Augmented Generation (RAG);</li>
+<li>The main technology stack included AWS Lambda with LangChain and LangGraph (for chaining and tool calling), LanceDB (serverless vector store), OpenSearch, and Splunk.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h4><strong>Software Product &amp; Platform Engineering Specialist</strong></h4>
+<p><em>From August 2021 until the November 2022</em></p>
+<ul>
+<li>
+<em>Platform Engineer/Solutions Architect</em> primarily working on AWS infrastructure within the automotive industry.</li>
+<li>Assist in architecting complex end-to-end cloud-based solutions tailored to client needs. These solutions involve designing secure and user-friendly APIs, as well as highly available and secure networks for the relevant services.</li>
+<li>Participate in the end-to-end development of a suite of microservices, along with the necessary infrastructure requirements. (Main technology stack: API Gateway, networking (AWS VPC, Route53, Elastic Load Balancers), AWS Lambda (Python, JavaScript, Go), Java microservices (ECS, Docker)).</li>
+<li>Perform cloud automation and monitoring using CloudWatch, EventBridge, and Lambda.</li>
+<li>Develop, design, and refactor cloud-based infrastructure using Infrastructure-as-Code (IaC) tools such as Terraform.</li>
+<li>Design and implement disaster recovery plans for services and platforms operating on a global scale.</li>
+<li>Support a range of ETL jobs, including maintenance, optimization, and monitoring. (Main technology stack: AWS Batch/AWS Lambda with Python, S3, AWS RDS, Redis).</li>
+<li>Manage relational databases deployed on AWS RDS, including planning and leading migrations from older platforms to more modern and up-to-date versions. Build highly available solutions by implementing replication.</li>
+</ul>
+</li>
+</ul>
+<h3>RIA Solutions Group</h3>
+<ul>
+<li>
+<h4><strong>Senior Software Engineer</strong></h4>
+<p><em>From December 2019 until August 2021</em></p>
+<ul>
+<li>Doing mainly integration work for a client in the logistics industry. Apply enterprise integration patterns to achieve highly flexible and easily maintainable solutions.</li>
+<li>Main technology stack for integration consisted of Spring Integration and Java EE technologies such as JBoss for the underlying web server, Java EE 8, JMS (ActiveMQ, IBM MQ), and JPA (EclipseLink).</li>
+<li>Participate in architecture design and implementation. Discuss and present technical solutions for clients.</li>
+</ul>
+</li>
+<li>
+<h4><strong>Software Engineer/Team Leader</strong></h4>
+<p><em>From August 2019 until November 2019</em></p>
+<ul>
+<li>Participate in the development of cloud-based solutions for clients from the logistics industry.</li>
+<li>Apply domain-driven design principles to implement new libraries using micro-services architecture.</li>
+<li>Implement and maintain multiple services using both event sourcing (Apache Kafka) and REST APIs as a way of communication. The stack of technologies used for service development includes languages that run on JVM, Java 8, and Groovy with the usage of Spring Boot and other Spring libraries (Spring MVC, Spring Data, Spring AOC, Spring Batch, etc.). It also includes NodeJS with the usage of JavaScript ES6 features.</li>
+<li>Develop and integrate several features which require handling both relational and non-relational data. The technology stack implies heavy usage of Elasticsearch for indexing and searching huge amounts of client data. Besides, several services use MySQL/MariaDB databases for relational data and Apache Cassandra databases for non-relational data.</li>
+<li>Work with real-time data streams using Amazon SQS and big data processing using Spring Batch.</li>
+<li>Participate in front-end development as well, implementing several features visible to the end user. The front-end stack implies the usage of HTML5, CSS3, and JavaScript with the usage of the AngularJS framework.</li>
+<li>Practice test-driven development (TDD), and implement unit tests/integration tests for code changes where testing was feasible. Have in-depth experience with the Spock framework, as well as with JUnit4 and Mochito.</li>
+<li>Work in an agile framework, collaborating with the client and business in story grooming, and reviewing story/acceptance criteria and performance metrics.</li>
+<li>Participate in interviewing new software engineer candidates.</li>
+<li>Provide mentorship and guidance for new joiners and junior colleagues.</li>
+</ul>
+</li>
+</ul>
+<h3>Endava Romania</h3>
+<ul>
+<li>
+<h4><strong>Software Engineer</strong></h4>
+<p><em>From August 2017 to September 2019</em></p>
+<ul>
+<li>Develop and maintain multiple full-stack business applications, working in agile teams. During my work the following technologies were used:<ul>
+<li>Back-end based on Java stack: Java 8, Maven, JAX-WS, JAX-RS, Spring/Spring Boot (Spring Core, Spring MVC, Spring AOP, Spring Security, Spring Data, Spring Batch, Spring Test), Tomcat, JBoss</li>
+<li>Persistence: extensively used both SQL (Oracle database with Hibernate JPA, Liquibase for migrations) and noSQL type databases (MarkLogic 8 with JSON documents. For interaction/querying we used server-side Javascript).</li>
+<li>Front-end: AngularJS (which implies heavy usage of Javascript[ES5])/Angular 4 (TypeScript), HTML5, CSS3 (Sass) + Twitter Bootstrap 3, package-managers (npm, Bower).</li>
+<li>Deployment/DevOps: Jenkins, Docker, Maven, Grunt, Gulp, npm</li>
+<li>Testing/Unit testing frameworks: JUnit, Mockito, Karma, Jasmin, Protractor, Roxy</li>
+<li>Dev environments: IntelliJ, WebStorm, VSCode, VIM, MarkLogic query console, SQL Developer</li>
+<li>Source control: git</li>
+<li>Scripting/automation: Bash, NodeJS,</li>
+<li>Other libraries/frameworks: Google Guava, Apache commons, Lombok, Dozer mapper, lodash;</li>
+</ul>
+</li>
+<li>Gather requirements from the external clients, actively participate in client and internal agile meetings;</li>
+<li>Develop REST-based Web Services used by third parties and implement REST end-points;</li>
+<li>Secure REST endpoints using Spring Security. Write and generate documentation for these end-points using Swagger;</li>
+<li>Initiate extensive code refactoring initiatives for older functionalities, focus on the usage of design patterns;</li>
+<li>Integrate with the external services which were exposing both REST and SOAP end-points;</li>
+<li>Create user-friendly GUIs using HTML, CSS and Javascript, implement single-page front-end applications using Angular;</li>
+<li>Extensively involved in code reviews (platforms used: BitBucket);</li>
+<li>Actively involved in release management/product delivery (platforms uses: AWS EC2, AWS S3);</li>
+<li>Supervise summer internship attendees</li>
+</ul>
+</li>
+</ul>
+<h3>Accenture Industrial Software Solutions Romania</h3>
+<ul>
+<li>
+<h3><strong>Software Engineering Associate</strong></h3>
+<p><em>From May 2015 to July 2017</em></p>
+<ul>
+<li>Develop and maintain a Railway Automation project using C++ (MFC, Boost), Visual Basic and
+Python environments;</li>
+<li>Work in a regulated environment, the components developed by us were graded between SIL 0 and SIL 2 safety-integrity level;</li>
+<li>Develop and maintain unit tests using GTEST and GMOCK libraries;</li>
+<li>Implement regression and UI tests using AutoIT and Python languages;</li>
+<li>Configure and maintain Jenkins - continuous integration system, develop batch scripts for automatic builds;</li>
+<li>Write software documentation (use cases, release notes) and testing documentation (test cases);</li>
+<li>Actively collaborate with clients and other teams;</li>
+<li>Actively attend Scrum meetings;</li>
+<li>Supervise summer internship attendees.</li>
+<li>Other technologies used: IBM Rational Synergy (version control system), IBM Rational Doors (software documentation), PVCS Merant Tracker (bugs and tickets), Citrix, Oracle Virtual Box (virtualization and working remotely on the client�s network), AutoIT (used for UI and regression/integration testing), Parasoft Static Analysis for C and C++.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>Internships<a class="anchor-link" href="#internships" id="internships">&lt;&lt;</a>
+</h2>
+<h3>Android Developer at <em>Smartsoft</em>
+</h3>
+<p><em>From July 2014 to August 2014</em></p>
+<h3>Software Engineer at <em>Evoline</em>
+</h3>
+<p><em>From July 2013 to August 2013</em></p>
+<hr>
+<h2>Education<a class="anchor-link" href="#education" id="education">&lt;&lt;</a>
+</h2>
+<h3>
+<strong>Master�s Degree in Software Development</strong> at <em>Sapientia Hungarian University of Transylvania [Târgu-Mureş, Romania]</em>
+</h3>
+<p><em>From September 2015 to June 2017</em></p>
+<ul>
+<li>
+<strong>Studied</strong>: Agile Methodologies, Numerical Math and Statistics, Virtual Reality and Game Development, Genetic Algorithms, Concurrent Computing (CUDA), Distributed Systems (Java EE), Software Verification and Synthesis, Software Testing, Modern Databases, Component-Based Software Development</li>
+<li>
+<strong>Final grade</strong>: 10/10</li>
+<li>
+<strong>Thesis</strong>: Parallel Artistic Style Transfer using Deep Convolutional Neural Networks</li>
+</ul>
+<h3>
+<strong>Bachelor�s Degree in Computer Science</strong> at <em>Sapientia Hungarian University of Transylvania [Târgu-Mureş, Romania]</em>
+</h3>
+<p><em>From September 2011 to June 2015</em></p>
+<ul>
+<li>
+<strong>Studied</strong>: Algorithms and Data Structures, Programming Languages, Web Technologies, Operating Systems, Databases, Computer Networks, Distributed Systems, Artificial Intelligence, Object Oriented Programming, Java Technologies, Android Programming, Image Processing, Computer Architecture, Assembly Programming, Microcontrollers, Programmable Digital Systems, Digital Signal Processing</li>
+<li>
+<strong>Final grade</strong>: 10/10</li>
+<li>
+<strong>Thesis</strong>: WLAN based conference system</li>
+<li>
+<strong>Honors</strong>:<ul>
+<li>
+<em>16th Scientific Student Conference of Technical Science - XVI. Műszaki Erdélyi Tudományos Diakköri Konferencia,</em> Second place in Computer Science and Applied Informatics section with the project of <em>�WLAN based Conference System�</em>.</li>
+<li>
+<em>XIV Scientific Students� Associations Conference - XIV. Tudományos Diákköri Konferencia (Sapientia TDK),</em> First place in Computer Science and Software Development Section section with the project: �WLAN based Conference System�.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>Certifications<a class="anchor-link" href="#certifications" id="certifications">&lt;&lt;</a>
+</h2>
+<ul>
+<li>
+<strong>Oracle Certified Professional: Java SE 17 Developer</strong><ul>
+<li>since January 2023</li>
+<li>Badge: <a href="https://catalog-education.oracle.com/pls/certview/sharebadge?id=41EBAA12010D28FC38171A53C685CD1445389E2BF5E8FCA2E4EE694B673E21D7" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>Oracle Certified Professional: Java SE 11 Developer</strong><ul>
+<li>since January 2021</li>
+<li>Badge: <a href="https://www.credly.com/badges/d24ba586-7589-488b-ac86-2b5ae49e994a/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified Developer – Associate</strong><ul>
+<li>valid between February 2021 and May 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/d507de98-aa20-425b-9211-15b4918c5308/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified Solutions Architect – Associate</strong><ul>
+<li>valid between March 2021 and August 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/6a70adfa-ac41-484c-b015-2b869410853c/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified SysOps Administrator – Associate</strong><ul>
+<li>valid between April 2021 and May 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/466e33cb-32ab-4217-9127-5e8f7e94de0c/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified DevOps Engineer – Professional</strong><ul>
+<li>valid between May 2021 and May 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/b294e430-9829-4550-bff3-ed5d893ae99e/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified Solutions Architect – Professional</strong><ul>
+<li>valid between August 2021 and August 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/cf39c076-d21f-4cc1-a033-954718fe87d6/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified Advanced Networking – Specialty</strong><ul>
+<li>valid between December 2021 and December 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/8c68b90f-3aeb-4a45-a205-bd9428889702/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified Machine Learning – Specialty</strong><ul>
+<li>valid between February 2024 and February 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/f0099e97-f4ab-47c5-a809-eab1e6b8def0/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>AWS Certified AI Practitioner</strong><ul>
+<li>valid between September 2024 and September 2027</li>
+<li>Badge: <a href="https://www.credly.com/badges/57789cb3-6896-4ab0-be6a-e1b8c19c6f38/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>Microsoft Certified: Azure Fundamentals</strong><ul>
+<li>since September 2020</li>
+<li>Badge: <a href="https://www.credly.com/badges/3e2a89c1-0ef3-4a45-9e22-ccd54ac6e0ef/public_url" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>Microsoft Certified: Azure Developer Associate</strong><ul>
+<li>valid between October 2020 and October 2022</li>
+<li>Badge: <a href="https://learn.microsoft.com/en-gb/users/ervinszilagyi-2278/credentials/b2f3afc499fc533c" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>Associate Cloud Engineer</strong><ul>
+<li>valid between August 2022 and August 2024</li>
+<li>Badge and certification: <a href="https://www.credential.net/9056a79b-89f1-4fb7-b824-76b4f752dd57" target="_blank">verify</a>
+</li>
+</ul>
+</li>
+<li>
+<strong>Software Security / License AFRP6UPJZ5 - Coursera Verified Certificates</strong><ul>
+<li>since December 2015</li>
+<li><a href="https://www.coursera.org/account/accomplishments/verify/AFRP6UPJZ5" target="_blank">https://www.coursera.org/account/accomplishments/verify/AFRP6UPJZ5</a></li>
+</ul>
+</li>
+<li>
+<strong>Programming Mobile Applications for Android Handheld Systems / License U4KVNZF6NS - Coursera Verified Certificates</strong><ul>
+<li>since December 2014</li>
+<li><a href="https://www.coursera.org/account/accomplishments/verify/U4KVNZF6NS" target="_blank">https://www.coursera.org/account/accomplishments/verify/U4KVNZF6NS</a></li>
+</ul>
+</li>
+<li>
+<strong>Scrum, Kanban, Lean and Story Writing / Sprint Consulting Llc</strong><ul>
+<li>since February 2016</li>
+</ul>
+</li>
+<li>
+<strong>Cambridge English: First (FCE)</strong><ul>
+<li>since July 2016</li>
+</ul>
+</li>
+</ul></article>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>

@@ -1,274 +1,131 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   An Introduction to AWS Batch - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
-   <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-   <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-   <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-   </script>
-   <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-   </script>
-   <meta charset="utf-8"/>
-   <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-   <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-   <script>
-    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>An Introduction to AWS Batch - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-   </script>
-  </link>
-  <meta content="An Introduction to AWS Batch" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev/an-introduction-to-aws-batch.html" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image"/>
-  <meta content="An Introduction to AWS Batch" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev/">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szil√°gyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       R√©sum√©
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    An Introduction to AWS Batch
-   </h1>
-   <p>
-    <a href="https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html" target="_blank">
-     AWS Batch
-    </a>
-    is a fully managed service that helps us developers run batch computing workloads on the cloud. The goal of this service is to effectively provision infrastructure for batch jobs submitted by us while we can focus on writing the code for dealing with business constraints.
-   </p>
-   <p>
-    Batch jobs running on AWS are essentially Docker containers that can be executed on different environments. AWS Batch supports job queues deployed on EC2 instances, on ECS clusters with Fargate, and on Amazon EKS (Elastic Kubernetes Service). Regardless of what we choose for the basis of our infrastructure, the provisioning of the necessary services and orchestration of the jobs is managed by AWS.
-   </p>
-   <h2>
-    Components of AWS Batch
-    <a class="anchor-link" href="#components-of-aws-batch" id="components-of-aws-batch">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Although one of the selling points of AWS Batch is to simplify batch computing on the cloud, it has a bunch of components each requiring its own configuration. The components required for a job executing on AWS Batch service are the following:
-   </p>
-   <h3>
-    Jobs
-   </h3>
-   <p>
-    Jobs are Docker containers wrapping units of work which we submit to an AWS Batch queue. Jobs can have names and they can receive parameters from their job definition.
-   </p>
-   <h3>
-    Job Definitions
-   </h3>
-   <p>
-    A job definition specifies how a job should run. Jobs definitions can have the followings:
-   </p>
-   <ul>
-    <li>
-     an IAM role to provide access to other AWS services;
-    </li>
-    <li>
-     information about the memory and CPU requirements of the job;
-    </li>
-    <li>
-     other properties required for the job such as environment variables, container properties, and mount points for extra storage.
-    </li>
-   </ul>
-   <h3>
-    Job Queues
-   </h3>
-   <p>
-    Jobs are submitted to job queues. The role of a job queue is to schedule jobs and execute them on compute environments. Jobs can have a priority based on which they can be scheduled to run on multiple different compute environments. The job queue itself can decide which job to be executed first on which compute environment.
-   </p>
-   <h3>
-    Compute Environments
-   </h3>
-   <p>
-    Compute environments are essentially ECS clusters. They contain the Amazon ECS container instances used for the containerized batch jobs. We can have managed or unmanaged compute environments:
-   </p>
-   <ul>
-    <li>
-     <strong>
-      Managed compute environments
-     </strong>
-     : AWS batch decides the capacity and the EC2 instance type required for the job (in case we decide to run our jobs on EC2). Alternatively, we can use Fargate environment, which will run our containerized batch job on instances entirely hidden from us and fully managed by AWS.
-    </li>
-    <li>
-     <strong>
-      Unmanaged compute environments
-     </strong>
-     : we manage our own compute resources. It requires that our compute environments use an AMI that meets the AWS ECS required AMI specifications.
-    </li>
-   </ul>
-   <h2>
-    Multi-node jobs and GPU jobs
-    <a class="anchor-link" href="#multi-node-jobs-and-gpu-jobs" id="multi-node-jobs-and-gpu-jobs">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    AWS Batch supports multi-node parallel jobs that span on multiple EC2 instances. They can be used for parallel data processing, high-performance computing applications, and for training machine learning models. Multi-node jobs can run only on managed compute environments.
-   </p>
-   <p>
-    In addition to multi-node jobs, we can enhance the underlying EC2 instances with graphics cards (GPUs). This can be useful for operations relying on parallel processing, such as deep learning.
-   </p>
-   <p>
-    AWS Batch also supports applications that use EFA. An
-    <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
-     Elastic Fabric Adapter (EFA)
-    </a>
-    is a network device used to accelerate High Performance Computing (HPC) applications using Message Passing Interface (MPI). Moreover, if we would like even better performance for parallel computing, we can have direct GPU-to-GPU communication via
-    <a href="https://aws.amazon.com/blogs/compute/optimizing-deep-learning-on-p3-and-p3dn-with-efa-part-1/" target="_blank">
-     NVIDIA Collective Communication Library (NCCL)
-    </a>
-    , which is also built on EFA.
-   </p>
-   <h2>
-    AWS Batch - When to use it?
-    <a class="anchor-link" href="#aws-batch-when-to-use-it" id="aws-batch-when-to-use-it">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    AWS Batch is recommended for any task which requires a lot of time/memory/computing power to run. This can be a vague statement, so let's see some examples of use cases for AWS Batch:
-   </p>
-   <ul>
-    <li>
-     High-performance computing: tasks that require a lot of computing power such as running usage analytics tasks on a huge amount of data, automatic content rendering, transcoding, etc.
-    </li>
-    <li>
-     Machine Learning: as we've seen before AWS Batch supports multi-node jobs and GPU-powered jobs, which can be essential for training ML models
-    </li>
-    <li>
-     ETL: we can use AWS Batch for ETL (extract, transform, and load) tasks
-    </li>
-    <li>
-     For any other task which may take up a lot of time (hours/days)
-    </li>
-   </ul>
-   <p>
-    While these use cases may sound cool, I suggest having caution before deciding if AWS Batch is the right choice for us. AWS offers a bunch of other products configured for specialized use cases. Let's walk through a few of these:
-   </p>
-   <h3>
-    AWS Batch vs AWS Glue/Amazon EMR
-   </h3>
-   <p>
-    A while above it was mentioned that AWS Batch can be used for ETL jobs. While this is true, we may want to step back and take a look at another service, such as AWS Glue. AWS Glue is a fully managed solution developed specifically for ETL jobs. It is a serverless option offering a bunch of choices for data preparation, data integration, and ingestion into several other services. It relies on Apache Spark.
-   </p>
-   <p>
-    Similarly, Amazon EMR is also an ETL solution for petabyte-scale data processing relying on open-source frameworks, such as Apache Spark, Apache Hive, and Presto.
-   </p>
-   <p>
-    My recommendation would be to use Glue/EMR if we are comfortable with the technologies they rely on. If we want to have something custom, built by ourselves, we can stick to AWS Batch.
-   </p>
-   <h3>
-    AWS Batch vs SageMaker
-   </h3>
-   <p>
-    We've also seen that AWS Batch can be used for machine learning. Again, while this is true, it is a crude way of doing machine learning. AWS offers SageMaker for Machine Learning a data science. SageMaker can run its own jobs that can be enhanced by GPU computing power.
-   </p>
-   <p>
-    While SageMaker is a one-stop shop for everything related to machine learning, AWS Batch is an offering for executing long-running tasks. If we have a machine learning model implemented but we just need the computing power to do the training, we can use AWS Batch, other than this probably SageMaker would make way more sense for everything ML-related.
-   </p>
-   <h3>
-    AWS Batch vs AWS Lambda
-   </h3>
-   <p>
-    AWS Lambda can also be an alternative for AWS Batch jobs. For certain generic tasks, a simple Lambda function can be more appropriate than having a fully-fledged batch job. We can consider using a Lambda Function when:
-   </p>
-   <ul>
-    <li>
-     the task is not that compute-intensive: AWS Lambda can have up to 6 vCPU cores and up to 10GB of RAM;
-    </li>
-    <li>
-     we know that our task would be able to be finished in 15 minutes.
-    </li>
-   </ul>
-   <p>
-    If we can adhere to these Lambda limitations, I strongly suggest using Lambda instead of AWS Batch. Lambda is considerably easier to set up and it has way fewer moving parts. We can simply focus on the implementation details rather than dealing with the infrastructure.
-   </p>
-   <h2>
-    Building an AWS Batch Job
-    <a class="anchor-link" href="#building-an-aws-batch-job" id="building-an-aws-batch-job">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    In the upcoming sections, we will put all things together and we will build an AWS Batch job from the scratch. For the sake of this exercise, let's assume we have a movie renting website and we would want to present movie information with ratings from critics to our customers. The purpose of a batch job will be to import a set of movie ratings at certain intervals into a DynamoDB table.
-   </p>
-   <p>
-    For the movies dataset, we will use one from
-    <a href="https://www.kaggle.com/datasets/db55ac3dfd0098a0cf96dd542807f9253a16587ff233e06baef372bccfd09942" target="_blank">
-     Kaggle
-    </a>
-    , which I had to download first and upload it to an S3 bucket (Kaggle limitation). Usually, if we are running a similar service in production, we will pay for a certain provider which will expose a dataset for us. Since Kaggle does not offer an easy way for automatic downloads, I had to save the dataset first into an S3 bucket.
-   </p>
-   <p>
-    Also, one may question the usage of a batch job considering the fact the data size might not be that big. A Lambda function may be sufficient to accomplish the same goal. While this is true, for the sake of this exercise we will stick to batch.
-   </p>
-   <p>
-    A simplified architectural diagram of what we would want to accomplish can be seen here:
-   </p>
-   <p>
-    <img alt="Import Movie Ratings Architecture" src="img-an-introduction-to-aws-batch/aws-batch.png"/>
-   </p>
-   <p>
-    Creating a batch job requires the provisioning of several of its components. To make this exercise redoable, we will use Terraform for the infrastructure. The upcoming steps can be accomplished from AWS console as well or with the usage of other IaC tools such as CDK. Terraform is mainly a preference of mine.
-   </p>
-   <h3>
-    Compute Environment
-   </h3>
-   <p>
-    The first component of a batch job we will create will be the compute environment. Our batch job will be a managed job running on AWS Fargate. We can write the IaC code for the compute environment as follows:
-   </p>
-   <pre><code class="language-terraform">resource "aws_batch_compute_environment" "compute_environment" {
+    </script>
+<meta content="An Introduction to AWS Batch" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/an-introduction-to-aws-batch.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
+<meta content="An Introduction to AWS Batch" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev/">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szil√°gyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">R√©sum√©</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>An Introduction to AWS Batch</h1>
+<p><a href="https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html" target="_blank">AWS Batch</a> is a fully managed service that helps us developers run batch computing workloads on the cloud. The goal of this service is to effectively provision infrastructure for batch jobs submitted by us while we can focus on writing the code for dealing with business constraints.</p>
+<p>Batch jobs running on AWS are essentially Docker containers that can be executed on different environments. AWS Batch supports job queues deployed on EC2 instances, on ECS clusters with Fargate, and on Amazon EKS (Elastic Kubernetes Service). Regardless of what we choose for the basis of our infrastructure, the provisioning of the necessary services and orchestration of the jobs is managed by AWS.</p>
+<h2>Components of AWS Batch<a class="anchor-link" href="#components-of-aws-batch" id="components-of-aws-batch">&lt;&lt;</a>
+</h2>
+<p>Although one of the selling points of AWS Batch is to simplify batch computing on the cloud, it has a bunch of components each requiring its own configuration. The components required for a job executing on AWS Batch service are the following:</p>
+<h3>Jobs</h3>
+<p>Jobs are Docker containers wrapping units of work which we submit to an AWS Batch queue. Jobs can have names and they can receive parameters from their job definition.</p>
+<h3>Job Definitions</h3>
+<p>A job definition specifies how a job should run. Jobs definitions can have the followings:</p>
+<ul>
+<li>an IAM role to provide access to other AWS services;</li>
+<li>information about the memory and CPU requirements of the job;</li>
+<li>other properties required for the job such as environment variables, container properties, and mount points for extra storage.</li>
+</ul>
+<h3>Job Queues</h3>
+<p>Jobs are submitted to job queues. The role of a job queue is to schedule jobs and execute them on compute environments. Jobs can have a priority based on which they can be scheduled to run on multiple different compute environments. The job queue itself can decide which job to be executed first on which compute environment.</p>
+<h3>Compute Environments</h3>
+<p>Compute environments are essentially ECS clusters. They contain the Amazon ECS container instances used for the containerized batch jobs. We can have managed or unmanaged compute environments:</p>
+<ul>
+<li>
+<strong>Managed compute environments</strong>: AWS batch decides the capacity and the EC2 instance type required for the job (in case we decide to run our jobs on EC2). Alternatively, we can use Fargate environment, which will run our containerized batch job on instances entirely hidden from us and fully managed by AWS.</li>
+<li>
+<strong>Unmanaged compute environments</strong>: we manage our own compute resources. It requires that our compute environments use an AMI that meets the AWS ECS required AMI specifications.</li>
+</ul>
+<h2>Multi-node jobs and GPU jobs<a class="anchor-link" href="#multi-node-jobs-and-gpu-jobs" id="multi-node-jobs-and-gpu-jobs">&lt;&lt;</a>
+</h2>
+<p>AWS Batch supports multi-node parallel jobs that span on multiple EC2 instances. They can be used for parallel data processing, high-performance computing applications, and for training machine learning models. Multi-node jobs can run only on managed compute environments.</p>
+<p>In addition to multi-node jobs, we can enhance the underlying EC2 instances with graphics cards (GPUs). This can be useful for operations relying on parallel processing, such as deep learning.</p>
+<p>AWS Batch also supports applications that use EFA. An <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">Elastic Fabric Adapter (EFA)</a> is a network device used to accelerate High Performance Computing (HPC) applications using Message Passing Interface (MPI). Moreover, if we would like even better performance for parallel computing, we can have direct GPU-to-GPU communication via <a href="https://aws.amazon.com/blogs/compute/optimizing-deep-learning-on-p3-and-p3dn-with-efa-part-1/" target="_blank">NVIDIA Collective Communication Library (NCCL)</a>, which is also built on EFA.</p>
+<h2>AWS Batch - When to use it?<a class="anchor-link" href="#aws-batch-when-to-use-it" id="aws-batch-when-to-use-it">&lt;&lt;</a>
+</h2>
+<p>AWS Batch is recommended for any task which requires a lot of time/memory/computing power to run. This can be a vague statement, so letís see some examples of use cases for AWS Batch:</p>
+<ul>
+<li>High-performance computing: tasks that require a lot of computing power such as running usage analytics tasks on a huge amount of data, automatic content rendering, transcoding, etc.</li>
+<li>Machine Learning: as weíve seen before AWS Batch supports multi-node jobs and GPU-powered jobs, which can be essential for training ML models</li>
+<li>ETL: we can use AWS Batch for ETL (extract, transform, and load) tasks</li>
+<li>For any other task which may take up a lot of time (hours/days)</li>
+</ul>
+<p>While these use cases may sound cool, I suggest having caution before deciding if AWS Batch is the right choice for us. AWS offers a bunch of other products configured for specialized use cases. Letís walk through a few of these:</p>
+<h3>AWS Batch vs AWS Glue/Amazon EMR</h3>
+<p>A while above it was mentioned that AWS Batch can be used for ETL jobs. While this is true, we may want to step back and take a look at another service, such as AWS Glue. AWS Glue is a fully managed solution developed specifically for ETL jobs. It is a serverless option offering a bunch of choices for data preparation, data integration, and ingestion into several other services. It relies on Apache Spark.</p>
+<p>Similarly, Amazon EMR is also an ETL solution for petabyte-scale data processing relying on open-source frameworks, such as Apache Spark, Apache Hive, and Presto.</p>
+<p>My recommendation would be to use Glue/EMR if we are comfortable with the technologies they rely on. If we want to have something custom, built by ourselves, we can stick to AWS Batch.</p>
+<h3>AWS Batch vs SageMaker</h3>
+<p>Weíve also seen that AWS Batch can be used for machine learning. Again, while this is true, it is a crude way of doing machine learning. AWS offers SageMaker for Machine Learning a data science. SageMaker can run its own jobs that can be enhanced by GPU computing power.</p>
+<p>While SageMaker is a one-stop shop for everything related to machine learning, AWS Batch is an offering for executing long-running tasks. If we have a machine learning model implemented but we just need the computing power to do the training, we can use AWS Batch, other than this probably SageMaker would make way more sense for everything ML-related.</p>
+<h3>AWS Batch vs AWS Lambda</h3>
+<p>AWS Lambda can also be an alternative for AWS Batch jobs. For certain generic tasks, a simple Lambda function can be more appropriate than having a fully-fledged batch job. We can consider using a Lambda Function when:</p>
+<ul>
+<li>the task is not that compute-intensive: AWS Lambda can have up to 6 vCPU cores and up to 10GB of RAM;</li>
+<li>we know that our task would be able to be finished in 15 minutes.</li>
+</ul>
+<p>If we can adhere to these Lambda limitations, I strongly suggest using Lambda instead of AWS Batch. Lambda is considerably easier to set up and it has way fewer moving parts. We can simply focus on the implementation details rather than dealing with the infrastructure.</p>
+<h2>Building an AWS Batch Job<a class="anchor-link" href="#building-an-aws-batch-job" id="building-an-aws-batch-job">&lt;&lt;</a>
+</h2>
+<p>In the upcoming sections, we will put all things together and we will build an AWS Batch job from the scratch. For the sake of this exercise, letís assume we have a movie renting website and we would want to present movie information with ratings from critics to our customers. The purpose of a batch job will be to import a set of movie ratings at certain intervals into a DynamoDB table.</p>
+<p>For the movies dataset, we will use one from <a href="https://www.kaggle.com/datasets/db55ac3dfd0098a0cf96dd542807f9253a16587ff233e06baef372bccfd09942" target="_blank">Kaggle</a>, which I had to download first and upload it to an S3 bucket (Kaggle limitation). Usually, if we are running a similar service in production, we will pay for a certain provider which will expose a dataset for us. Since Kaggle does not offer an easy way for automatic downloads, I had to save the dataset first into an S3 bucket.</p>
+<p>Also, one may question the usage of a batch job considering the fact the data size might not be that big. A Lambda function may be sufficient to accomplish the same goal. While this is true, for the sake of this exercise we will stick to batch.</p>
+<p>A simplified architectural diagram of what we would want to accomplish can be seen here:</p>
+<p><img alt="Import Movie Ratings Architecture" src="img-an-introduction-to-aws-batch/aws-batch.png"></p>
+<p>Creating a batch job requires the provisioning of several of its components. To make this exercise redoable, we will use Terraform for the infrastructure. The upcoming steps can be accomplished from AWS console as well or with the usage of other IaC tools such as CDK. Terraform is mainly a preference of mine.</p>
+<h3>Compute Environment</h3>
+<p>The first component of a batch job we will create will be the compute environment. Our batch job will be a managed job running on AWS Fargate. We can write the IaC code for the compute environment as follows:</p>
+<pre><code class="language-terraform">resource "aws_batch_compute_environment" "compute_environment" {
   compute_environment_name = var.module_name
 
   compute_resources {
@@ -290,14 +147,8 @@
   depends_on   = [aws_iam_role_policy_attachment.service_role_attachment]
 }
 </code></pre>
-   <p>
-    We can notice in the resource definition that it requires a few other resources to be present. First, the compute environment needs a service role. According to the
-    <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#service_role" target="_blank">
-     Terraform documentation
-    </a>
-    the service role "allows AWS Batch to make calls to other AWS services on your behalf". With all respect to the people who wrote the documentation, for me personally, this statement does not offer a lot of information. In all fairness, Terraform documentation offers an example of this service role, which we will use in our project:
-   </p>
-   <pre><code class="language-terraform">data "aws_iam_policy_document" "assume_role" {
+<p>We can notice in the resource definition that it requires a few other resources to be present. First, the compute environment needs a service role. According to the <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#service_role" target="_blank">Terraform documentation</a> the service role ìallows AWS Batch to make calls to other AWS services on your behalfî. With all respect to the people who wrote the documentation, for me personally, this statement does not offer a lot of information. In all fairness, Terraform documentation offers an example of this service role, which we will use in our project:</p>
+<pre><code class="language-terraform">data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
 
@@ -320,21 +171,9 @@ resource "aws_iam_role_policy_attachment" "service_role_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
 </code></pre>
-   <p>
-    Essentially what we are doing here is creating a role with an IAM policy offered by AWS, the name of the policy being
-    <code>
-     AWSBatchServiceRole
-    </code>
-    . Moreover, we create a trust policy to allow AWS Batch to assume this role.
-   </p>
-   <p>
-    Another important thing required by our compute environment is a list of security groups and subnets. I tie them together because they are part of the AWS networking infrastructure needed for the project. A security group is a
-    <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">
-     stateful firewall
-    </a>
-    , while a subnet is part of a virtual private network. Networking in AWS is a complex topic, and it falls outside the scope of this article. Since AWS Batch requires the presence of a minimal networking setup, this is what we can use for our purposes:
-   </p>
-   <pre><code class="language-terraform">resource "aws_vpc" "vpc" {
+<p>Essentially what we are doing here is creating a role with an IAM policy offered by AWS, the name of the policy being <code>AWSBatchServiceRole</code>. Moreover, we create a trust policy to allow AWS Batch to assume this role. </p>
+<p>Another important thing required by our compute environment is a list of security groups and subnets. I tie them together because they are part of the AWS networking infrastructure needed for the project. A security group is a <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">stateful firewall</a>, while a subnet is part of a virtual private network. Networking in AWS is a complex topic, and it falls outside the scope of this article. Since AWS Batch requires the presence of a minimal networking setup, this is what we can use for our purposes:</p>
+<pre><code class="language-terraform">resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
 
   tags = {
@@ -419,10 +258,8 @@ resource "aws_route_table_association" "private_rt_association" {
   route_table_id = aws_route_table.private_rt.id
 }
 </code></pre>
-   <p>
-    Now, this may seem like a lot of code. What is happening here is that we create an entirely new VPC with 2 subnets (a private and a public one). We put our cluster behind a NAT to be able to make calls outside to the internet. This is required for our batch job to work properly since it has to communicate with the AWS Batch API. Last but not least, for the security group, we can use this:
-   </p>
-   <pre><code class="language-terraform">resource "aws_security_group" "sg" {
+<p>Now, this may seem like a lot of code. What is happening here is that we create an entirely new VPC with 2 subnets (a private and a public one). We put our cluster behind a NAT to be able to make calls outside to the internet. This is required for our batch job to work properly since it has to communicate with the AWS Batch API. Last but not least, for the security group, we can use this:</p>
+<pre><code class="language-terraform">resource "aws_security_group" "sg" {
   name        = "${var.module_name}-sg"
   description = "Movies batch demo SG."
   vpc_id      = aws_vpc.vpc.id
@@ -435,19 +272,11 @@ resource "aws_route_table_association" "private_rt_association" {
   }
 }
 </code></pre>
-   <p>
-    This is probably the simplest security group. It allows outbound traffic, denying inbound traffic. Remember, security groups are stateful, so this should be perfect for our use case.
-   </p>
-   <h2>
-    Job Queue
-    <a class="anchor-link" href="#job-queue" id="job-queue">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Now that we have the compute environment, we can create a job queue that will use this environment.
-   </p>
-   <pre><code>resource "aws_batch_job_queue" "job_queue" {
+<p>This is probably the simplest security group. It allows outbound traffic, denying inbound traffic. Remember, security groups are stateful, so this should be perfect for our use case.</p>
+<h2>Job Queue<a class="anchor-link" href="#job-queue" id="job-queue">&lt;&lt;</a>
+</h2>
+<p>Now that we have the compute environment, we can create a job queue that will use this environment.</p>
+<pre><code>resource "aws_batch_job_queue" "job_queue" {
   name     = "${var.module_name}-job-queue"
   state    = "ENABLED"
   priority = 1
@@ -456,16 +285,10 @@ resource "aws_route_table_association" "private_rt_association" {
   ]
 }
 </code></pre>
-   <p>
-    The definition of a queue is pretty simple, it needs a name, a state (enabled, disabled), a priority, and the compute environment to which it can schedule jobs. Next, we will need a job.
-   </p>
-   <h3>
-    Job Definition
-   </h3>
-   <p>
-    For a job definition, we need a few things to specify. Let's see the resource definition first:
-   </p>
-   <pre><code class="language-terraform">resource "aws_batch_job_definition" "job_definition" {
+<p>The definition of a queue is pretty simple, it needs a name, a state (enabled, disabled), a priority, and the compute environment to which it can schedule jobs. Next, we will need a job.</p>
+<h3>Job Definition</h3>
+<p>For a job definition, we need a few things to specify. Letís see the resource definition first:</p>
+<pre><code class="language-terraform">resource "aws_batch_job_definition" "job_definition" {
   name = "${var.module_name}-job-definition"
   type = "container"
 
@@ -511,49 +334,13 @@ resource "aws_route_table_association" "private_rt_association" {
   })
 }
 </code></pre>
-   <p>
-    For the platform capabilities, we can have the same job being used for
-    <code>
-     FARGATE
-    </code>
-    and
-    <code>
-     EC2
-    </code>
-    as well. In our case, we need only
-    <code>
-     FARGATE
-    </code>
-    .
-   </p>
-   <p>
-    For the container properties, we need to have a bunch of things in place. Probably the most important is the repository URL for the Docker image. We will build the Docker image in the next section.
-   </p>
-   <p>
-    For the
-    <code>
-     resourceRequirements
-    </code>
-    we configure the CPU and the memory usage. These apply to the job itself, and they should "fit" inside the compute environment.
-   </p>
-   <p>
-    Moving on, we can specify some environment variables for the container. We are using these environment variables to be able to pass input to the container. We could also override the CMD (command) part of the Docker container and provide some input values there, but we are not doing that in this case.
-   </p>
-   <p>
-    Last, but not least, we see that the job definition requires 2 IAM roles. The first one is the execution role, which "grants to the Amazon ECS container and AWS Fargate agents permission to make AWS API calls" (according to
-    <a href="https://docs.aws.amazon.com/batch/latest/userguide/execution-IAM-role.html" target="_blank">
-     AWS Batch execution IAM role
-    </a>
-    ). The second one is the job role, which is an "IAM role that the container can assume for AWS permissions" (according to the
-    <a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_ContainerProperties.html" target="_blank">
-     ContainerProperties docs
-    </a>
-    ). Is this confusing for anybody else or just for me? Probably yes... so let's clarify these roles.
-   </p>
-   <p>
-    The service role grants permission for the ECS cluster (and the ECS Fargate agent) to do certain AWS API calls. These calls include getting the Docker image from an ECR repository or being able to create CloudWatch log streams.
-   </p>
-   <pre><code class="language-terraform">resource "aws_iam_role" "ecs_task_execution_role" {
+<p>For the platform capabilities, we can have the same job being used for <code>FARGATE</code> and <code>EC2</code> as well. In our case, we need only <code>FARGATE</code>. </p>
+<p>For the container properties, we need to have a bunch of things in place. Probably the most important is the repository URL for the Docker image. We will build the Docker image in the next section. </p>
+<p>For the <code>resourceRequirements</code> we configure the CPU and the memory usage. These apply to the job itself, and they should ìfitî inside the compute environment. </p>
+<p>Moving on, we can specify some environment variables for the container. We are using these environment variables to be able to pass input to the container. We could also override the CMD (command) part of the Docker container and provide some input values there, but we are not doing that in this case.</p>
+<p>Last, but not least, we see that the job definition requires 2 IAM roles. The first one is the execution role, which ìgrants to the Amazon ECS container and AWS Fargate agents permission to make AWS API callsî (according to <a href="https://docs.aws.amazon.com/batch/latest/userguide/execution-IAM-role.html" target="_blank">AWS Batch execution IAM role</a>). The second one is the job role, which is an ìIAM role that the container can assume for AWS permissionsî (according to the <a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_ContainerProperties.html" target="_blank">ContainerProperties docs</a>). Is this confusing for anybody else or just for me? Probably yesÖ so letís clarify these roles.</p>
+<p>The service role grants permission for the ECS cluster (and the ECS Fargate agent) to do certain AWS API calls. These calls include getting the Docker image from an ECR repository or being able to create CloudWatch log streams. </p>
+<pre><code class="language-terraform">resource "aws_iam_role" "ecs_task_execution_role" {
   name               = "${var.module_name}-ecs-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -574,17 +361,9 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 </code></pre>
-   <p>
-    Since AWS already provides a policy for the execution role (
-    <code>
-     AmazonECSTaskExecutionRolePolicy
-    </code>
-    ), we can reuse that.
-   </p>
-   <p>
-    The job role will grant permissions to the running container itself. In our case, if we need to write entries to a DynamoDB table, we have to provide write permission to the job to that table. Likewise, if we read from an S3 bucket, we have to create a policy with S3 read permission as well.
-   </p>
-   <pre><code class="language-terraform">resource "aws_iam_role" "job_role" {
+<p>Since AWS already provides a policy for the execution role (<code>AmazonECSTaskExecutionRolePolicy</code>), we can reuse that. </p>
+<p>The job role will grant permissions to the running container itself. In our case, if we need to write entries to a DynamoDB table, we have to provide write permission to the job to that table. Likewise, if we read from an S3 bucket, we have to create a policy with S3 read permission as well.</p>
+<pre><code class="language-terraform">resource "aws_iam_role" "job_role" {
   name               = "${var.module_name}-job-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -649,34 +428,22 @@ resource "aws_iam_role_policy_attachment" "s3_readonly_policy_attachment" {
   policy_arn = aws_iam_policy.s3_readonly_policy.arn
 }
 </code></pre>
-   <p>
-    Both the service role and job role require a trust policy so they can be assumed by ECS.
-   </p>
-   <h3>
-    Building the Docker Container for the Job
-   </h3>
-   <p>
-    For our job to be complete, we need to build a Docker container with the so-called "business logic". We can store this container in an AWS ECR repository or on DockerHub. Usually, what I tend to do is to create a separate Terraform project for the ECR. The reason for this choice is that the Docker image should exist in ECR at the moment when the deployment of the AWS Batch job happens.
-   </p>
-   <p>
-    The code for the ECR is very simple:
-   </p>
-   <pre><code class="language-terraform">resource "aws_ecr_repository" "repository" {
+<p>Both the service role and job role require a trust policy so they can be assumed by ECS. </p>
+<h3>Building the Docker Container for the Job</h3>
+<p>For our job to be complete, we need to build a Docker container with the so-called ìbusiness logicî. We can store this container in an AWS ECR repository or on DockerHub. Usually, what I tend to do is to create a separate Terraform project for the ECR. The reason for this choice is that the Docker image should exist in ECR at the moment when the deployment of the AWS Batch job happens. </p>
+<p>The code for the ECR is very simple:</p>
+<pre><code class="language-terraform">resource "aws_ecr_repository" "repository" {
   name                 = var.repo_name
   image_tag_mutability = "MUTABLE"
 }
 </code></pre>
-   <p>
-    I also create an output with the Docker repository URL:
-   </p>
-   <pre><code class="language-terraform">output "ecr_registry_url" {
+<p>I also create an output with the Docker repository URL:</p>
+<pre><code class="language-terraform">output "ecr_registry_url" {
   value = aws_ecr_repository.repository.repository_url
 }
 </code></pre>
-   <p>
-    This output can be imported inside the other project and can be provided for the job definition:
-   </p>
-   <pre><code>data "terraform_remote_state" "ecr" {
+<p>This output can be imported inside the other project and can be provided for the job definition:</p>
+<pre><code>data "terraform_remote_state" "ecr" {
   backend = "s3"
 
   config = {
@@ -686,10 +453,8 @@ resource "aws_iam_role_policy_attachment" "s3_readonly_policy_attachment" {
   }
 }
 </code></pre>
-   <p>
-    For the source code which will do the ingesting of the movie ratings inside DynamoDB, we can use the following Python snippet:
-   </p>
-   <pre><code class="language-python">import csv
+<p>For the source code which will do the ingesting of the movie ratings inside DynamoDB, we can use the following Python snippet:</p>
+<pre><code class="language-python">import csv
 import io
 import os
 from zipfile import ZipFile
@@ -763,13 +528,9 @@ if __name__ == '__main__':
     content = download_content(bucket, key)
     write_to_dynamo(content, table_name)
 </code></pre>
-   <p>
-    This code is self-explanatory. We get an archive with a CSV file from a bucket location, we extract that archive and we iterate over the lines while doing batch insert into DynamoDB. We can see that certain inputs such as bucket name, the archive path, and table name are provided as environment variables.
-   </p>
-   <p>
-    For the Docker file, we can use the following:
-   </p>
-   <pre><code class="language-Docker">FROM public.ecr.aws/docker/library/python:3.9.16-bullseye
+<p>This code is self-explanatory. We get an archive with a CSV file from a bucket location, we extract that archive and we iterate over the lines while doing batch insert into DynamoDB. We can see that certain inputs such as bucket name, the archive path, and table name are provided as environment variables.</p>
+<p>For the Docker file, we can use the following:</p>
+<pre><code class="language-Docker">FROM public.ecr.aws/docker/library/python:3.9.16-bullseye
 
 COPY requirements.txt .
 
@@ -779,49 +540,17 @@ COPY main.py .
 
 CMD ["python3", "main.py"]
 </code></pre>
-   <p>
-    We build the image with the usual Docker
-    <code>
-     build
-    </code>
-    (or
-    <code>
-     buildx
-    </code>
-    ) command:
-   </p>
-   <pre><code class="language-bash">docker build --platform linux/amd64 -t movies-loader .
+<p>We build the image with the usual Docker <code>build</code> (or <code>buildx</code>) command:</p>
+<pre><code class="language-bash">docker build --platform linux/amd64 -t movies-loader .
 </code></pre>
-   <p>
-    Note: the platform flag is important if we are using a MacBook M1, since AWS Batch
-    <a href="https://github.com/aws/containers-roadmap/issues/1652" target="_blank">
-     does not support ARM/Graviton yet
-    </a>
-    .
-   </p>
-   <p>
-    We can push the image to the ECR repository following the push command from the AWS console.
-   </p>
-   <h2>
-    Triggering a Batch Job
-    <a class="anchor-link" href="#triggering-a-batch-job" id="triggering-a-batch-job">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    There are several ways to trigger batch jobs since they are available as EventBridge targets. For our example, we could have a scheduled EventBridge rule which could be invoked periodically.
-   </p>
-   <p>
-    To make my life easier and be able to debug my job, I opted to create a simple
-    <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">
-     Step Function
-    </a>
-    .
-   </p>
-   <p>
-    Step Functions are state machines used for serverless orchestration. They are a perfect candidate for managing running jobs, offering a way to easily see and monitor the running state of the job and report the finishing status of it. We can implement the states of a Step Function using some JSON code.
-   </p>
-   <pre><code class="language-terraform">resource "aws_sfn_state_machine" "sfn_state_machine" {
+<p>Note: the platform flag is important if we are using a MacBook M1, since AWS Batch <a href="https://github.com/aws/containers-roadmap/issues/1652" target="_blank">does not support ARM/Graviton yet</a>. </p>
+<p>We can push the image to the ECR repository following the push command from the AWS console.</p>
+<h2>Triggering a Batch Job<a class="anchor-link" href="#triggering-a-batch-job" id="triggering-a-batch-job">&lt;&lt;</a>
+</h2>
+<p>There are several ways to trigger batch jobs since they are available as EventBridge targets. For our example, we could have a scheduled EventBridge rule which could be invoked periodically.</p>
+<p>To make my life easier and be able to debug my job, I opted to create a simple <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">Step Function</a>.</p>
+<p>Step Functions are state machines used for serverless orchestration. They are a perfect candidate for managing running jobs, offering a way to easily see and monitor the running state of the job and report the finishing status of it. We can implement the states of a Step Function using some JSON code.</p>
+<pre><code class="language-terraform">resource "aws_sfn_state_machine" "sfn_state_machine" {
   name     = "${var.module_name}-sfn"
   role_arn = aws_iam_role.sfn_role.arn
 
@@ -846,14 +575,8 @@ CMD ["python3", "main.py"]
 EOF
 }
 </code></pre>
-   <p>
-    Like everything in AWS, Step Functions require an IAM role as well. The IAM role used in our example is similar to what is given in the
-    <a href="https://docs.aws.amazon.com/step-functions/latest/dg/batch-job-notification.html" target="_blank">
-     AWS documentation
-    </a>
-    .
-   </p>
-   <pre><code class="language-terraform">data "aws_iam_policy_document" "sfn_policy" {
+<p>Like everything in AWS, Step Functions require an IAM role as well. The IAM role used in our example is similar to what is given in the <a href="https://docs.aws.amazon.com/step-functions/latest/dg/batch-job-notification.html" target="_blank">AWS documentation</a>.</p>
+<pre><code class="language-terraform">data "aws_iam_policy_document" "sfn_policy" {
   statement {
     actions = [
       "batch:SubmitJob",
@@ -889,138 +612,49 @@ resource "aws_iam_role_policy_attachment" "sfn_policy_attachment" {
   policy_arn = aws_iam_policy.sfn_policy.arn
 }
 </code></pre>
-   <p>
-    Out Step Function is required to be able to listen to and create CloudWatch Events, this is why it is necessary to have the policy for the
-    <code>
-     rule/StepFunctionsGetEventsForBatchJobsRule
-    </code>
-    resource (see
-    <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/WhatIsCloudWatchEvents.html" target="_blank">
-     this StackOverflow answer
-    </a>
-    ).
-   </p>
-   <p>
-    Ultimately we will end up with this simplistic Step Function with only one intermediary state:
-   </p>
-   <p>
-    <img alt="Step Function" src="img-an-introduction-to-aws-batch/step-function.png"/>
-   </p>
-   <h2>
-    Conclusions
-    <a class="anchor-link" href="#conclusions" id="conclusions">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    In this article, we've seen a fairly in-depth introduction to the AWS Batch service. We also talked about when to use AWS Batch and when to consider other services that might be more adequate for the task at hand. We have also built a batch job from the scratch using Terraform, Docker, and Python.
-   </p>
-   <p>
-    In conclusion, I think AWS Batch is a powerful service and it gets overshadowed by other offerings targeting more specific tasks. While the service itself abstracts away the provisioning of the underlying infrastructure, the whole setup process of a batch job can be still challenging and the official documentation in many cases lacks clarity. Ultimately, if we don't want to get in the weeds, we can rely on a
-    <a href="https://registry.terraform.io/modules/terraform-aws-modules/batch/aws/latest" target="_blank">
-     Terraform module
-    </a>
-    maintained by the community to spin up a batch job.
-   </p>
-   <p>
-    The source code used for this article can also be found on GitHub at this URL:
-    <a href="https://github.com/Ernyoke/aws-batch-demo" target="_blank">
-     https://github.com/Ernyoke/aws-batch-demo
-    </a>
-    .
-   </p>
-   <h2>
-    References
-    <a class="anchor-link" href="#references" id="references">
-     &lt;&lt;
-    </a>
-   </h2>
-   <ol>
-    <li>
-     AWS Batch Documentation:
-     <a href="https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-    <li>
-     Terraform Documentation - Compute Environment:
-     <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#service_role" target="_blank">
-      Terraform docs
-     </a>
-    </li>
-    <li>
-     Stateful Firewall:
-     <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">
-      WikiPedia page
-     </a>
-    </li>
-    <li>
-     AWS Batch - Execution IAM Role:
-     <a href="https://docs.aws.amazon.com/batch/latest/userguide/execution-IAM-role.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-    <li>
-     AWS Batch - Container Properties:
-     <a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_ContainerProperties.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-    <li>
-     Step Functions:
-     <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-    <li>
-     EFA for AWS Batch:
-     <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-    <li>
-     Optimizing deep learning on P3 and P3dn with EFA:
-     <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">
-      AWS docs
-     </a>
-    </li>
-   </ol>
-  </article>
-  <div class="utterances">
-  </div>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+<p>Out Step Function is required to be able to listen to and create CloudWatch Events, this is why it is necessary to have the policy for the <code>rule/StepFunctionsGetEventsForBatchJobsRule</code> resource (see <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/WhatIsCloudWatchEvents.html" target="_blank">this StackOverflow answer</a>).</p>
+<p>Ultimately we will end up with this simplistic Step Function with only one intermediary state:</p>
+<p><img alt="Step Function" src="img-an-introduction-to-aws-batch/step-function.png"></p>
+<h2>Conclusions<a class="anchor-link" href="#conclusions" id="conclusions">&lt;&lt;</a>
+</h2>
+<p>In this article, weíve seen a fairly in-depth introduction to the AWS Batch service. We also talked about when to use AWS Batch and when to consider other services that might be more adequate for the task at hand. We have also built a batch job from the scratch using Terraform, Docker, and Python.</p>
+<p>In conclusion, I think AWS Batch is a powerful service and it gets overshadowed by other offerings targeting more specific tasks. While the service itself abstracts away the provisioning of the underlying infrastructure, the whole setup process of a batch job can be still challenging and the official documentation in many cases lacks clarity. Ultimately, if we donít want to get in the weeds, we can rely on a <a href="https://registry.terraform.io/modules/terraform-aws-modules/batch/aws/latest" target="_blank">Terraform module</a> maintained by the community to spin up a batch job.</p>
+<p>The source code used for this article can also be found on GitHub at this URL: <a href="https://github.com/Ernyoke/aws-batch-demo" target="_blank">https://github.com/Ernyoke/aws-batch-demo</a>.</p>
+<h2>References<a class="anchor-link" href="#references" id="references">&lt;&lt;</a>
+</h2>
+<ol>
+<li>AWS Batch Documentation: <a href="https://docs.aws.amazon.com/batch/latest/userguide/what-is-batch.html" target="_blank">AWS docs</a>
+</li>
+<li>Terraform Documentation - Compute Environment: <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/batch_compute_environment#service_role" target="_blank">Terraform docs</a>
+</li>
+<li>Stateful Firewall: <a href="https://en.wikipedia.org/wiki/Stateful_firewall" target="_blank">WikiPedia page</a>
+</li>
+<li>AWS Batch - Execution IAM Role: <a href="https://docs.aws.amazon.com/batch/latest/userguide/execution-IAM-role.html" target="_blank">AWS docs</a>
+</li>
+<li>AWS Batch - Container Properties: <a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_ContainerProperties.html" target="_blank">AWS docs</a>
+</li>
+<li>Step Functions: <a href="https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html" target="_blank">AWS docs</a>
+</li>
+<li>EFA for AWS Batch: <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">AWS docs</a>
+</li>
+<li>Optimizing deep learning on P3 and P3dn with EFA: <a href="https://docs.aws.amazon.com/batch/latest/userguide/efa.html" target="_blank">AWS docs</a>
+</li>
+</ol></article>
+<div class="utterances">
+</div>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>

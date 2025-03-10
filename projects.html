@@ -1,491 +1,205 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   Projects - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-  <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-  <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-  </script>
-  <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-  </script>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-  <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-  <script>
-   const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>Projects - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-  </script>
-  <meta content="Projects" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev/projects.html" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image"/>
-  <meta content="Projects" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szilágyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       Résumé
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    Projects
-   </h1>
-   <h2>
-    DelaunayImage
-    <a class="anchor-link" href="#delaunayimage" id="delaunayimage">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    The goal of this small project was to create a tool which can generate artistic bitmap and/or vector graphic (.svg) images using
-    <a href="https://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">
-     Delaunay triangulation
-    </a>
-    algorithm. I wrote a full article about this project, which can be found
-    <a href="https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html">
-     here
-    </a>
-    .
-   </p>
-   <p>
-    Example of a generated image:
-   </p>
-   <p>
-    <img alt="Triangulated output image" src="images/delaunay.jpg"/>
-   </p>
-   <ul>
-    <li>
-     Technologies used: Java, OpenCV
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/DelaunayImage" target="_blank">
-      https://github.com/Ernyoke/DelaunayImage
-     </a>
-    </li>
-   </ul>
-   <h2>
-    Fractal Erosion
-    <a class="anchor-link" href="#fractal-erosion" id="fractal-erosion">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    The goal of this project was to procedurally generate 3D terrain using
-    <a href="https://en.wikipedia.org/wiki/Diamond-square_algorithm" target="_blank">
-     Diamond-square fractal algorithm
-    </a>
-    . At first I implemented this using C++17 with OpenGL, then I decided to give a shot and implement it using JavaScript and WebGL, which be seen in action
-    <a href="https://ervinszilagyi.dev/fractal-erosion-webgl">
-     here
-    </a>
-    .
-   </p>
-   <p>
-    <img alt="Erosion GIF" src="images/erosion_resized.gif"/>
-   </p>
-   <ul>
-    <li>
-     Technologies used: C++, OpenGL, JavaScript, WebGL
-    </li>
-    <li>
-     Source code for native C++ implementation:
-     <a href="https://github.com/Ernyoke/fractal-erosion" target="_blank">
-      https://github.com/Ernyoke/fractal-erosion
-     </a>
-    </li>
-    <li>
-     Source code for web implementation:
-     <a href="https://github.com/Ernyoke/fractal-erosion-webgl" target="_blank">
-      https://github.com/Ernyoke/fractal-erosion-webgl
-     </a>
-    </li>
-    <li>
-     Try out the JS implementation here:
-     <a href="https://ervinszilagyi.dev/fractal-erosion-webgl">
-      https://ervinszilagyi.dev/fractal-erosion-webgl
-     </a>
-    </li>
-   </ul>
-   <h2>
-    Imger
-    <a class="anchor-link" href="#imger" id="imger">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Imger is a collection of image processing algorithms implemented in Go. Example of algorithms:
-   </p>
-   <ul>
-    <li>
-     Grayscale
-    </li>
-    <li>
-     Blend algorithms: AddScalarToGray, AddGray, AddGrayWeighted
-    </li>
-    <li>
-     Thresholding algorithms: Binary, BinaryInv, Trunc, ToZero, ToZeroInv, Otsu
-    </li>
-    <li>
-     Image padding: BorderConstant, BorderReplicate, BorderReflect
-    </li>
-    <li>
-     Convolution
-    </li>
-    <li>
-     Blur algorithms: Average - Box, Gaussian
-    </li>
-    <li>
-     Edge detection algorithms: Sobel, Laplacian, Canny
-    </li>
-    <li>
-     Resizing algorithms: Nearest Neighbour, Linear, Catmull-Rom, Lanczos
-    </li>
-    <li>
-     Effects: Pixelate, Sepia, Emboss, Sharpen, Invert
-    </li>
-    <li>
-     Transform algorithms: Rotate
-    </li>
-    <li>
-     Generate Gradients: LinearGradient, SigmoidalGradient
-    </li>
-   </ul>
-   <p>
-    Technology stack:
-   </p>
-   <ul>
-    <li>
-     Technologies used: Go
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/Imger" target="_blank">
-      https://github.com/Ernyoke/Imger
-     </a>
-    </li>
-   </ul>
-   <h2>
-    BlueSky Bots
-    <a class="anchor-link" href="#bluesky-bots" id="bluesky-bots">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    bsky-aws-community-builder-blogposts -
-    <a href="https://bsky.app/profile/awscmblogposts.bsky.social" target="_blank">
-     AWS Community Builder Blog Posts
-    </a>
-   </h3>
-   <p>
-    It is a bot that re-shares blog posts authored by AWS Community Builders from
-    <a href="https://dev.to/aws-builders" target="_blank">
-     dev.to/aws-builders
-    </a>
-    .
-   </p>
-   <ul>
-    <li>
-     Technologies used: TypeScript, AWS Lambda, Terraform
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/bsky-aws-community-builder-blogposts" target="_blank">
-      https://github.com/Ernyoke/bsky-aws-community-builder-blogposts
-     </a>
-    </li>
-   </ul>
-   <h3>
-    bsky-aws-heroes-blogposts -
-    <a href="https://bsky.app/profile/awsheroesblogposts.bsky.social" target="_blank">
-     AWS Heroes Blog Posts
-    </a>
-   </h3>
-   <p>
-    Similarly to
-    <em>
-     bsky-aws-community-builder-blogposts
-    </em>
-    , it is a bot that re-shares blog posts authored by AWS Heroes from
-    <a href="https://dev.to/aws-heroes" target="_blank">
-     dev.to/aws-heroes
-    </a>
-    .
-   </p>
-   <ul>
-    <li>
-     Technologies used: TypeScript, AWS Lambda, Terraform
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/bsky-aws-heroes-blogposts" target="_blank">
-      https://github.com/Ernyoke/bsky-aws-heroes-blogposts
-     </a>
-    </li>
-   </ul>
-   <h3>
-    bsky-aws-news-feed -
-    <a href="https://bsky.app/profile/awsrecentnews.bsky.social" target="_blank">
-     AWS News Feed on 🦋
-    </a>
-   </h3>
-   <p>
-    It is a bot that watched the RSS feed provided by AWS (http://aws.amazon.com/new) and re-shares the latest AWS cloud news on BlueSky.
-   </p>
-   <ul>
-    <li>
-     Technologies used: TypeScript, AWS Lambda, Terraform
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/bsky-aws-news-feed" target="_blank">
-      https://github.com/Ernyoke/bsky-aws-news-feed
-     </a>
-    </li>
-   </ul>
-   <h3>
-    bsky-aws-blogs
-   </h3>
-   <p>
-    This project serves to BlueSky Bots:
-   </p>
-   <ul>
-    <li>
-     <a href="https://bsky.app/profile/awsblogs.bsky.social" target="_blank">
-      AWS Blogs on 🦋
-     </a>
-     : it is an aggregate of all the blog posts from AWS employees and partners.
-    </li>
-    <li>
-     <a href="https://bsky.app/profile/deprecatedbyaws.bsky.social" target="_blank">
-      Deprecated by AWS
-     </a>
-     : it is an aggregate for blog posts that talk about service and feature deprecations on AWS.
-    </li>
-   </ul>
-   <p>
-    The project uses an event-driven approach:
-   </p>
-   <ul>
-    <li>
-     The Fetcher Lambda function runs on a schedule and retrieves all newly created blog posts. For each blog post, a new event is published to an SNS topic.
-    </li>
-    <li>
-     There are two SQS queues listening to these events: one for the AWS Blogs Lambda function and the other for the Deprecations Lambda function.
-    </li>
-    <li>
-     The AWS Blogs Lambda function simply re-shares everything on BlueSky.
-    </li>
-    <li>
-     The Deprecations Lambda function uses LLM models to detect if the blog post mentions any service or feature deprecation. If the blog post is about a deprecation, it will also be re-shared on BlueSky.
-    </li>
-   </ul>
-   <p>
-    Technology stack:
-   </p>
-   <ul>
-    <li>
-     Technologies used: TypeScript, SNS, SQS, AWS Lambda, AWS Bedrock (AWS Titan, Anthropic Claude Haiku provided by Bedrock), LangChain, Terraform
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/bsky-aws-blogs" target="_blank">
-      https://github.com/Ernyoke/bsky-aws-blogs
-     </a>
-    </li>
-   </ul>
-   <h2>
-    Recon Tools
-    <a class="anchor-link" href="#recon-tools" id="recon-tools">
-     &lt;&lt;
-    </a>
-   </h2>
-   <h3>
-    <em>
-     domain-recon
-    </em>
-   </h3>
-   <p>
-    <code>
-     domain-recon
-    </code>
-    is a tool which can be used for passive host reconnaissance. It helps extend the attack surface by fetching all the available active certificates for the host. Using certificate parsing, it extracts all available domains from "Common Name" and "Matching Identities" fields. Moreover, in a lot of cases, it may encounter certificates issued for wildcard domains (
-    <code>
-     example: *.example.com
-    </code>
-    ). For these domains, it can use a word list to extend these wildcards by filling in words from the list and generate new potential subdomains.
-   </p>
-   <p>
-    <img alt="domain-recon in action" src="images/domain-recon.gif"/>
-   </p>
-   <p>
-    Read the full article here:
-    <a href="articles/certificate-parsing-with-domain-recon">
-     Certificate Parsing with
-     <code>
-      domain-recon
-     </code>
-    </a>
-   </p>
-   <ul>
-    <li>
-     Technologies used: Rust
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/recon-tools/domain-recon-rs" target="_blank">
-      https://github.com/recon-tools/domain-recon-rs
-     </a>
-    </li>
-   </ul>
-   <h3>
-    <em>
-     simple-port-scanner (sps)
-    </em>
-   </h3>
-   <p>
-    It is exactly what the name of the app says, a simple port scanner written in Rust. It is cross platform, it does TCP SYN or full TCP connect scans on hosts. It supports host discovery with TCP PING, ICMP PING and UDP PING. It is aiming to be simple to use and fast.
-   </p>
-   <ul>
-    <li>
-     Technologies used: Rust
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/recon-tools/simple-port-scanner-rs" target="_blank">
-      https://github.com/recon-tools/simple-port-scanner-rs
-     </a>
-    </li>
-   </ul>
-   <h3>
-    <em>
-     cert-ripper
-    </em>
-   </h3>
-   <p>
-    <code>
-     cert-ripper
-    </code>
-    is tool for retrieving the certificate chain for a hostname or URL. The certificates from the chain can be simply printed out in an OpenSSL format to the standard output, or they can be saved in a folder in different formats (PEM, TXT - OpenSSL, DER, etc.)
-   </p>
-   <ul>
-    <li>
-     Technologies used: Go
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/recon-tools/cert-ripper-go" target="_blank">
-      https://github.com/recon-tools/cert-ripper-go
-     </a>
-    </li>
-   </ul>
-   <h2>
-    Static Site Generator (ssg) + This Site
-    <a class="anchor-link" href="#static-site-generator-ssg-this-site" id="static-site-generator-ssg-this-site">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    At a certain point I wanted to have my own personal site where I can share and document what I am working on and my own experience about tech. My idea was to write everything in simple markdown files and transform them to static HTML pages. Although there are many existing solutions out there, I found everything either way too complicated to learn or having way more overhead than what I need. I decided to write a simple Python script, which can transform markdown pages to HTML. That is how
-    <code>
-     ssg
-    </code>
-    was born. It is opinionated, developed mainly for this site and not intended to be used by everyone else. But it works for me, which is good enough...
-   </p>
-   <ul>
-    <li>
-     Technologies used: Python
-    </li>
-    <li>
-     Source code:
-     <a href="https://github.com/Ernyoke/ssg" target="_blank">
-      https://github.com/Ernyoke/ssg
-     </a>
-    </li>
-   </ul>
-  </article>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+    </script>
+<meta content="Projects" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/projects.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
+<meta content="Projects" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szilágyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">Résumé</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Projects</h1>
+<h2>DelaunayImage<a class="anchor-link" href="#delaunayimage" id="delaunayimage">&lt;&lt;</a>
+</h2>
+<p>The goal of this small project was to create a tool which can generate artistic bitmap and/or vector graphic (.svg) images using <a href="https://en.wikipedia.org/wiki/Delaunay_triangulation" target="_blank">Delaunay triangulation</a> algorithm. I wrote a full article about this project, which can be found <a href="https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html">here</a>.</p>
+<p>Example of a generated image:</p>
+<p><img alt="Triangulated output image" src="images/delaunay.jpg"></p>
+<ul>
+<li>Technologies used: Java, OpenCV</li>
+<li>Source code: <a href="https://github.com/Ernyoke/DelaunayImage" target="_blank">https://github.com/Ernyoke/DelaunayImage</a>
+</li>
+</ul>
+<h2>Fractal Erosion<a class="anchor-link" href="#fractal-erosion" id="fractal-erosion">&lt;&lt;</a>
+</h2>
+<p>The goal of this project was to procedurally generate 3D terrain using <a href="https://en.wikipedia.org/wiki/Diamond-square_algorithm" target="_blank">Diamond-square fractal algorithm</a>. At first I implemented this using C++17 with OpenGL, then I decided to give a shot and implement it using JavaScript and WebGL, which be seen in action <a href="https://ervinszilagyi.dev/fractal-erosion-webgl">here</a>.</p>
+<p><img alt="Erosion GIF" src="images/erosion_resized.gif"></p>
+<ul>
+<li>Technologies used: C++, OpenGL, JavaScript, WebGL</li>
+<li>Source code for native C++ implementation: <a href="https://github.com/Ernyoke/fractal-erosion" target="_blank">https://github.com/Ernyoke/fractal-erosion</a>
+</li>
+<li>Source code for web implementation: <a href="https://github.com/Ernyoke/fractal-erosion-webgl" target="_blank">https://github.com/Ernyoke/fractal-erosion-webgl</a>
+</li>
+<li>Try out the JS implementation here: <a href="https://ervinszilagyi.dev/fractal-erosion-webgl">https://ervinszilagyi.dev/fractal-erosion-webgl</a>
+</li>
+</ul>
+<h2>Imger<a class="anchor-link" href="#imger" id="imger">&lt;&lt;</a>
+</h2>
+<p>Imger is a collection of image processing algorithms implemented in Go. Example of algorithms:</p>
+<ul>
+<li>Grayscale</li>
+<li>Blend algorithms: AddScalarToGray, AddGray, AddGrayWeighted</li>
+<li>Thresholding algorithms: Binary, BinaryInv, Trunc, ToZero, ToZeroInv, Otsu</li>
+<li>Image padding: BorderConstant, BorderReplicate, BorderReflect</li>
+<li>Convolution</li>
+<li>Blur algorithms: Average - Box, Gaussian</li>
+<li>Edge detection algorithms: Sobel, Laplacian, Canny</li>
+<li>Resizing algorithms: Nearest Neighbour, Linear, Catmull-Rom, Lanczos</li>
+<li>Effects: Pixelate, Sepia, Emboss, Sharpen, Invert</li>
+<li>Transform algorithms: Rotate</li>
+<li>Generate Gradients: LinearGradient, SigmoidalGradient</li>
+</ul>
+<p>Technology stack:</p>
+<ul>
+<li>Technologies used: Go</li>
+<li>Source code: <a href="https://github.com/Ernyoke/Imger" target="_blank">https://github.com/Ernyoke/Imger</a>
+</li>
+</ul>
+<h2>BlueSky Bots<a class="anchor-link" href="#bluesky-bots" id="bluesky-bots">&lt;&lt;</a>
+</h2>
+<h3>bsky-aws-community-builder-blogposts - <a href="https://bsky.app/profile/awscmblogposts.bsky.social" target="_blank">AWS Community Builder Blog Posts</a>
+</h3>
+<p>It is a bot that re-shares blog posts authored by AWS Community Builders from <a href="https://dev.to/aws-builders" target="_blank">dev.to/aws-builders</a>.</p>
+<ul>
+<li>Technologies used: TypeScript, AWS Lambda, Terraform</li>
+<li>Source code: <a href="https://github.com/Ernyoke/bsky-aws-community-builder-blogposts" target="_blank">https://github.com/Ernyoke/bsky-aws-community-builder-blogposts</a>
+</li>
+</ul>
+<h3>bsky-aws-heroes-blogposts - <a href="https://bsky.app/profile/awsheroesblogposts.bsky.social" target="_blank">AWS Heroes Blog Posts</a>
+</h3>
+<p>Similarly to <em>bsky-aws-community-builder-blogposts</em>, it is a bot that re-shares blog posts authored by AWS Heroes from <a href="https://dev.to/aws-heroes" target="_blank">dev.to/aws-heroes</a>.</p>
+<ul>
+<li>Technologies used: TypeScript, AWS Lambda, Terraform</li>
+<li>Source code: <a href="https://github.com/Ernyoke/bsky-aws-heroes-blogposts" target="_blank">https://github.com/Ernyoke/bsky-aws-heroes-blogposts</a>
+</li>
+</ul>
+<h3>bsky-aws-news-feed - <a href="https://bsky.app/profile/awsrecentnews.bsky.social" target="_blank">AWS News Feed on 🦋</a>
+</h3>
+<p>It is a bot that watched the RSS feed provided by AWS (http://aws.amazon.com/new) and re-shares the latest AWS cloud news on BlueSky.</p>
+<ul>
+<li>Technologies used: TypeScript, AWS Lambda, Terraform</li>
+<li>Source code: <a href="https://github.com/Ernyoke/bsky-aws-news-feed" target="_blank">https://github.com/Ernyoke/bsky-aws-news-feed</a>
+</li>
+</ul>
+<h3>bsky-aws-blogs</h3>
+<p>This project serves to BlueSky Bots:</p>
+<ul>
+<li>
+<a href="https://bsky.app/profile/awsblogs.bsky.social" target="_blank">AWS Blogs on 🦋</a>: it is an aggregate of all the blog posts from AWS employees and partners.</li>
+<li>
+<a href="https://bsky.app/profile/deprecatedbyaws.bsky.social" target="_blank">Deprecated by AWS</a>: it is an aggregate for blog posts that talk about service and feature deprecations on AWS.</li>
+</ul>
+<p>The project uses an event-driven approach:</p>
+<ul>
+<li>The Fetcher Lambda function runs on a schedule and retrieves all newly created blog posts. For each blog post, a new event is published to an SNS topic.</li>
+<li>There are two SQS queues listening to these events: one for the AWS Blogs Lambda function and the other for the Deprecations Lambda function.</li>
+<li>The AWS Blogs Lambda function simply re-shares everything on BlueSky.</li>
+<li>The Deprecations Lambda function uses LLM models to detect if the blog post mentions any service or feature deprecation. If the blog post is about a deprecation, it will also be re-shared on BlueSky.</li>
+</ul>
+<p>Technology stack:</p>
+<ul>
+<li>Technologies used: TypeScript, SNS, SQS, AWS Lambda, AWS Bedrock (AWS Titan, Anthropic Claude Haiku provided by Bedrock), LangChain, Terraform</li>
+<li>Source code: <a href="https://github.com/Ernyoke/bsky-aws-blogs" target="_blank">https://github.com/Ernyoke/bsky-aws-blogs</a>
+</li>
+</ul>
+<h2>Recon Tools<a class="anchor-link" href="#recon-tools" id="recon-tools">&lt;&lt;</a>
+</h2>
+<h3><em>domain-recon</em></h3>
+<p><code>domain-recon</code> is a tool which can be used for passive host reconnaissance. It helps extend the attack surface by fetching all the available active certificates for the host. Using certificate parsing, it extracts all available domains from �Common Name� and �Matching Identities� fields. Moreover, in a lot of cases, it may encounter certificates issued for wildcard domains (<code>example: *.example.com</code>). For these domains, it can use a word list to extend these wildcards by filling in words from the list and generate new potential subdomains.</p>
+<p><img alt="domain-recon in action" src="images/domain-recon.gif"></p>
+<p>Read the full article here: <a href="articles/certificate-parsing-with-domain-recon">Certificate Parsing with <code>domain-recon</code></a></p>
+<ul>
+<li>Technologies used: Rust</li>
+<li>Source code: <a href="https://github.com/recon-tools/domain-recon-rs" target="_blank">https://github.com/recon-tools/domain-recon-rs</a>
+</li>
+</ul>
+<h3><em>simple-port-scanner (sps)</em></h3>
+<p>It is exactly what the name of the app says, a simple port scanner written in Rust. It is cross platform, it does TCP SYN or full TCP connect scans on hosts. It supports host discovery with TCP PING, ICMP PING and UDP PING. It is aiming to be simple to use and fast.</p>
+<ul>
+<li>Technologies used: Rust</li>
+<li>Source code: <a href="https://github.com/recon-tools/simple-port-scanner-rs" target="_blank">https://github.com/recon-tools/simple-port-scanner-rs</a>
+</li>
+</ul>
+<h3><em>cert-ripper</em></h3>
+<p><code>cert-ripper</code> is tool for retrieving the certificate chain for a hostname or URL. The certificates from the chain can be simply printed out in an OpenSSL format to the standard output, or they can be saved in a folder in different formats (PEM, TXT - OpenSSL, DER, etc.)</p>
+<ul>
+<li>Technologies used: Go</li>
+<li>Source code: <a href="https://github.com/recon-tools/cert-ripper-go" target="_blank">https://github.com/recon-tools/cert-ripper-go</a>
+</li>
+</ul>
+<h2>Static Site Generator (ssg) + This Site<a class="anchor-link" href="#static-site-generator-ssg-this-site" id="static-site-generator-ssg-this-site">&lt;&lt;</a>
+</h2>
+<p>At a certain point I wanted to have my own personal site where I can share and document what I am working on and my own experience about tech. My idea was to write everything in simple markdown files and transform them to static HTML pages. Although there are many existing solutions out there, I found everything either way too complicated to learn or having way more overhead than what I need. I decided to write a simple Python script, which can transform markdown pages to HTML. That is how <code>ssg</code> was born. It is opinionated, developed mainly for this site and not intended to be used by everyone else. But it works for me, which is good enough�</p>
+<ul>
+<li>Technologies used: Python</li>
+<li>Source code: <a href="https://github.com/Ernyoke/ssg" target="_blank">https://github.com/Ernyoke/ssg</a>
+</li>
+</ul></article>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>

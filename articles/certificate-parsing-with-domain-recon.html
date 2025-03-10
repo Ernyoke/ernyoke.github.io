@@ -1,205 +1,89 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   Certificate Parsing with domain-recon - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
-   <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-   <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-   <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-   </script>
-   <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-   </script>
-   <meta charset="utf-8"/>
-   <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-   <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-   <script>
-    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>Certificate Parsing with domain-recon - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-   </script>
-  </link>
-  <meta content="Certificate Parsing with domain-recon" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev/certificate-parsing-with-domain-recon.html" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image"/>
-  <meta content="Certificate Parsing with domain-recon" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev/">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szil√°gyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       R√©sum√©
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    Certificate Parsing with
-    <code>
-     domain-recon
-    </code>
-   </h1>
-   <h2>
-    What is Certificate Parsing?
-    <a class="anchor-link" href="#what-is-certificate-parsing" id="what-is-certificate-parsing">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Certificate parsing is a way of conducting web hacking reconnaissance when an attacker is targeting an organization. The goal is to gather information about the organization and widen the attack space by enumerating every possible domain and subdomain owned by an organization. One methodology of enumerating domains and subdomains is to take advantage of the SSL certificates used by the organization. There are several online databases like
-    <a href="https://crt.sh/" target="_blank">
-     crt.sh
-    </a>
-    and
-    <a href="https://sslmate.com/ct_search_api/" target="_blank">
-     sslmate
-    </a>
-    which can be used to enumerate certificates issued for domains owned by an organization. Moreover, if we take a look at the
-    <code>
-     Subject Alternative Name
-    </code>
-    of a certificate, we might be able to enumerate other hostnames for which the certificate is applied.
-   </p>
-   <h2>
-    What is
-    <code>
-     domain-recon
-    </code>
-    ?
-    <a class="anchor-link" href="#what-is-domain-recon" id="what-is-domain-recon">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">
-     <code>
-      domain-recon
-     </code>
-    </a>
-    is an open-source command line tool written in Rust, which automates certificate parsing. It uses
-    <code>
-     [crt.sh](https://crt.sh/)
-    </code>
-    database to fetch information about certificates issued for a domain and all of its subdomains. It extracts all the hostnames from the
-    <code>
-     Common Name
-    </code>
-    and
-    <code>
-     Matching Identities
-    </code>
-    fields, the result of which will be a list of domains requiring further filtering. We can distinguish the following type of domains in the list:
-   </p>
-   <ul>
-    <li>
-     registered domains that can be resolved as IPv4 or IPv6 IP addresses;
-    </li>
-    <li>
-     unregistered domains;
-    </li>
-    <li>
-     wildcard domains, domain names which contain a wildcard character (
-     <code>
-      *
-     </code>
-     ), for example:
-     <code>
-      *.example.com
-     </code>
-     . Wildcards are used to secure multiple subdomain names (hosts) pertaining to the same base domain.
-    </li>
-   </ul>
-   <p>
-    <code>
-     domain-recon
-    </code>
-    filters out wildcard domains from the list and tries to do a domain resolution for each non-wildcard domain. It drops all the domain names which are not registered and it displays a list only with the "valid" domain names.
-   </p>
-   <p>
-    In the case of the wildcard domains, it will try to guess possible subdomains. This is accomplished by taking a
-    <a href="https://github.com/domain-recon/domain-recon-rs/blob/main/words.txt" target="_blank">
-     wordlist
-    </a>
-    as input and replacing the wildcards with entries from the list. To detect which domain names are registered, it tries to do a domain resolution for each new entry and displays a new list with the successful queries.
-   </p>
-   <h2>
-    Example of Usage
-    <a class="anchor-link" href="#example-of-usage" id="example-of-usage">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    The source code for
-    <code>
-     domain-recon
-    </code>
-    tool can be found on
-    <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">
-     GitHub
-    </a>
-    . Executables are built and released for all Linux, Mac, and Windows operating systems and can be downloaded from the
-    <a href="https://github.com/domain-recon/domain-recon-rs/releases" target="_blank">
-     releases
-    </a>
-    .
-   </p>
-   <p>
-    List all the domains and subdomains for
-    <code>
-     dev.to
-    </code>
-    :
-   </p>
-   <pre><code class="language-bash">domain-recon -d dev.to -f words.txt
+    </script>
+<meta content="Certificate Parsing with domain-recon" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/certificate-parsing-with-domain-recon.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="og:image">
+<meta content="Certificate Parsing with domain-recon" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev/">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szil√°gyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">R√©sum√©</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Certificate Parsing with <code>domain-recon</code>
+</h1>
+<h2>What is Certificate Parsing?<a class="anchor-link" href="#what-is-certificate-parsing" id="what-is-certificate-parsing">&lt;&lt;</a>
+</h2>
+<p>Certificate parsing is a way of conducting web hacking reconnaissance when an attacker is targeting an organization. The goal is to gather information about the organization and widen the attack space by enumerating every possible domain and subdomain owned by an organization. One methodology of enumerating domains and subdomains is to take advantage of the SSL certificates used by the organization. There are several online databases like <a href="https://crt.sh/" target="_blank">crt.sh</a> and <a href="https://sslmate.com/ct_search_api/" target="_blank">sslmate</a> which can be used to enumerate certificates issued for domains owned by an organization. Moreover, if we take a look at the <code>Subject Alternative Name</code> of a certificate, we might be able to enumerate other hostnames for which the certificate is applied.</p>
+<h2>What is <code>domain-recon</code>?<a class="anchor-link" href="#what-is-domain-recon" id="what-is-domain-recon">&lt;&lt;</a>
+</h2>
+<p><a href="https://github.com/domain-recon/domain-recon-rs" target="_blank"><code>domain-recon</code></a> is an open-source command line tool written in Rust, which automates certificate parsing. It uses <code>[crt.sh](https://crt.sh/)</code> database to fetch information about certificates issued for a domain and all of its subdomains. It extracts all the hostnames from the <code>Common Name</code> and <code>Matching Identities</code> fields, the result of which will be a list of domains requiring further filtering. We can distinguish the following type of domains in the list:</p>
+<ul>
+<li>registered domains that can be resolved as IPv4 or IPv6 IP addresses;</li>
+<li>unregistered domains;</li>
+<li>wildcard domains, domain names which contain a wildcard character (<code>*</code>), for example: <code>*.example.com</code>. Wildcards are used to secure multiple subdomain names (hosts) pertaining to the same base domain.</li>
+</ul>
+<p><code>domain-recon</code> filters out wildcard domains from the list and tries to do a domain resolution for each non-wildcard domain. It drops all the domain names which are not registered and it displays a list only with the ìvalidî domain names.</p>
+<p>In the case of the wildcard domains, it will try to guess possible subdomains. This is accomplished by taking a <a href="https://github.com/domain-recon/domain-recon-rs/blob/main/words.txt" target="_blank">wordlist</a> as input and replacing the wildcards with entries from the list. To detect which domain names are registered, it tries to do a domain resolution for each new entry and displays a new list with the successful queries.</p>
+<h2>Example of Usage<a class="anchor-link" href="#example-of-usage" id="example-of-usage">&lt;&lt;</a>
+</h2>
+<p>The source code for <code>domain-recon</code> tool can be found on <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">GitHub</a>. Executables are built and released for all Linux, Mac, and Windows operating systems and can be downloaded from the <a href="https://github.com/domain-recon/domain-recon-rs/releases" target="_blank">releases</a>.</p>
+<p>List all the domains and subdomains for <code>dev.to</code>:</p>
+<pre><code class="language-bash">domain-recon -d dev.to -f words.txt
 </code></pre>
-   <p>
-    The output of which will be something like this:
-   </p>
-   <pre><code class="language-bash">Fetching certificates...
+<p>The output of which will be something like this:</p>
+<pre><code class="language-bash">Fetching certificates...
 Extracting domains....
 sni.cloudflaressl.com A 104.22.63.243, 172.67.27.61, 104.22.62.243
 dev.to A 151.101.194.217, 151.101.2.217, 151.101.66.217, 151.101.130.217
@@ -223,15 +107,11 @@ demo.forem.com A 3.19.109.223, 3.135.110.253, 3.13.138.118
 www.forem.com A 34.251.201.224, 54.194.170.100, 34.253.101.190
 www.dev.to A 188.114.97.13, 188.114.96.13
 </code></pre>
-   <p>
-    We can omit to expand wildcards by not specifying a wordlist:
-   </p>
-   <pre><code class="language-bash">domain-recon -d dev.to
+<p>We can omit to expand wildcards by not specifying a wordlist:</p>
+<pre><code class="language-bash">domain-recon -d dev.to
 </code></pre>
-   <p>
-    Output:
-   </p>
-   <pre><code>Fetching certificates...
+<p>Output:</p>
+<pre><code>Fetching certificates...
 Extracting domains....
 jobs.dev.to A 188.114.97.13, 188.114.96.13
 sni174710.cloudflaressl.com A 104.22.62.243, 172.67.27.61, 104.22.63.243
@@ -248,23 +128,9 @@ t2.shared.global.fastly.net A 151.101.2.217, 151.101.66.217, 151.101.130.217, 15
 status.dev.to A 52.215.192.131
 itstatus.stmonicatrust.co.uk A 52.215.192.133
 </code></pre>
-   <p>
-    We can use the
-    <code>
-     --plain
-    </code>
-    flag to suppress displaying IP addresses. This can be useful if we want a list with domain names only, which can be provided as input for tools such as
-    <a href="https://www.python-httpx.org/" target="_blank">
-     <code>
-      httpx
-     </code>
-    </a>
-    .
-   </p>
-   <p>
-    Example:
-   </p>
-   <pre><code class="language-bash">$ domain-recon -d dev.to -f words.txt --plain | httpx -probe -sc -title -ip
+<p>We can use the <code>--plain</code> flag to suppress displaying IP addresses. This can be useful if we want a list with domain names only, which can be provided as input for tools such as <a href="https://www.python-httpx.org/" target="_blank"><code>httpx</code></a>.</p>
+<p>Example:</p>
+<pre><code class="language-bash">$ domain-recon -d dev.to -f words.txt --plain | httpx -probe -sc -title -ip
 
     __    __  __       _  __
    / /_  / /_/ /_____ | |/ /
@@ -298,118 +164,32 @@ https://itstatus.stmonicatrust.co.uk [SUCCESS] [200] [St Monica Trust IT Status]
 https://status-beta.sailpoint.com [SUCCESS] [302] [] [52.215.192.131]
 https://demo.forem.com [SUCCESS] [200] [Dunder Mifflin Community] [3.19.109.223]
 </code></pre>
-   <h2>
-    Limitations
-    <a class="anchor-link" href="#limitations" id="limitations">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    <code>
-     domain-recon
-    </code>
-    can discover domain names that have public SSL certificates. Currently, it scans only valid certificates, this can be easily changed to include invalid ones as well, but according to my experience, this is not as useful.
-   </p>
-   <p>
-    Nowadays, most websites have SSL certificates, including development and testing environments as well. It can be helpful for a pen-tester to scan for these environments. Obviously, it can not find environments without registered SSL certificates.
-   </p>
-   <p>
-    <code>
-     domain-recon
-    </code>
-    currently uses Google, Cloudflare, and Quad9 domain resolvers. By default, it is set to use Google only, which we can override with
-    <code>
-     --dns_resolver
-    </code>
-    argument. We can also set to use multiple resolvers at the same time (
-    <code>
-     --dns_resolver="google,cloudflare,quad9"
-    </code>
-    ). According to my experience, having only one resolver might invoke rate limiting if we are scanning a huge number of domains at the same time. Unfortunately, there are slowdowns with multiple resolvers as well. It relies on
-    <a href="https://docs.rs/async-std-resolver/latest/async_std_resolver/" target="_blank">
-     <code>
-      async-std-resolver
-     </code>
-    </a>
-    crate for DNS resolution. A future improvement would be to optimize the usage of
-    <code>
-     async-std-resolver
-    </code>
-    to achieve better performance. Since it relies on async calls, we can run on errors related to having too many opened connections. This is somewhat mitigated by limiting the DNS calls to a lower number, but I'm sure there better ways to deal with it.
-   </p>
-   <h2>
-    Further Reading
-    <a class="anchor-link" href="#further-reading" id="further-reading">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    <code>
-     domain-recon
-    </code>
-    tool was inspired by
-    <a href="https://www.amazon.com/Bug-Bounty-Bootcamp-Reporting-Vulnerabilities-ebook/dp/B08YK368Y3" target="_blank">
-     "Bug Bounty Bootcamp: The Guide to Finding and Reporting Web Vulnerabilities"
-    </a>
-    book by
-    <a href="https://vickieli.dev/about" target="_blank">
-     Vickie Li
-    </a>
-    . It is a great resource for anyone interested in web hacking and penetration testing.
-   </p>
-   <h2>
-    Source Code and Contributing
-    <a class="anchor-link" href="#source-code-and-contributing" id="source-code-and-contributing">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    As mentioned above, the source code for
-    <code>
-     domain-recon
-    </code>
-    can be found on GitHub:
-    <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">
-     https://github.com/domain-recon/domain-recon-rs
-    </a>
-    . It is written entirely in Rust. Any contribution is welcomed. ;)
-   </p>
-  </article>
-  <div class="utterances">
-  </div>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+<h2>Limitations<a class="anchor-link" href="#limitations" id="limitations">&lt;&lt;</a>
+</h2>
+<p><code>domain-recon</code> can discover domain names that have public SSL certificates. Currently, it scans only valid certificates, this can be easily changed to include invalid ones as well, but according to my experience, this is not as useful.</p>
+<p>Nowadays, most websites have SSL certificates, including development and testing environments as well. It can be helpful for a pen-tester to scan for these environments. Obviously, it can not find environments without registered SSL certificates.</p>
+<p><code>domain-recon</code> currently uses Google, Cloudflare, and Quad9 domain resolvers. By default, it is set to use Google only, which we can override with <code>--dns_resolver</code> argument. We can also set to use multiple resolvers at the same time (<code>--dns_resolver="google,cloudflare,quad9"</code>). According to my experience, having only one resolver might invoke rate limiting if we are scanning a huge number of domains at the same time. Unfortunately, there are slowdowns with multiple resolvers as well. It relies on <a href="https://docs.rs/async-std-resolver/latest/async_std_resolver/" target="_blank"><code>async-std-resolver</code></a> crate for DNS resolution. A future improvement would be to optimize the usage of <code>async-std-resolver</code> to achieve better performance. Since it relies on async calls, we can run on errors related to having too many opened connections. This is somewhat mitigated by limiting the DNS calls to a lower number, but Iím sure there better ways to deal with it.</p>
+<h2>Further Reading<a class="anchor-link" href="#further-reading" id="further-reading">&lt;&lt;</a>
+</h2>
+<p><code>domain-recon</code> tool was inspired by <a href="https://www.amazon.com/Bug-Bounty-Bootcamp-Reporting-Vulnerabilities-ebook/dp/B08YK368Y3" target="_blank">ìBug Bounty Bootcamp: The Guide to Finding and Reporting Web Vulnerabilitiesî</a> book by <a href="https://vickieli.dev/about" target="_blank">Vickie Li</a>. It is a great resource for anyone interested in web hacking and penetration testing.</p>
+<h2>Source Code and Contributing<a class="anchor-link" href="#source-code-and-contributing" id="source-code-and-contributing">&lt;&lt;</a>
+</h2>
+<p>As mentioned above, the source code for <code>domain-recon</code> can be found on GitHub: <a href="https://github.com/domain-recon/domain-recon-rs" target="_blank">https://github.com/domain-recon/domain-recon-rs</a>. It is written entirely in Rust. Any contribution is welcomed. ;)</p></article>
+<div class="utterances">
+</div>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>

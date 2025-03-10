@@ -1,130 +1,76 @@
-<!DOCTYPE html>
 <html data-theme="light" lang="en">
- <head>
-  <title>
-   Fluent Bit with ECS: Configuration Tips and Tricks - ervinszilagyi.dev
-  </title>
-  <link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png"/>
-  <link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet"/>
-  <link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
-   <link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light"/>
-   <link disabled="disabled" href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark"/>
-   <script src="https://ervinszilagyi.dev/scripts/scripts.js">
-   </script>
-   <script data-domain="ervinszilagyi.dev" defer="" src="https://plausible.io/js/plausible.js">
-   </script>
-   <meta charset="utf-8"/>
-   <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"/>
-   <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
-   <script>
-    const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+<head>
+<title>Fluent Bit with ECS: Configuration Tips and Tricks - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = localStorage.getItem("theme");
         if (!theme) {
             theme = isDarkMode() ? "dark" : "light";
         }
         document.documentElement.setAttribute("data-theme", theme);
-   </script>
-  </link>
-  <meta content="Fluent Bit with ECS: Configuration Tips and Tricks" property="og:title"/>
-  <meta content="Personal web page and blog." property="og:description"/>
-  <meta content="https://ervinszilagyi.dev/fluentbit-with-ecs-configuration-tips-and-tricks.html" property="og:url"/>
-  <meta content="https://ervinszilagyi.dev/articles/img-fluentbit-with-ecs-configuration-tips-and-tricks/cover.avif" property="og:image"/>
-  <meta content="Fluent Bit with ECS: Configuration Tips and Tricks" property="twitter:title"/>
-  <meta content="Personal web page and blog." property="twitter:description"/>
-  <meta content="@ervin_szilagyi" property="twitter:site"/>
-  <meta content="@ervin_szilagyi" property="twitter:creator"/>
-  <meta content="https://ervinszilagyi.dev/articles/img-fluentbit-with-ecs-configuration-tips-and-tricks/cover.avif" property="twitter:image"/>
-  <meta content="summary_large_image" property="twitter:card"/>
- </head>
- <body class="light-mode">
-  <nav class="menu">
-   <div class="nav-left">
-    <ul>
-     <li>
-      <a href="https://ervinszilagyi.dev/">
-       <img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png"/>
-       <span class="sitename">
-        Ervin Szil√°gyi
-       </span>
-      </a>
-     </li>
-    </ul>
-   </div>
-   <div class="nav-right">
-    <ul>
-     <li>
-      <a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()">
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">
-       R√©sum√©
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">
-       Projects
-      </a>
-     </li>
-     <li>
-      <a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">
-       Blog
-      </a>
-     </li>
-    </ul>
-   </div>
-  </nav>
-  <article id="main-content">
-   <h1>
-    Fluent Bit with ECS: Configuration Tips and Tricks
-   </h1>
-   <p>
-    A while ago I wrote a
-    <a href="./ecs-custom-logging-with-fluentbit.html">
-     blog post
-    </a>
-    about Fluent Bit integration with containers running in an ECS cluster. According to my statistics, this post is one of the most viewed on my blog, so I was determined to write a follow-up for it. I've been using FluentBit with ECS for more than a year in a business application running in production. During this period I had the chance to make use of and even abuse several features provided by Fluent Bit.
-   </p>
-   <p>
-    Generally speaking my experience with Fluent Bit in the last year was positive. In many cases, I found that it had a steep learning curve, and several times I felt I was doing things that I should not supposed to be doing. In the end, I managed to reconcile myself with how it operates and I can say for sure that it is a fast and very polished product that can handle huge production workloads.
-   </p>
-   <p>
-    In this blog post, I will talk about certain tips and tricks for the Fluent Bit configuration file that I found useful. Some of them might be trivial if you already have experience with it. Nevertheless, I think that they might be helpful for anybody interested in introducing Fluent Bit to their cluster of services.
-   </p>
-   <p>
-    This post will not provide a guideline on how to set up Fluent Bit. If you are interested in that, please read my previous post on this topic:
-    <a href="./ecs-custom-logging-with-fluentbit.html">
-     ECS Fargate Custom Logging with Fluent Bit
-    </a>
-    . Moreover, there are several useful articles from AWS, such as this one:
-    <a href="https://aws.amazon.com/blogs/opensource/centralized-container-logging-fluent-bit/" target="_blank">
-     Centralized Container Logging with Fluent Bit
-    </a>
-    .
-   </p>
-   <h2>
-    Fluent Bit Configuration Basics
-    <a class="anchor-link" href="#fluent-bit-configuration-basics" id="fluent-bit-configuration-basics">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Fluent Bit can be configured with a
-    <code>
-     fluent-bit.conf
-    </code>
-    configuration file or with YAML configuration. We will focus on the so-called classic
-    <code>
-     .conf
-    </code>
-    configuration format since at this point the YAML configuration is not that widespread.
-   </p>
-   <p>
-    A basic configuration file would look like this:
-   </p>
-   <pre><code class="language-bash">[SERVICE]
+    </script>
+<meta content="Fluent Bit with ECS: Configuration Tips and Tricks" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/fluentbit-with-ecs-configuration-tips-and-tricks.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/articles/img-fluentbit-with-ecs-configuration-tips-and-tricks/cover.avif" property="og:image">
+<meta content="Fluent Bit with ECS: Configuration Tips and Tricks" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/articles/img-fluentbit-with-ecs-configuration-tips-and-tricks/cover.avif" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev/">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szil√°gyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">R√©sum√©</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Fluent Bit with ECS: Configuration Tips and Tricks</h1>
+<p>A while ago I wrote a <a href="./ecs-custom-logging-with-fluentbit.html">blog post</a> about Fluent Bit integration with containers running in an ECS cluster. According to my statistics, this post is one of the most viewed on my blog, so I was determined to write a follow-up for it. Iíve been using FluentBit with ECS for more than a year in a business application running in production. During this period I had the chance to make use of and even abuse several features provided by Fluent Bit.</p>
+<p>Generally speaking my experience with Fluent Bit in the last year was positive. In many cases, I found that it had a steep learning curve, and several times I felt I was doing things that I should not supposed to be doing. In the end, I managed to reconcile myself with how it operates and I can say for sure that it is a fast and very polished product that can handle huge production workloads.</p>
+<p>In this blog post, I will talk about certain tips and tricks for the Fluent Bit configuration file that I found useful. Some of them might be trivial if you already have experience with it. Nevertheless, I think that they might be helpful for anybody interested in introducing Fluent Bit to their cluster of services.</p>
+<p>This post will not provide a guideline on how to set up Fluent Bit. If you are interested in that, please read my previous post on this topic: <a href="./ecs-custom-logging-with-fluentbit.html">ECS Fargate Custom Logging with Fluent Bit</a>. Moreover, there are several useful articles from AWS, such as this one: <a href="https://aws.amazon.com/blogs/opensource/centralized-container-logging-fluent-bit/" target="_blank">Centralized Container Logging with Fluent Bit</a>.</p>
+<h2>Fluent Bit Configuration Basics<a class="anchor-link" href="#fluent-bit-configuration-basics" id="fluent-bit-configuration-basics">&lt;&lt;</a>
+</h2>
+<p>Fluent Bit can be configured with a <code>fluent-bit.conf</code> configuration file or with YAML configuration. We will focus on the so-called classic <code>.conf</code> configuration format since at this point the YAML configuration is not that widespread. </p>
+<p>A basic configuration file would look like this:</p>
+<pre><code class="language-bash">[SERVICE]
     Flush     5
     Daemon    off
     Log_Level debug
@@ -142,100 +88,26 @@
     Name  stdout
     Match my*cpu
 </code></pre>
-   <p>
-    We can notice that a configuration file can have the following sections:
-   </p>
-   <ul>
-    <li>
-     <em>
-      Service
-     </em>
-     : defines global settings for the Fluent Bit container. Some examples of these kinds of settings are how often should the container flush its content, the logging level of the Fluent Bit agent, or if we would like to add additional plugins or parsers (more about parsers below).
-    </li>
-    <li>
-     <em>
-      Input
-     </em>
-     : defines the source from where the agent will attempt to collect records. Fluent Bit can receive records from multiple sources, such as log streams created by applications and services, Linux/Unix system logs, hardware metrics, Docker events, etc. A full list of inputs can be found in the
-     <a href="https://docs.fluentbit.io/manual/pipeline/inputs" target="_blank">
-      documentation
-     </a>
-     . When we talk about Fluent Bit usage together with ECS containers, most of the time these records are log events (log messages with additional metadata).
-    </li>
-    <li>
-     <em>
-      Output
-     </em>
-     : defines the sink, the destination where certain records will go. Fluent Bit supports multiple destinations, such as ElasticSearch, AWS S3, Kafka our event stdout. For a full list, see the official documentation for
-     <a href="https://docs.fluentbit.io/manual/pipeline/outputs" target="_blank">
-      outputs
-     </a>
-     .
-    </li>
-    <li>
-     <em>
-      Filter
-     </em>
-     : the name of this section is somewhat misleading in my opinion. Filters can be used to manipulate records, not just for filtering and dropping entries. With filters, we can modify certain fields from the records or we can add/remove/rename certain information. A full list of filters can be found
-     <a href="https://docs.fluentbit.io/manual/pipeline/filters" target="_blank">
-      here
-     </a>
-     .
-    </li>
-   </ul>
-   <p>
-    Not all of these sections are mandatory in a configuration file. Generally, we need at least the input and output sections. The
-    <code>
-     fluent-bit.conf
-    </code>
-    file is also referred to as the main configuration file. Besides this file, we can have additional configurations, such as parsers. Parsers are used to read and transform raw input records into a structured object, such Lua tables (tables are the equivalent of a dictionary/map in other languages). This is required by the agent to be able to further process them with filters.
-   </p>
-   <p>
-    We can write our own parsers and load them, or we can rely on the ones provided by Fluent Bit itself. It comes with its own pre-configured
-    <code>
-     parser.conf
-    </code>
-    file (https://github.com/fluent/fluent-bit/blob/master/conf/parsers.conf). These parsers support most of the popular log formats, such as Docker, nginx, or syslog.
-   </p>
-   <h2>
-    Debugging and Troubleshooting Fluent Bit Configuration File
-    <a class="anchor-link" href="#debugging-and-troubleshooting-fluent-bit-configuration-file" id="debugging-and-troubleshooting-fluent-bit-configuration-file">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    While working with Fluent Bit I found myself losing a lot of time with deployments. If I wanted to see the effects of certain changes I made in the configuration file, I had to rebuild the Fluent Bit image, push it to an ECR repo, restart the main service which will load the newest version of the sidecar container, and then just wait for the log messages to arrive while hoping to see some meaningful change. This laborious process can be very annoying. It is way wiser to attempt to run the container locally and provide some test input for validating a modification in the configuration file.
-   </p>
-   <p>
-    We mentioned that we can have several types of
-    <code>
-     INPUT
-    </code>
-    s. One of them, having the name of
-    <code>
-     dummy
-    </code>
-    , was purposefully implemented for quick testig. It accepts a pre-defined JSON as input. It will repeatedly send this input for processing over and over again, simulating a stream of data. Additionally, if we set the
-    <code>
-     OUTPUT
-    </code>
-    to be
-    <code>
-     stdout
-    </code>
-    , we will create a way of doing "printf debugging".
-   </p>
-   <p>
-    For example:
-   </p>
-   <p>
-    We create a
-    <code>
-     fluent-bit.conf
-    </code>
-    file with the following content:
-   </p>
-   <pre><code class="language-bash">[INPUT]
+<p>We can notice that a configuration file can have the following sections:</p>
+<ul>
+<li>
+<em>Service</em>: defines global settings for the Fluent Bit container. Some examples of these kinds of settings are how often should the container flush its content, the logging level of the Fluent Bit agent, or if we would like to add additional plugins or parsers (more about parsers below).</li>
+<li>
+<em>Input</em>: defines the source from where the agent will attempt to collect records. Fluent Bit can receive records from multiple sources, such as log streams created by applications and services, Linux/Unix system logs, hardware metrics, Docker events, etc. A full list of inputs can be found in the <a href="https://docs.fluentbit.io/manual/pipeline/inputs" target="_blank">documentation</a>. When we talk about Fluent Bit usage together with ECS containers, most of the time these records are log events (log messages with additional metadata).</li>
+<li>
+<em>Output</em>: defines the sink, the destination where certain records will go. Fluent Bit supports multiple destinations, such as ElasticSearch, AWS S3, Kafka our event stdout. For a full list, see the official documentation for <a href="https://docs.fluentbit.io/manual/pipeline/outputs" target="_blank">outputs</a>.</li>
+<li>
+<em>Filter</em>: the name of this section is somewhat misleading in my opinion. Filters can be used to manipulate records, not just for filtering and dropping entries. With filters, we can modify certain fields from the records or we can add/remove/rename certain information. A full list of filters can be found <a href="https://docs.fluentbit.io/manual/pipeline/filters" target="_blank">here</a>.</li>
+</ul>
+<p>Not all of these sections are mandatory in a configuration file. Generally, we need at least the input and output sections. The <code>fluent-bit.conf</code> file is also referred to as the main configuration file. Besides this file, we can have additional configurations, such as parsers. Parsers are used to read and transform raw input records into a structured object, such Lua tables (tables are the equivalent of a dictionary/map in other languages). This is required by the agent to be able to further process them with filters.  </p>
+<p>We can write our own parsers and load them, or we can rely on the ones provided by Fluent Bit itself. It comes with its own pre-configured <code>parser.conf</code> file (https://github.com/fluent/fluent-bit/blob/master/conf/parsers.conf). These parsers support most of the popular log formats, such as Docker, nginx, or syslog.</p>
+<h2>Debugging and Troubleshooting Fluent Bit Configuration File<a class="anchor-link" href="#debugging-and-troubleshooting-fluent-bit-configuration-file" id="debugging-and-troubleshooting-fluent-bit-configuration-file">&lt;&lt;</a>
+</h2>
+<p>While working with Fluent Bit I found myself losing a lot of time with deployments. If I wanted to see the effects of certain changes I made in the configuration file, I had to rebuild the Fluent Bit image, push it to an ECR repo, restart the main service which will load the newest version of the sidecar container, and then just wait for the log messages to arrive while hoping to see some meaningful change. This laborious process can be very annoying. It is way wiser to attempt to run the container locally and provide some test input for validating a modification in the configuration file.</p>
+<p>We mentioned that we can have several types of <code>INPUT</code>s. One of them, having the name of <code>dummy</code>, was purposefully implemented for quick testig. It accepts a pre-defined JSON as input. It will repeatedly send this input for processing over and over again, simulating a stream of data. Additionally, if we set the <code>OUTPUT</code> to be <code>stdout</code>, we will create a way of doing ìprintf debuggingî.</p>
+<p>For example:</p>
+<p>We create a <code>fluent-bit.conf</code> file with the following content:</p>
+<pre><code class="language-bash">[INPUT]
     Name   dummy
     Dummy {"message": "custom dummy"}
 
@@ -243,10 +115,8 @@
     Name   stdout
     Match  *
 </code></pre>
-   <p>
-    We create a Dockerfile for our Fluent Bit image:
-   </p>
-   <pre><code class="language-bash">FROM amazon/aws-for-fluent-bit:latest
+<p>We create a Dockerfile for our Fluent Bit image:</p>
+<pre><code class="language-bash">FROM amazon/aws-for-fluent-bit:latest
 
 WORKDIR /
 
@@ -254,24 +124,14 @@ ADD fluent-bit.conf fluent-bit.conf
 
 CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
 </code></pre>
-   <p>
-    We build the Fluent Bit docker image:
-   </p>
-   <pre><code class="language-bash">docker buildx build --platform linux/amd64 -t fluent-bit-dummy .
+<p>We build the Fluent Bit docker image:</p>
+<pre><code class="language-bash">docker buildx build --platform linux/amd64 -t fluent-bit-dummy .
 </code></pre>
-   <p>
-    We run the image locally:
-   </p>
-   <pre><code class="language-bash">docker run --rm fluent-bit-dummy
+<p>We run the image locally:</p>
+<pre><code class="language-bash">docker run --rm fluent-bit-dummy
 </code></pre>
-   <p>
-    This will launch the container that will run until we stop it with
-    <code>
-     Ctrl+C
-    </code>
-    key combination. This execution will produce an output similar to the following:
-   </p>
-   <pre><code class="language-bash">$ docker run --rm fluent-bit-dummy
+<p>This will launch the container that will run until we stop it with <code>Ctrl+C</code> key combination. This execution will produce an output similar to the following:</p>
+<pre><code class="language-bash">$ docker run --rm fluent-bit-dummy
 WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
 Fluent Bit v1.9.10
 * Copyright (C) 2015-2022 The Fluent Bit Authors
@@ -298,14 +158,8 @@ Fluent Bit v1.9.10
 [2023/12/24 16:07:08] [ info] [output:stdout:stdout.0] thread worker #0 stopping...
 [2023/12/24 16:07:08] [ info] [output:stdout:stdout.0] thread worker #0 stopped
 </code></pre>
-   <p>
-    The problem with
-    <code>
-     dummy
-    </code>
-    is that it requires the content of the message to be inline. This can be annoying if we want to give something more complex. For example, a log event generated by the log router of an ECS containers looks like this:
-   </p>
-   <pre><code class="language-json">{
+<p>The problem with <code>dummy</code> is that it requires the content of the message to be inline. This can be annoying if we want to give something more complex. For example, a log event generated by the log router of an ECS containers looks like this:</p>
+<pre><code class="language-json">{
     "source": "stdout",
     "ecs_task_arn": "arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE",
     "container_name": "/ecs-windows-app-task-1-sample-container-cEXAMPLE",
@@ -317,32 +171,10 @@ Fluent Bit v1.9.10
     "ecs_task_definition_family": "windows-app-task"
 }
 </code></pre>
-   <p>
-    We could provide this JSON document as a one-liner and call it a day. In my opinion, it would be ideal if we could put this into a file, and point the input to use the content of that file to generate records. Unfortunately,
-    <code>
-     dummy
-    </code>
-    input is dummy and does not support reading stuff from a file.
-   </p>
-   <p>
-    A workaround that I've been using to overcome this limitation, is to have
-    <code>
-     exec
-    </code>
-    instead of
-    <code>
-     dummy
-    </code>
-    .
-    <code>
-     exec
-    </code>
-    can take the content from the standard output of a script and generate records based on that.
-   </p>
-   <p>
-    We can provide a simple bash script that reads and outputs the content of a file:
-   </p>
-   <pre><code class="language-bash">#!/bin/bash
+<p>We could provide this JSON document as a one-liner and call it a day. In my opinion, it would be ideal if we could put this into a file, and point the input to use the content of that file to generate records. Unfortunately, <code>dummy</code> input is dummy and does not support reading stuff from a file. </p>
+<p>A workaround that Iíve been using to overcome this limitation, is to have <code>exec</code> instead of <code>dummy</code>. <code>exec</code> can take the content from the standard output of a script and generate records based on that.</p>
+<p>We can provide a simple bash script that reads and outputs the content of a file:</p>
+<pre><code class="language-bash">#!/bin/bash
 
 # Read the content of the log entry from a file
 content=$(cat log.json)
@@ -350,10 +182,8 @@ content=$(cat log.json)
 # Echo the output, which will be the input for Fluent Bit
 echo $content
 </code></pre>
-   <p>
-    We can alter the configuration file as such:
-   </p>
-   <pre><code class="language-bash">[SERVICE]
+<p>We can alter the configuration file as such:</p>
+<pre><code class="language-bash">[SERVICE]
     Flush        5
     Log_Level    info
     Parsers_File /fluent-bit/parsers/parsers.conf
@@ -368,10 +198,8 @@ echo $content
     Name   stdout
     Match  *
 </code></pre>
-   <p>
-    The Dockerfile should also be modified to have the bash script and the log entry JSON file:
-   </p>
-   <pre><code class="language-bash">FROM amazon/aws-for-fluent-bit:latest
+<p>The Dockerfile should also be modified to have the bash script and the log entry JSON file:</p>
+<pre><code class="language-bash">FROM amazon/aws-for-fluent-bit:latest
 
 WORKDIR /
 
@@ -383,202 +211,63 @@ RUN chmod +x generate.sh
 
 CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
 </code></pre>
-   <p>
-    Running this container locally will print the following over and over again:
-   </p>
-   <pre><code>[0] dummy.input: [1703444437.645291508, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "container_id"=&gt;"61f5e6EXAMPLE", "log"=&gt;"10", "ecs_task_definition_family"=&gt;"windows-app-task"}]
+<p>Running this container locally will print the following over and over again:</p>
+<pre><code>[0] dummy.input: [1703444437.645291508, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "container_id"=&gt;"61f5e6EXAMPLE", "log"=&gt;"10", "ecs_task_definition_family"=&gt;"windows-app-task"}]
 </code></pre>
-   <h2>
-    Loading Parsers
-    <a class="anchor-link" href="#loading-parsers" id="loading-parsers">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    Parsers should not be part of the main configuration file, they should be placed into a separate file. Adhering to this requirement, Fluent Bit provides a set of parsers located under
-    <code>
-     /fluent-bit/parsers/parsers.conf
-    </code>
-    path. For these parsers to be used, we have to load them in the service section:
-   </p>
-   <pre><code class="language-bash">[SERVICE]
+<h2>Loading Parsers<a class="anchor-link" href="#loading-parsers" id="loading-parsers">&lt;&lt;</a>
+</h2>
+<p>Parsers should not be part of the main configuration file, they should be placed into a separate file. Adhering to this requirement, Fluent Bit provides a set of parsers located under <code>/fluent-bit/parsers/parsers.conf</code> path. For these parsers to be used, we have to load them in the service section:</p>
+<pre><code class="language-bash">[SERVICE]
     Parsers_File /fluent-bit/parsers/parsers.conf
 </code></pre>
-   <p>
-    Parsers can work together with INPUTs, as we have already seen in the case of
-    <code>
-     exec
-    </code>
-    INPUT. We can also have separate FILTER doing the parsing:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p>Parsers can work together with INPUTs, as we have already seen in the case of <code>exec</code> INPUT. We can also have separate FILTER doing the parsing:</p>
+<pre><code class="language-bash">[FILTER]
     Name parser
     Match dummy.*
     Key_Name data
     Parser dummy_test
 </code></pre>
-   <p>
-    As a reminder, FILTERs are used to modify data. We will discuss different types of FILTERs in the upcoming paragraphs.
-   </p>
-   <h2>
-    Modify Records with FILTER
-    <a class="anchor-link" href="#modify-records-with-filter" id="modify-records-with-filter">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    The most basic FILTER operation is the
-    <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify" target="_blank">
-     Modify
-    </a>
-    . Modify can be used to do a bunch of changes on a record:
+<p>As a reminder, FILTERs are used to modify data. We will discuss different types of FILTERs in the upcoming paragraphs.</p>
+<h2>Modify Records with FILTER<a class="anchor-link" href="#modify-records-with-filter" id="modify-records-with-filter">&lt;&lt;</a>
+</h2>
+<p>The most basic FILTER operation is the <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify" target="_blank">Modify</a>. Modify can be used to do a bunch of changes on a record:
     - add  fields with static values
     - overwrite fields with static values
     - remove fields
-    - rename fields
-   </p>
-   <p>
-    Aside from static fields, we can refer to environment variables as well.  For example, we can inject the current environment/AWS region in each record:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+    - rename fields</p>
+<p>Aside from static fields, we can refer to environment variables as well.  For example, we can inject the current environment/AWS region in each record:</p>
+<pre><code class="language-bash">[FILTER]
     Name            modify
     Add environment ${ENVIRONMENT}
     Add region      ${AWS_REGION}
 </code></pre>
-   <p>
-    <code>
-     ENVIRONMENT
-    </code>
-    and
-    <code>
-     AWS_REGION
-    </code>
-    are environment variables and they should be specified in the task definition.
-   </p>
-   <p>
-    Additionally, the Modify FILTER supports conditional actions. For example, we could apply a renaming only if a certain condition is met, such as the field stars with a particular string:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p><code>ENVIRONMENT</code> and <code>AWS_REGION</code> are environment variables and they should be specified in the task definition.</p>
+<p>Additionally, the Modify FILTER supports conditional actions. For example, we could apply a renaming only if a certain condition is met, such as the field stars with a particular string:</p>
+<pre><code class="language-bash">[FILTER]
     Name                                   modify
     Match                                  *
     Rename    ecs_task_definition_family   family
     Condition Key_value_matches            ecs_task_definition_family windows.*
 </code></pre>
-   <p>
-    The above FILTER will rename the
-    <code>
-     ecs_task_definition_family
-    </code>
-    field to
-    <code>
-     family
-    </code>
-    if the value of the
-    <code>
-     ecs_task_definition_family
-    </code>
-    starts with
-    <code>
-     windows.*
-    </code>
-    . Please note
-    <code>
-     windows.*
-    </code>
-    is a regular expression. Aside from the
-    <code>
-     Key_value_matches
-    </code>
-    condition, there are several other conditions we can use. All of them can be found in the
-    <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify#conditions" target="_blank">
-     Fluent Bit documentation for Modify
-    </a>
-    .
-   </p>
-   <h2>
-    Routing and Multiple Outputs
-    <a class="anchor-link" href="#routing-and-multiple-outputs" id="routing-and-multiple-outputs">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    One of the most important abilities of the Fluent Bit agent is to offer support for multiple outputs. For example, we could deliver every log message to a centralized logging aggregator which is built upon ElasticSearch, while at the same time, we could direct error messages to an alerting system. To achieve this architecture, we need to introduce the concept of routing records.
-   </p>
-   <p>
-    Routing requires the presence of two important other entry properties:
-    <code>
-     Tag
-    </code>
-    and
-    <code>
-     Match
-    </code>
-    . When we create an INPUT, we can add an optional
-    <code>
-     Tag
-    </code>
-    property. Every record originating from this INPUT will carry this tag. For example:
-   </p>
-   <pre><code class="language-bash">[INPUT]
+<p>The above FILTER will rename the <code>ecs_task_definition_family</code> field to <code>family</code> if the value of the <code>ecs_task_definition_family</code> starts with <code>windows.*</code>. Please note <code>windows.*</code> is a regular expression. Aside from the <code>Key_value_matches</code> condition, there are several other conditions we can use. All of them can be found in the <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify#conditions" target="_blank">Fluent Bit documentation for Modify</a>.</p>
+<h2>Routing and Multiple Outputs<a class="anchor-link" href="#routing-and-multiple-outputs" id="routing-and-multiple-outputs">&lt;&lt;</a>
+</h2>
+<p>One of the most important abilities of the Fluent Bit agent is to offer support for multiple outputs. For example, we could deliver every log message to a centralized logging aggregator which is built upon ElasticSearch, while at the same time, we could direct error messages to an alerting system. To achieve this architecture, we need to introduce the concept of routing records.</p>
+<p>Routing requires the presence of two important other entry properties: <code>Tag</code> and <code>Match</code>. When we create an INPUT, we can add an optional <code>Tag</code> property. Every record originating from this INPUT will carry this tag. For example:</p>
+<pre><code class="language-bash">[INPUT]
     Name cpu
     Tag  cpu_usage
 </code></pre>
-   <p>
-    We collect the CPU usage to generate records. Each record will be tagged with
-    <code>
-     cpu_usage
-    </code>
-    . Now we can define FILTERs to process only these records with the help of
-    <code>
-     Match
-    </code>
-    :
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p>We collect the CPU usage to generate records. Each record will be tagged with <code>cpu_usage</code>. Now we can define FILTERs to process only these records with the help of <code>Match</code>:</p>
+<pre><code class="language-bash">[FILTER]
     Name          modify
     Match         cpu_usage
     Add   brand   AMD
     Add   mark    Ryzen
 </code></pre>
-   <p>
-    Each record tagged with
-    <code>
-     cpu_usage
-    </code>
-    will have a
-    <code>
-     brand
-    </code>
-    and a
-    <code>
-     mark
-    </code>
-    field. In case we add another input for collecting the memory usage and we tag these records with
-    <code>
-     mem_usage
-    </code>
-    , the records originating from the memory INPUT won't receive the
-    <code>
-     brand
-    </code>
-    and
-    <code>
-     mark
-    </code>
-    fields.
-   </p>
-   <p>
-    Similarly, we can create multiple outputs possessing the
-    <code>
-     Match
-    </code>
-    property. As an example, we can create an OUTPUT to match everything with
-    <code>
-     cpu_usage
-    </code>
-    only and build a CloudWatch metric based on this information, while we also could save every event in an S3 bucket:
-   </p>
-   <pre><code class="language-bash">[OUTPUT]
+<p>Each record tagged with <code>cpu_usage</code> will have a <code>brand</code> and a <code>mark</code> field. In case we add another input for collecting the memory usage and we tag these records with <code>mem_usage</code>, the records originating from the memory INPUT wonít receive the <code>brand</code> and <code>mark</code> fields. </p>
+<p>Similarly, we can create multiple outputs possessing the <code>Match</code> property. As an example, we can create an OUTPUT to match everything with <code>cpu_usage</code> only and build a CloudWatch metric based on this information, while we also could save every event in an S3 bucket:</p>
+<pre><code class="language-bash">[OUTPUT]
     Name              cloudwatch_logs
     Match             cpu_usage
     log_stream_name   fluent-bit-cloudwatch
@@ -597,39 +286,17 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     s3_key_format                /$TAG[2]/$TAG[0]/%Y/%m/%d/%H/%M/%S/$UUID.gz
     s3_key_format_tag_delimiters .-
 </code></pre>
-   <p>
-    Note,
-    <code>
-     Match
-    </code>
-    accepts a regular expression. We can have a wildcard (
-    <code>
-     *
-    </code>
-    ) to match everything.
-   </p>
-   <h2>
-    Nest and Lift
-    <a class="anchor-link" href="#nest-and-lift" id="nest-and-lift">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    When working with Fluent Bit on ECS, generally it is a good idea to configure our services to log in JSON format. Most of the logging libraries support this out of the box. Assuming we are logging everything in JSON format, let's imagine our service generates the following log messages:
-   </p>
-   <pre><code class="language-json">{
+<p>Note, <code>Match</code> accepts a regular expression. We can have a wildcard (<code>*</code>) to match everything.</p>
+<h2>Nest and Lift<a class="anchor-link" href="#nest-and-lift" id="nest-and-lift">&lt;&lt;</a>
+</h2>
+<p>When working with Fluent Bit on ECS, generally it is a good idea to configure our services to log in JSON format. Most of the logging libraries support this out of the box. Assuming we are logging everything in JSON format, letís imagine our service generates the following log messages:</p>
+<pre><code class="language-json">{
     "type": "error",
     "message": "Something happened!"
 }
 </code></pre>
-   <p>
-    The log router from ECS will embed the content of every log message under the
-    <code>
-     "log"
-    </code>
-    field, the final event having a similar format:
-   </p>
-   <pre><code class="language-json">{
+<p>The log router from ECS will embed the content of every log message under the <code>"log"</code> field, the final event having a similar format:</p>
+<pre><code class="language-json">{
     "source": "stdout",
     "ecs_task_arn": "arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE",
     "container_name": "/ecs-windows-app-task-1-sample-container-cEXAMPLE",
@@ -644,26 +311,8 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     "ecs_task_definition_family": "windows-app-task"
 }
 </code></pre>
-   <p>
-    We decided we don't like our log content to be embedded under
-    <code>
-     "log"
-    </code>
-    property, so we want everything to be on the root level of the record. To do this, we can use the
-    <code>
-     Nest
-    </code>
-    FILTER. This filter has two operations, the first one being
-    <code>
-     Nest
-    </code>
-    (again, confusing I know), and the second one is
-    <code>
-     Lift
-    </code>
-    . In case we want to lift out fields to the root level, we can do the following:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p>We decided we donít like our log content to be embedded under <code>"log"</code> property, so we want everything to be on the root level of the record. To do this, we can use the <code>Nest</code> FILTER. This filter has two operations, the first one being <code>Nest</code> (again, confusing I know), and the second one is <code>Lift</code>. In case we want to lift out fields to the root level, we can do the following:</p>
+<pre><code class="language-bash">[FILTER]
     Name         nest
     Match        *
     Operation    lift
@@ -671,34 +320,12 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     Nested_under log
     Add_prefix   LIFTED_
 </code></pre>
-   <p>
-    This FILTER will lift everything situated under the
-    <code>
-     "log"
-    </code>
-    and put it into the root. The output will be something like this:
-   </p>
-   <pre><code class="language-bash">[5] dummy.input: [1703451474.539715464, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "container_id"=&gt;"61f5e6EXAMPLE", "ecs_task_definition_family"=&gt;"windows-app-task", "LIFTED_type"=&gt;"error", "LIFTED_message"=&gt;"Something happened!"}]
+<p>This FILTER will lift everything situated under the <code>"log"</code> and put it into the root. The output will be something like this:</p>
+<pre><code class="language-bash">[5] dummy.input: [1703451474.539715464, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "container_id"=&gt;"61f5e6EXAMPLE", "ecs_task_definition_family"=&gt;"windows-app-task", "LIFTED_type"=&gt;"error", "LIFTED_message"=&gt;"Something happened!"}]
 </code></pre>
-   <p>
-    Usually, I recommend adding a prefix to the lifted fields, but this can be omitted.
-   </p>
-   <p>
-    Now we are happy with how our record looks, but unfortunately, our colleague does not agree with us. He suggests we keep the
-    <code>
-     "log"
-    </code>
-    object as it is and move the
-    <code>
-     "container_id"
-    </code>
-    inside that object. We can accomplish this with
-    <code>
-     Nest
-    </code>
-    operation:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p>Usually, I recommend adding a prefix to the lifted fields, but this can be omitted.</p>
+<p>Now we are happy with how our record looks, but unfortunately, our colleague does not agree with us. He suggests we keep the <code>"log"</code> object as it is and move the <code>"container_id"</code> inside that object. We can accomplish this with <code>Nest</code> operation:</p>
+<pre><code class="language-bash">[FILTER]
     Name       nest
     Match      *
     Operation  nest
@@ -706,42 +333,16 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     Nest_under log
     Add_prefix NESTED_
 </code></pre>
-   <p>
-    The output after adding this section to the configuration will look similar to this:
-   </p>
-   <pre><code class="language-bash">[3] dummy.input: [1703451786.500213512, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "log"=&gt;{"type"=&gt;"error", "message"=&gt;"Something happened!"}, "ecs_task_definition_family"=&gt;"windows-app-task", "log"=&gt;{"NESTED_container_id"=&gt;"61f5e6EXAMPLE"}}]
+<p>The output after adding this section to the configuration will look similar to this:</p>
+<pre><code class="language-bash">[3] dummy.input: [1703451786.500213512, {"source"=&gt;"stdout", "ecs_task_arn"=&gt;"arn:aws:ecs:region:0123456789012:task/FluentBit-cluster/13EXAMPLE", "container_name"=&gt;"/ecs-windows-app-task-1-sample-container-cEXAMPLE", "ecs_cluster"=&gt;"FluentBit-cluster", "ecs_container_name"=&gt;"sample-container", "ecs_task_definition_version"=&gt;"1", "log"=&gt;{"type"=&gt;"error", "message"=&gt;"Something happened!"}, "ecs_task_definition_family"=&gt;"windows-app-task", "log"=&gt;{"NESTED_container_id"=&gt;"61f5e6EXAMPLE"}}]
 </code></pre>
-   <p>
-    We can notice that this output is a little bit funky, since it appears there are two
-    <code>
-     "log"
-    </code>
-    objects. This is a
-    <a href="https://github.com/fluent/fluent-bit/issues/1177" target="_blank">
-     "bug"
-    </a>
-    in the Fluent Bit version used for this blog post. The demos and examples presented in this post are using the latest Fluent Bit docker image maintained by AWS, which at the moment of writing, is based on Fluent Bit
-    <code>
-     1.9.10
-    </code>
-    . Technically, this issue was
-    <a href="https://github.com/fluent/fluent-bit/commit/1d148860a8825d5f80aef40efd0d6d2812419740" target="_blank">
-     fixed
-    </a>
-    in a later version of Fluent Bit. The fix consists of maintaining only the latest key in the table, resulting in an effective overwrite in case the key existed before.
-   </p>
-   <p>
-    So, we can enumerate a few caveats for Nest and Lift:
-   </p>
-   <ul>
-    <li>
-     As we have seen before, if we would like to nest a field into an already existing field, that is not really possible, even if the receiving field itself is a nested object. Personally, I would have preferred a possibility to merge them, but I'm fully aware that this will come with its own baggage of challenges and edge cases.
-    </li>
-    <li>
-     Let's say we have a deeply nested object such as this:
-    </li>
-   </ul>
-   <pre><code class="language-json">{
+<p>We can notice that this output is a little bit funky, since it appears there are two <code>"log"</code> objects. This is a <a href="https://github.com/fluent/fluent-bit/issues/1177" target="_blank">ìbugî</a> in the Fluent Bit version used for this blog post. The demos and examples presented in this post are using the latest Fluent Bit docker image maintained by AWS, which at the moment of writing, is based on Fluent Bit <code>1.9.10</code>. Technically, this issue was <a href="https://github.com/fluent/fluent-bit/commit/1d148860a8825d5f80aef40efd0d6d2812419740" target="_blank">fixed</a> in a later version of Fluent Bit. The fix consists of maintaining only the latest key in the table, resulting in an effective overwrite in case the key existed before.</p>
+<p>So, we can enumerate a few caveats for Nest and Lift:</p>
+<ul>
+<li>As we have seen before, if we would like to nest a field into an already existing field, that is not really possible, even if the receiving field itself is a nested object. Personally, I would have preferred a possibility to merge them, but Iím fully aware that this will come with its own baggage of challenges and edge cases.</li>
+<li>Letís say we have a deeply nested object such as this:</li>
+</ul>
+<pre><code class="language-json">{
     "source": "stdout",
     "log": {
         "type": "error",
@@ -753,234 +354,80 @@ CMD ["/fluent-bit/bin/fluent-bit", "-c", "fluent-bit.conf"]
     },
 }
 </code></pre>
-   <p>
-    In case we would like to lift only the
-    <code>
-     "code"
-    </code>
-    property to the root, we simply can not do this easily. We will have to lift the content of the
-    <code>
-     "log"
-    </code>
-    first and then the content of
-    <code>
-     "details"
-    </code>
-    . At this point, we essentially broke the original structure of our JSON, which is probably not what we wanted in the first place.
-   </p>
-   <h2>
-    Lua Scripting
-    <a class="anchor-link" href="#lua-scripting" id="lua-scripting">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    If we think we need more flexibility for processing records, we can write our own
-    <a href="https://docs.fluentbit.io/manual/pipeline/filters/lua" target="_blank">
-     embedded filters using Lua
-    </a>
-    language.
-    <a href="https://www.lua.org/" target="_blank">
-     Lua
-    </a>
-    is a highly efficient programming language used mainly for embedded scripting.
-   </p>
-   <p>
-    It is relatively easy to integrate a Lua script into a Fluent Bit configuration. First, we have to define a FILTER which will call our script:
-   </p>
-   <pre><code class="language-bash">[FILTER]
+<p>In case we would like to lift only the <code>"code"</code> property to the root, we simply can not do this easily. We will have to lift the content of the <code>"log"</code> first and then the content of <code>"details"</code>. At this point, we essentially broke the original structure of our JSON, which is probably not what we wanted in the first place.</p>
+<h2>Lua Scripting<a class="anchor-link" href="#lua-scripting" id="lua-scripting">&lt;&lt;</a>
+</h2>
+<p>If we think we need more flexibility for processing records, we can write our own <a href="https://docs.fluentbit.io/manual/pipeline/filters/lua" target="_blank">embedded filters using Lua</a> language. <a href="https://www.lua.org/" target="_blank">Lua</a> is a highly efficient programming language used mainly for embedded scripting.</p>
+<p>It is relatively easy to integrate a Lua script into a Fluent Bit configuration. First, we have to define a FILTER which will call our script:</p>
+<pre><code class="language-bash">[FILTER]
     Name    lua
     Match   *
     script  script.lua
     call    transform
 </code></pre>
-   <p>
-    Then, we have to create a script file (named
-    <code>
-     script.lua
-    </code>
-    in this case, but we can name it however we want) and write our function (named
-    <code>
-     transform
-    </code>
-    in this case, but again, we can name this as we wish) which will be invoked for each record.
-   </p>
-   <pre><code class="language-lua">function transform(tag, timestamp, record)
+<p>Then, we have to create a script file (named <code>script.lua</code> in this case, but we can name it however we want) and write our function (named <code>transform</code> in this case, but again, we can name this as we wish) which will be invoked for each record.</p>
+<pre><code class="language-lua">function transform(tag, timestamp, record)
     record["from_lua"] = "hello from lua"
     return 1, timestamp, record
 end
 </code></pre>
-   <p>
-    There are a few restrictions for this function. The function should accept the following arguments:
-   </p>
-   <ul>
-    <li>
-     <code>
-      tag
-     </code>
-     : tag attached to the record, we discussed tags in detail in the routing section above;
-    </li>
-    <li>
-     <code>
-      timestamp
-     </code>
-     : an Unix timestamp attached to each record
-    </li>
-    <li>
-     <code>
-      record
-     </code>
-     : the record itself. The type of this argument is a Lua
-     <a href="https://www.lua.org/pil/2.5.html" target="_blank">
-      table
-     </a>
-    </li>
-   </ul>
-   <p>
-    This function has to return 3 values:
--
-    <code>
-     code
-    </code>
-    : must be one of the following values:
-    -
-    <code>
-     -1
-    </code>
-    : tells Fluent Bit to drop the current record
-    -
-    <code>
-     0
-    </code>
-    : the current record was not modified
-    -
-    <code>
-     1
-    </code>
-    : the current record was modified
-    -
-    <code>
-     2
-    </code>
-    : the timestamp was modified
--
-    <code>
-     timestamp
-    </code>
-    : the Unix timestamp of the record, usually it is returned as it was received in the arguments
--
-    <code>
-     record
-    </code>
-    : the record itself, in the form of a Lua table.
-   </p>
-   <p>
-    We can do some fairly complex transformations with Lua. My suggestion is to keep it to a minimum. We have to remember that this script will be executed for every record (as long as we did not do a filter before that). Having a heavy and time-consuming transformation will result in our processing lagging, or we will end up dropping records in the worst possible scenario. Moreover, sidecar containers usually use the same resources allocated to the main service. If we attempt to steal a significant amount of resources from the main service, we might disturb its operation.
-   </p>
-   <h2>
-    Final Thoughts
-    <a class="anchor-link" href="#final-thoughts" id="final-thoughts">
-     &lt;&lt;
-    </a>
-   </h2>
-   <p>
-    The motivation behind this blog post was to share several ideas acquired while working with Fluent Bit sidecar container in production. Some of these might seem boring or obvious to experienced people and that is absolutely fine. Logging should be boring, without any unforeseen surprises. It should just work.
-   </p>
-   <p>
-    That being said, I hope some of these tips may be helpful for somebody out there.
-   </p>
-   <p>
-    The code for the examples presented in this blog post can be found on GitHub:
-    <a href="https://github.com/Ernyoke/ecs-with-fluentbit" target="_blank">
-     https://github.com/Ernyoke/ecs-with-fluentbit
-    </a>
-   </p>
-   <h2>
-    References:
-    <a class="anchor-link" href="#references" id="references">
-     &lt;&lt;
-    </a>
-   </h2>
-   <ol>
-    <li>
-     Fluent Bit Inputs:
-     <a href="https://docs.fluentbit.io/manual/pipeline/inputs" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Fluent Bit Outputs:
-     <a href="https://docs.fluentbit.io/manual/pipeline/outputs" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Fluent Bit Filters:
-     <a href="https://docs.fluentbit.io/manual/pipeline/filters" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Fluent Bit Modify:
-     <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Fluent Bit Lua Filter:
-     <a href="https://docs.fluentbit.io/manual/pipeline/filters/lua" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Lua programming language:
-     <a href="https://www.lua.org" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-    <li>
-     Lua - Tables:
-     <a href="https://www.lua.org/pil/2.5.html" target="_blank">
-      Official Documentation
-     </a>
-    </li>
-   </ol>
-  </article>
-  <div class="utterances">
-  </div>
-  <footer>
-   <span>
-    Site generated with
-    <a href="https://github.com/Ernyoke/ssg" target="_blank">
-     ssg
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/privacy.html">
-     Privacy Policy
-    </a>
-   </span>
-   <span>
-    |
-   </span>
-   <span>
-    <a href="https://ervinszilagyi.dev/ai.html">
-     AI
-    </a>
-   </span>
-  </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript">
-  </script>
-  <script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript">
-  </script>
-  <script>
-   hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+<p>There are a few restrictions for this function. The function should accept the following arguments:</p>
+<ul>
+<li>
+<code>tag</code>: tag attached to the record, we discussed tags in detail in the routing section above;</li>
+<li>
+<code>timestamp</code>: an Unix timestamp attached to each record</li>
+<li>
+<code>record</code>: the record itself. The type of this argument is a Lua <a href="https://www.lua.org/pil/2.5.html" target="_blank">table</a>
+</li>
+</ul>
+<p>This function has to return 3 values:
+- <code>code</code>: must be one of the following values:
+    - <code>-1</code>: tells Fluent Bit to drop the current record
+    - <code>0</code>: the current record was not modified
+    - <code>1</code>: the current record was modified
+    - <code>2</code>: the timestamp was modified
+- <code>timestamp</code>: the Unix timestamp of the record, usually it is returned as it was received in the arguments
+- <code>record</code>: the record itself, in the form of a Lua table.</p>
+<p>We can do some fairly complex transformations with Lua. My suggestion is to keep it to a minimum. We have to remember that this script will be executed for every record (as long as we did not do a filter before that). Having a heavy and time-consuming transformation will result in our processing lagging, or we will end up dropping records in the worst possible scenario. Moreover, sidecar containers usually use the same resources allocated to the main service. If we attempt to steal a significant amount of resources from the main service, we might disturb its operation.</p>
+<h2>Final Thoughts<a class="anchor-link" href="#final-thoughts" id="final-thoughts">&lt;&lt;</a>
+</h2>
+<p>The motivation behind this blog post was to share several ideas acquired while working with Fluent Bit sidecar container in production. Some of these might seem boring or obvious to experienced people and that is absolutely fine. Logging should be boring, without any unforeseen surprises. It should just work. </p>
+<p>That being said, I hope some of these tips may be helpful for somebody out there.</p>
+<p>The code for the examples presented in this blog post can be found on GitHub: <a href="https://github.com/Ernyoke/ecs-with-fluentbit" target="_blank">https://github.com/Ernyoke/ecs-with-fluentbit</a></p>
+<h2>References:<a class="anchor-link" href="#references" id="references">&lt;&lt;</a>
+</h2>
+<ol>
+<li>Fluent Bit Inputs: <a href="https://docs.fluentbit.io/manual/pipeline/inputs" target="_blank">Official Documentation</a>
+</li>
+<li>Fluent Bit Outputs: <a href="https://docs.fluentbit.io/manual/pipeline/outputs" target="_blank">Official Documentation</a>
+</li>
+<li>Fluent Bit Filters: <a href="https://docs.fluentbit.io/manual/pipeline/filters" target="_blank">Official Documentation</a>
+</li>
+<li>Fluent Bit Modify: <a href="https://docs.fluentbit.io/manual/pipeline/filters/modify" target="_blank">Official Documentation</a>
+</li>
+<li>Fluent Bit Lua Filter: <a href="https://docs.fluentbit.io/manual/pipeline/filters/lua" target="_blank">Official Documentation</a>
+</li>
+<li>Lua programming language: <a href="https://www.lua.org" target="_blank">Official Documentation</a>
+</li>
+<li>Lua - Tables: <a href="https://www.lua.org/pil/2.5.html" target="_blank">Official Documentation</a>
+</li>
+</ol></article>
+<div class="utterances">
+</div>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
         hljs.highlightAll();
-  </script>
- </body>
+    </script>
+</body>
 </html>
