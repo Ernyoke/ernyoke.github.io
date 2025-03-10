@@ -69,6 +69,7 @@ function switchTheme() {
     }
 
     document.documentElement.setAttribute("data-theme", getCurrentTheme());
+    setHighlightJsTheme();
 }
 
 window.onload = () => {
