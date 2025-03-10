@@ -68,16 +68,16 @@
 <h2>Environment Set-Up<a class="anchor-link" href="#environment-set-up" id="environment-set-up">&lt;&lt;</a>
 </h2>
 <p>To understand containers, we would want to play around with some <em>container runtimes</em>. Docker is the most popular implementation of a container runtime, we will use that for this article. There are several other implementations out there, for example, Podman, LXC/LXD, rkt, and many others.</p>
-<p>Moving on with our setup, we would want to use a Linux (Ubuntu) machine on which we can install Docker Engine following the steps from the <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank">Docker documentation</a>. We would want to specifically use Docker Engine and not Docker Desktop. Docker Desktop will utilize a virtual machine for the host, we don’t want to have that virtual machine for our current purposes.</p>
+<p>Moving on with our setup, we would want to use a Linux (Ubuntu) machine on which we can install Docker Engine following the steps from the <a href="https://docs.docker.com/engine/install/ubuntu/" target="_blank">Docker documentation</a>. We would want to specifically use Docker Engine and not Docker Desktop. Docker Desktop will utilize a virtual machine for the host, we don't want to have that virtual machine for our current purposes.</p>
 <h2>Process Isolation<a class="anchor-link" href="#process-isolation" id="process-isolation">&lt;&lt;</a>
 </h2>
-<p>Containers are not virtual machines (VMs). Despite having their own hostname, filesystem, process space, and networking stack, they are not VMs. They do not have a standalone kernel, and they cannot have separate kernel modules or device drives installed. They can have multiple processes, which are isolated from the host machine’s running processes.</p>
+<p>Containers are not virtual machines (VMs). Despite having their own hostname, filesystem, process space, and networking stack, they are not VMs. They do not have a standalone kernel, and they cannot have separate kernel modules or device drives installed. They can have multiple processes, which are isolated from the host machine's running processes.</p>
 <p>On our Ubuntu host, we can run the following command to get information about the kernel:</p>
 <pre><code class="language-bash">root@ip-172-31-24-119:~# uname -s -r
 Linux 5.15.0-1019-aws
 </code></pre>
-<p>From the output, we can see that the name of the kernel currently in use is <code>Linux</code> with the release version of the kernel <code>5.15.0-1019-aws</code> (The <code>aws</code> prefix comes from the fact that I’m using an EC2 machine on AWS).</p>
-<p>Let’s output some more information about our Linux distribution:</p>
+<p>From the output, we can see that the name of the kernel currently in use is <code>Linux</code> with the release version of the kernel <code>5.15.0-1019-aws</code> (The <code>aws</code> prefix comes from the fact that I'm using an EC2 machine on AWS).</p>
+<p>Let's output some more information about our Linux distribution:</p>
 <pre><code class="language-bash">root@ip-172-31-24-119:~# cat /etc/os-release
 PRETTY_NAME="Ubuntu 22.04.1 LTS"
 NAME="Ubuntu"
@@ -92,10 +92,10 @@ BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
 PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
 UBUNTU_CODENAME=jammy
 </code></pre>
-<p>Now, let’s run Rocky Linux from a Docker container using the following command:</p>
+<p>Now, let's run Rocky Linux from a Docker container using the following command:</p>
 <pre><code class="language-bash">docker run -ti rockylinux:8
 </code></pre>
-<p>The <code>-ti</code> flag will run the container in an interactive mode, prompting us to a shell inside the container. Let’s fetch some OS information:</p>
+<p>The <code>-ti</code> flag will run the container in an interactive mode, prompting us to a shell inside the container. Let's fetch some OS information:</p>
 <pre><code class="language-bash">[root@3564a12dd942 /]# cat /etc/os-release
 NAME="Rocky Linux"
 VERSION="8.6 (Green Obsidian)"
@@ -118,9 +118,9 @@ REDHAT_SUPPORT_PRODUCT_VERSION="8"
 Linux 5.15.0-1019-aws
 </code></pre>
 <p>We can notice that it is the same as for the host machine. We can conclude that the container and the Ubuntu host machine are sharing the same kernel. Containers rely on the ability of the host operating system to isolate one program from another while allowing these programs to share resources between them such as CPU, memory, storage, and networking resources. This is accomplished by a capability of the Linux kernel, named <a href="https://en.wikipedia.org/wiki/Linux_namespaces" target="_blank"><strong>namespaces</strong></a>.</p>
-<p>Linux namespaces are not a new technology or a recently added feature of the kernel, they have been available for many years. The role of a process namespace is to isolate the processes running inside of it, so they should not be able to see things they shouldn’t.</p>
+<p>Linux namespaces are not a new technology or a recently added feature of the kernel, they have been available for many years. The role of a process namespace is to isolate the processes running inside of it, so they should not be able to see things they shouldn't.</p>
 <p>To watch process namespaces created by container runtimes in action, we will use <code>containerd</code>. If we followed the installation link from above, we should have <code>containerd</code> installed with Docker Engine. Docker uses <code>containerd</code> under the hood as its container runtime. A <em>container runtime</em> (container engine) provides low-level functionalities to execute containerized processes. </p>
-<p>To access <code>containerd</code>, we can use <code>ctr</code> command. For example, to check if <code>containerd</code> was installed and works correctly, we can run <code>ctr images ls</code>, which should return a list of images in case of success, or an error. At this point we most likely don’t have any images pulled, so should get an empty response. To pull a <code>busybox</code> image we can do the following:</p>
+<p>To access <code>containerd</code>, we can use <code>ctr</code> command. For example, to check if <code>containerd</code> was installed and works correctly, we can run <code>ctr images ls</code>, which should return a list of images in case of success, or an error. At this point we most likely don't have any images pulled, so should get an empty response. To pull a <code>busybox</code> image we can do the following:</p>
 <pre><code class="language-bash">ctr image pull docker.io/library/busybox:latest
 </code></pre>
 <p>We can check again the existing images with <code>ctr images ls</code> which should list the <code>busybox</code> image. We can run this image using:</p>
@@ -216,7 +216,7 @@ ssm-user@ip-172-31-24-119:~/alpine$ curl -o alpine.tar.gz http://dl-cdn.alpineli
 ssm-user@ip-172-31-24-119:~/alpine$ ls
 alpine.tar.gz
 </code></pre>
-<p>Let’s unpack the archive:</p>
+<p>Let's unpack the archive:</p>
 <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~/alpine$ tar xf alpine.tar.gz
 ssm-user@ip-172-31-24-119:~/alpine$ ls
 alpine.tar.gz  bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
@@ -234,9 +234,9 @@ bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbi
 <p>Container runtimes, such as <code>containerd</code> (or Docker) implement a similar approach to <code>chroot</code> for filesystem isolation. On top of that, they provide a more practical way of setup for the isolation by using <strong>container images</strong>. Container images are ready-to-use bundles that contain all the required files and folders for the base filesystem, metadata (environment variables, arguments), and other executables.</p>
 <h2>Resource Limiting<a class="anchor-link" href="#resource-limiting" id="resource-limiting">&lt;&lt;</a>
 </h2>
-<p>Until now we’ve seen how we can have process, networking, and filesystem isolation. There is one piece missing from the puzzle: hardware resource limiting. Even if our processes our entirely isolated, they still can “see” the host’s CPU, memory, networking, and storage. In the following lines, we will discuss how can we guarantee, that a container is only using the resource allocated to it.</p>
+<p>Until now we've seen how we can have process, networking, and filesystem isolation. There is one piece missing from the puzzle: hardware resource limiting. Even if our processes our entirely isolated, they still can "see" the host's CPU, memory, networking, and storage. In the following lines, we will discuss how can we guarantee, that a container is only using the resource allocated to it.</p>
 <p>In the case of a Linux kernel the <strong>scheduler</strong> keeps a list of all the processes, from which it tracks all the ones that are ready to run and also how much time each process received. The scheduler is designed to be <a href="https://en.wikipedia.org/wiki/Completely_Fair_Scheduler" target="_blank">fair</a>, meaning it tries to give time to each process to run. It also accepts input regarding the priority of each process. </p>
-<p>In terms of prioritization of processes, we can discuss processes about <em>real-time</em> and <em>non-real-time</em> policies. Real-time processes have to react fast (“in-real-time”) to outside events, so these processes get a higher priority compared to non-real-time processes.</p>
+<p>In terms of prioritization of processes, we can discuss processes about <em>real-time</em> and <em>non-real-time</em> policies. Real-time processes have to react fast ("in-real-time") to outside events, so these processes get a higher priority compared to non-real-time processes.</p>
 <p>We can use <code>ps</code> Linux command to see which process is running in real-time or non-real-time:</p>
 <pre><code class="language-bash">root@ip-172-31-19-81:~# ps -e -o pid,class,rtprio,ni,comm
     PID CLS RTPRIO  NI COMMAND
@@ -262,7 +262,7 @@ bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbi
 <li>
 <code>RR</code>: round-robin, also real-time-policy</li>
 </ul>
-<p>In the <code>RTPRIO</code> and <code>NI</code> columns, we can see the priority of some processes. <code>RTPRIO</code> (real-time priority) applies only to real-time processes, while <code>NI</code> (“nice” level) applies to non-real-time processes and can have a value between -20 (least nice, highest priority) to 20 (nicest, lowest priority).</p>
+<p>In the <code>RTPRIO</code> and <code>NI</code> columns, we can see the priority of some processes. <code>RTPRIO</code> (real-time priority) applies only to real-time processes, while <code>NI</code> ("nice" level) applies to non-real-time processes and can have a value between -20 (least nice, highest priority) to 20 (nicest, lowest priority).</p>
 <p>Real-time processes are usually not computationally intensive, but when they need CPU, they need it immediately. For all real-time processes to get the CPU they require, the Linux kernel reserves slices of CPU time for each process. The ability to provide slices of CPU time to each process represents the basis of CPU resource isolation in the case of containers. This approach is preferred because one process can not influence the scheduler by requesting more processing time for certain computationally intensive tasks.</p>
 <p>To manage container use of CPU cores, Linux uses <strong>control groups (<code>cgroups</code>)</strong>. Control groups can do, even more, to cite <a href="https://en.wikipedia.org/wiki/Cgroups" target="_blank">Wikipedia</a>:</p>
 <blockquote>
@@ -308,8 +308,8 @@ drwxr-xr-x  3 root root 0 Oct 17 20:20 user.slice/
 <p>Each of the entries from above defines the properties of a different resource. We can configure these properties by applying limits.</p>
 <h2>Building Container Images<a class="anchor-link" href="#building-container-images" id="building-container-images">&lt;&lt;</a>
 </h2>
-<p>Before building a container image ourselves, let’s step a little bit back and investigate how are other, popular images built. We will use Docker to pull an <code>Apache httpd</code> image, which we will take it apart to see its content.</p>
-<p>Let’s pull the image from the Docker registry:</p>
+<p>Before building a container image ourselves, let's step a little bit back and investigate how are other, popular images built. We will use Docker to pull an <code>Apache httpd</code> image, which we will take it apart to see its content.</p>
+<p>Let's pull the image from the Docker registry:</p>
 <pre><code class="language-bash">ssm-user@ip-172-31-24-119:~$ docker pull httpd
 Using default tag: latest
 latest: Pulling from library/httpd

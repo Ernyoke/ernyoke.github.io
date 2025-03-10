@@ -64,17 +64,17 @@
 <article id="main-content"><h1>Expose our REST API on AWS with a Custom Domain</h1>
 <p>DNS is hard.</p>
 <p>This is absolutely true for huge enterprise networks and distributed systems. With a simple Google search, we can find many IT incidents caused by DNS issues.</p>
-<p>But this is not the topic of this current article. Most of us are not in a position to deal with the DNS for enterprise systems. What we most likely encounter once in a while is “a simple” DNS setup for a REST API. Even in this case, DNS can be confusing for the uninitiated. The purpose of this article is to clear up certain misconceptions and to guide the reader through the steps of exposing a REST API publicly on AWS with a custom domain name.</p>
+<p>But this is not the topic of this current article. Most of us are not in a position to deal with the DNS for enterprise systems. What we most likely encounter once in a while is "a simple" DNS setup for a REST API. Even in this case, DNS can be confusing for the uninitiated. The purpose of this article is to clear up certain misconceptions and to guide the reader through the steps of exposing a REST API publicly on AWS with a custom domain name.</p>
 <h2>Get out own domain<a class="anchor-link" href="#get-out-own-domain" id="get-out-own-domain">&lt;&lt;</a>
 </h2>
-<p>If we are thinking about making our API public to the world, we would want to purchase a custom domain. AWS provides a domain registrar where we can buy domains, but there are better third-party options out in the wild. Purchasing a domain can be an adventure in itself, with each registrar offering different prices depending on the length/wording/choice of the top-level domain. Myself, I own the domain of <a href="https://ervinszilagyi.dev/"><em>ervinszilagyi.dev</em></a>, and I also have registered <em>ervinszilagyi.xyz</em> for this tutorial (and for my other projects as well). I’m using GoDaddy domain registrar for my domains, and I will be referring to them in this article. I have no affiliation with them, I just happened to use them for my domain purchases. To follow the steps of this tutorial, our domain registrar of choice should allow changing the nameservers, or if you want to delegate only a subdomain, then it should allow us to register NS records. If these concepts are not clear at this point, we should not worry too much, we will have explanations below.</p>
+<p>If we are thinking about making our API public to the world, we would want to purchase a custom domain. AWS provides a domain registrar where we can buy domains, but there are better third-party options out in the wild. Purchasing a domain can be an adventure in itself, with each registrar offering different prices depending on the length/wording/choice of the top-level domain. Myself, I own the domain of <a href="https://ervinszilagyi.dev/"><em>ervinszilagyi.dev</em></a>, and I also have registered <em>ervinszilagyi.xyz</em> for this tutorial (and for my other projects as well). I'm using GoDaddy domain registrar for my domains, and I will be referring to them in this article. I have no affiliation with them, I just happened to use them for my domain purchases. To follow the steps of this tutorial, our domain registrar of choice should allow changing the nameservers, or if you want to delegate only a subdomain, then it should allow us to register NS records. If these concepts are not clear at this point, we should not worry too much, we will have explanations below.</p>
 <h2>Hosted Zones and Records<a class="anchor-link" href="#hosted-zones-and-records" id="hosted-zones-and-records">&lt;&lt;</a>
 </h2>
-<p>In AWS, everything related to DNS is handled by Route 53 (the name it’s a pun, DNS resolution is using port 53).</p>
-<p>Route 53 works with <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html" target="_blank">Hosted Zones</a>, which are “databases” or containers for storing and managing our records. We can have 2 types of Hosted Zones:</p>
+<p>In AWS, everything related to DNS is handled by Route 53 (the name it's a pun, DNS resolution is using port 53).</p>
+<p>Route 53 works with <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html" target="_blank">Hosted Zones</a>, which are "databases" or containers for storing and managing our records. We can have 2 types of Hosted Zones:</p>
 <ul>
 <li>
-<em>Private Hosted Zones</em>: they are used for domains inside Amazon VPC (Virtual Private Cloud). They are not resolvable from the public internet. We won’t use them in this tutorial, but it is important to be aware of them.</li>
+<em>Private Hosted Zones</em>: they are used for domains inside Amazon VPC (Virtual Private Cloud). They are not resolvable from the public internet. We won't use them in this tutorial, but it is important to be aware of them.</li>
 <li>
 <em>Public Hosted Zones</em>: they are used for storing records for publicly routable domains. We can access them from the public internet.</li>
 </ul>
@@ -85,7 +85,7 @@
 <li>
 <em>AAAA record</em> : used to store IPv6 addresses</li>
 <li>
-<em>CNAME record</em>: it points to another domain, in cases where we don’t have or we simply can not use an IP address for our backend</li>
+<em>CNAME record</em>: it points to another domain, in cases where we don't have or we simply can not use an IP address for our backend</li>
 <li>
 <em>TXT record</em> (Text record): used to store additional text information. This information can be for other humans or other systems (metadata information)</li>
 <li>
@@ -93,14 +93,14 @@
 <li>
 <em>NS record</em> (Name server record): identifies the name servers for the hosted zone. Each Hosted Zone automatically gets assigned an NS record with 4 nameservers.</li>
 </ul>
-<p>Hosted Zones can have <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html" target="_blank">alias records</a>. Alias records are Amazon Route 53 specific records. The reason for their existence is to overcome a limitation of how DNS Zones work. For a DNS Zone, if we want to register a record pointing to the node of the DNS space (Apex domain), this record has to be either A or AAAA record (remember, both of them point to IP addresses). The problem with this is that in AWS we don’t receive static IP addresses for a lot of services (such as S3, CloudFront, API Gateway, etc.). To work around this limitation, AWS introduced Alias records. We will use an Alias record for our REST API below.</p>
+<p>Hosted Zones can have <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html" target="_blank">alias records</a>. Alias records are Amazon Route 53 specific records. The reason for their existence is to overcome a limitation of how DNS Zones work. For a DNS Zone, if we want to register a record pointing to the node of the DNS space (Apex domain), this record has to be either A or AAAA record (remember, both of them point to IP addresses). The problem with this is that in AWS we don't receive static IP addresses for a lot of services (such as S3, CloudFront, API Gateway, etc.). To work around this limitation, AWS introduced Alias records. We will use an Alias record for our REST API below.</p>
 <h2>Configure a custom domain resolution with a Hosted Zone<a class="anchor-link" href="#configure-a-custom-domain-resolution-with-a-hosted-zone" id="configure-a-custom-domain-resolution-with-a-hosted-zone">&lt;&lt;</a>
 </h2>
-<p>Let’s say we decided on our domain (which in my case is <em>ervinszilagyi.xyz</em>) and now we would want to initiate its setup. </p>
+<p>Let's say we decided on our domain (which in my case is <em>ervinszilagyi.xyz</em>) and now we would want to initiate its setup. </p>
 <p>First, we need to create a <em>public</em> Hosted Zone in Route 53. We should make sure, the name of the Hosted Zone is the same as we have it for our domain.</p>
 <p>In AWS Console we should go to Route 53 -&gt; Hosted Zones -&gt; and press the Create Hosted Zone button. We should be directed to the following form, where we have to fill in our domain name:</p>
 <p><img alt="Create Hosted Zone Form" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-hosted-zone.png"></p>
-<p>We should make sure we select that we want to create a <em>public</em> Hosted Zone and we should press “Create Hosted Zone”. After a few moments, our hosted zone should be up:</p>
+<p>We should make sure we select that we want to create a <em>public</em> Hosted Zone and we should press "Create Hosted Zone". After a few moments, our hosted zone should be up:</p>
 <p><img alt="Hosted Zone created with Records" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/records.png"></p>
 <p>We can notice that we have an <code>SOA</code> record and an <code>NS</code> record with 4 nameservers. What we have to do next, is to go to our domain registrar (in my case GoDaddy) and change the nameservers for the domain we purchased:</p>
 <p><img alt="GoDaddy Nameservers" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/change-nameservers.png"></p>
@@ -115,11 +115,11 @@ ns-47.awsdns-05.com.
 ns-1142.awsdns-14.org.
 </code></pre>
 <p>This query should return back the 4 nameservers, the ones we just configured. </p>
-<p>At this point, we can move on to the next step where we request a TLS certificate for our domain (jump over to the next section, if you don’t care about subdomain delegation).</p>
+<p>At this point, we can move on to the next step where we request a TLS certificate for our domain (jump over to the next section, if you don't care about subdomain delegation).</p>
 <h2>Delegate a custom subdomain resolution to a Hosted Zone<a class="anchor-link" href="#delegate-a-custom-subdomain-resolution-to-a-hosted-zone" id="delegate-a-custom-subdomain-resolution-to-a-hosted-zone">&lt;&lt;</a>
 </h2>
-<p>I own <a href="https://ervinszilagyi.dev/"><em>ervinszilagyi.dev</em></a>. This domain resolves to my personal website and blog. Obviously, I don’t want to change this behavior, I would like other people to read my blog posts. I would still want to use this domain for my tutorials.</p>
-<p>One way to make use of this domain is to create a subdomain under it and delegate the nameservers resolution for this subdomain to an AWS Hosted Zone. Let’s say I would like to register my rest API using <code>rest.ervinszilagyi.dev</code> domain name.</p>
+<p>I own <a href="https://ervinszilagyi.dev/"><em>ervinszilagyi.dev</em></a>. This domain resolves to my personal website and blog. Obviously, I don't want to change this behavior, I would like other people to read my blog posts. I would still want to use this domain for my tutorials.</p>
+<p>One way to make use of this domain is to create a subdomain under it and delegate the nameservers resolution for this subdomain to an AWS Hosted Zone. Let's say I would like to register my rest API using <code>rest.ervinszilagyi.dev</code> domain name.</p>
 <p>As before, in the AWS console we should go to Route53 service and create a <em>public</em> Hosted Zone for <code>rest.ervinszilagyi.dev</code>:</p>
 <p><img alt="Create Hosted Zone for the Sub-Domain" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-subdomain.png"></p>
 <p>When the Hosted Zone is created, we get the NS record with 4 namespaces:</p>
@@ -200,7 +200,7 @@ ns-1142.awsdns-14.org.
 <h2>Create an Alias record for our API<a class="anchor-link" href="#create-an-alias-record-for-our-api" id="create-an-alias-record-for-our-api">&lt;&lt;</a>
 </h2>
 <p>We should navigate back to Route 53 and select our Hosted Zone. We want to create a record, so we should press the big orange <em>Create record</em> button.</p>
-<p>We want to create an <code>A</code> record that is an <em>Alias</em>. We explained in the beginning what Alias records are, what we have to know now is that we can use an Alias record if we don’t have an IP address for the <code>A</code> record. It is not recommended at all to rely on API addresses for AWS API Gateways, so we should enable the Alias tickbox. </p>
+<p>We want to create an <code>A</code> record that is an <em>Alias</em>. We explained in the beginning what Alias records are, what we have to know now is that we can use an Alias record if we don't have an IP address for the <code>A</code> record. It is not recommended at all to rely on API addresses for AWS API Gateways, so we should enable the Alias tickbox. </p>
 <p>For the <em>Route traffic</em> section, we need to select <code>Alias to API Gateway</code> and we will have to find our API Gateway in the region in which we are working.</p>
 <p><img alt="Configure Alias Record for the API Gateway" src="img-expose-our-rest-api-on-aws-with-a-custom-domain/create-alias-record.png"></p>
 <p>We leave the routing policy at the default simple routing option.</p>
@@ -241,8 +241,8 @@ ervinszilagyi.xyz.      0       IN      A       3.86.19.75
 <h2>Automating all these steps<a class="anchor-link" href="#automating-all-these-steps" id="automating-all-these-steps">&lt;&lt;</a>
 </h2>
 <p>We can agree on the fact that there are many steps to be taken to have a custom domain set up for a REST API. Fortunately, we can have our infrastructure configured quickly if we write some Terraform code with all these changes. </p>
-<p>This is exactly what I’ve already done, making the code available for anybody on Github: <a href="https://github.com/Ernyoke/aws-custom-domain-r53" target="_blank">https://github.com/Ernyoke/aws-custom-domain-r53</a></p>
-<p>This repository contains 3 Terraform projects (let’s call them stacks):</p>
+<p>This is exactly what I've already done, making the code available for anybody on Github: <a href="https://github.com/Ernyoke/aws-custom-domain-r53" target="_blank">https://github.com/Ernyoke/aws-custom-domain-r53</a></p>
+<p>This repository contains 3 Terraform projects (let's call them stacks):</p>
 <pre><code class="language-bash">tree
 .
 â”œâ”€â”€ README.md
@@ -269,7 +269,7 @@ ervinszilagyi.xyz.      0       IN      A       3.86.19.75
 terraform apply
 </code></pre>
 <p>After the plan is rolled out successfully, we should see the nameservers in the output. We should copy these nameservers and do the change for our domain in the registrar. We have to make sure our changes are propagated before moving on to the next step.</p>
-<p>The <code>certificate</code> stack creates the TLS certificate and the validation for it. For the validation to succeed, our domain should point to the correct nameservers. The commands for the terraform rollout are the same as we’ve seen with the <code>route53</code> stack. </p>
+<p>The <code>certificate</code> stack creates the TLS certificate and the validation for it. For the validation to succeed, our domain should point to the correct nameservers. The commands for the terraform rollout are the same as we've seen with the <code>route53</code> stack. </p>
 <p>Last, we should roll out our REST API. After that is successful, we should be able to test it with a <code>curl</code> request.</p>
 <h2>Conclusions<a class="anchor-link" href="#conclusions" id="conclusions">&lt;&lt;</a>
 </h2>

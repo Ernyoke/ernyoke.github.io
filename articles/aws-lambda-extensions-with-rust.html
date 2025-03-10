@@ -83,13 +83,13 @@
 <p>In the upcoming lines, we will discuss how to build external extensions for our functions. External extensions provide higher flexibility compared to internal extensions, but they also come with their caveats.</p>
 <h2>Why Rust?<a class="anchor-link" href="#why-rust" id="why-rust">&lt;&lt;</a>
 </h2>
-<p>Extensions can be developed in any language of choice. Since external extensions run in parallel with the actual function, they can be written in an entirely different programming language compared to the one chosen for the lambda. While it’s good to have this freedom of choice, AWS documentation recommends using a compiled language. The reasons for this are the following:</p>
+<p>Extensions can be developed in any language of choice. Since external extensions run in parallel with the actual function, they can be written in an entirely different programming language compared to the one chosen for the lambda. While it's good to have this freedom of choice, AWS documentation recommends using a compiled language. The reasons for this are the following:</p>
 <ul>
 <li>extensions written in a compiled language are built as a self-contained binary. This is great since they can work with any Lambda runtime, as long as we pay attention to the architecture. We can build the same extension and deploy it to both <code>x86-64</code> and <code>arm64</code>;</li>
 <li>extensions can affect the performance of the Lambda function. They share resources with the Lambda Runtime, so it is recommended for them to be performant as possible to avoid interfering with the Lambda.</li>
 </ul>
 <p>Besides these two reasons, a third reason would be the presence of great tooling. While developing extensions on our local machine is still a challenge, we have some great open-source tools and libraries to alleviate some of the hurdles. In this blog post, we will use <a href="https://github.com/cargo-lambda/cargo-lambda" target="_blank">cargo-lambda</a> to bootstrap and deploy an extension project.</p>
-<h2>Let’s Bootstrap and Deploy an Extension<a class="anchor-link" href="#lets-bootstrap-and-deploy-an-extension" id="lets-bootstrap-and-deploy-an-extension">&lt;&lt;</a>
+<h2>Let's Bootstrap and Deploy an Extension<a class="anchor-link" href="#let-s-bootstrap-and-deploy-an-extension" id="let-s-bootstrap-and-deploy-an-extension">&lt;&lt;</a>
 </h2>
 <p>We will use <code>cargo-lambda</code> for our extension. <code>cargo-lambda</code> is an open-source tool, the purpose of which is to help developers to build Lambda Functions and Lambda Extensions. It can generate and bootstrap Rust projects for both lambdas and extensions. It can help to build and compile those projects. This is important since lambdas and extensions need to be cross-compiled to a Linux executable binary. <code>cargo-lambda</code> makes this seamless from both Windows and macOS environments.</p>
 <p>The first step would be to create a Rust project for our extension. This can be accomplished with the following <code>cargo-lambda</code> command:</p>
@@ -103,7 +103,7 @@
 <p>Now that we have an existing binary built, we would want to deploy this binary to AWS. We can do this using another <code>cargo-lambda</code> command:</p>
 <pre><code class="language-bash">cargo lambda deploy --extension
 </code></pre>
-<p>This will deploy our extension to AWS in form of a Lambda Layer. As we’ve been discussing previously, our extension should be able to run beside any Lambda Runtime. By default, the <code>deploy</code> command will only enable compatibility for <code>provided.al2</code> runtime (essentially Rust, or any other compiled Lambda function). To enable it for other runtimes such as NodeJS or Python, we can add the <code>--compatible_runtimes</code> flag, for example:</p>
+<p>This will deploy our extension to AWS in form of a Lambda Layer. As we've been discussing previously, our extension should be able to run beside any Lambda Runtime. By default, the <code>deploy</code> command will only enable compatibility for <code>provided.al2</code> runtime (essentially Rust, or any other compiled Lambda function). To enable it for other runtimes such as NodeJS or Python, we can add the <code>--compatible_runtimes</code> flag, for example:</p>
 <pre><code>cargo lambda deploy --extension --compatible_runtimes=provided.al2,nodejs16.x,python3.9
 </code></pre>
 <p>A whole list with all the compatible runtimes can be found in the <a href="https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime" target="_blank">AWS documentation</a>. As a side note, I have to mention that this feature for supporting other runtimes, was implemented by myself for the <code>cargo-lambda</code> project. I hope that other people will find it as useful :)</p>
@@ -113,7 +113,7 @@
 </h2>
 <p>Many organizations employ a log aggregator framework. The reason for this is to be able to have every log message in one place for easier operational and support tasks, debugging, or even legal purposes. By default, Lambda functions are using CloudWatch for logging. To integrate with another log aggregator, extensions are the perfect solution. In fact, many existing log aggregator products are already providing ready-to-use Lambda Extensions. For example, AWS partners such as Datadog, Dynatrace, Honeycomb, Sumo Logic, etc. have their extensions published publicly, some of them having their code open for everybody. A whole list of partners can be found in the <a href="https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html" target="_blank">AWS docs</a>. </p>
 <p>In case we use an internally developed log aggregator, or the product employed does not provide an extension out of the box, we can create one ourselves. In the following lines, we will see how to build an extension that integrates with Kineses Firehose and saves our log messages into an S3 bucket.</p>
-<p>In the previous sections, we’ve already seen how to bootstrap and deploy an extension. To be able to send messages to Kinesis, we can develop the following code:</p>
+<p>In the previous sections, we've already seen how to bootstrap and deploy an extension. To be able to send messages to Kinesis, we can develop the following code:</p>
 <pre><code class="language-Rust">use aws_sdk_firehose::error::PutRecordError;
 use aws_sdk_firehose::model::Record;
 use aws_sdk_firehose::output::PutRecordOutput;

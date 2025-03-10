@@ -63,7 +63,7 @@
 </nav>
 <article id="main-content"><h1>About AWS AI Practitioner (Beta) Exam</h1>
 <p>In June this year, AWS announced 2 new certification exams: the AI Practitioner exam and the Machine Learning Engineer Associate exams. At the same time, AWS has the Machine Learning Specialty (MLS-C01) certification. You can still take this exam, and at the point of writing this article, there is no news of being retired. However, we can assume that the Machine Learning Engineer Associate will take its place.</p>
-<p>Conversely, the AI Practitioner certification is an entirely new exam, the second foundational level certification aside from the AWS Cloud Practitioner one. Foundational level certifications are considered to be “entry” level certifications. They can be attempted by people who do not necessarily have an in-depth technical knowledge of cloud concepts.</p>
+<p>Conversely, the AI Practitioner certification is an entirely new exam, the second foundational level certification aside from the AWS Cloud Practitioner one. Foundational level certifications are considered to be "entry" level certifications. They can be attempted by people who do not necessarily have an in-depth technical knowledge of cloud concepts.</p>
 <p>From pure curiosity, I decided to attempt this certification. In my day-to-day job, I had the chance to work with AWS technologies and with LLM models lately, so I thought it would be an interesting challenge.</p>
 <h2>Exam Overview<a class="anchor-link" href="#exam-overview" id="exam-overview">&lt;&lt;</a>
 </h2>
@@ -91,7 +91,7 @@
 <li>You should understand what backpropagation is: the process of updating the weights in the network to minimize the loss function</li>
 <li>Deep Learning: understand what it is and for what is used. Remember the keyword <strong>convolution</strong>, it is used for a type of deep learning network (named convolutional networks) of which main use cases are computer vision and image recognition.</li>
 <li>GenAI: what is generative AI and what is it used for?</li>
-<li>Transformer Models/Diffusion Models/Multi-Modal Models: these are “GenAI” models. There is a high chance that you will see some questions asking about some properties of these models, so it is recommended that you have a minimal understanding of them. Other than that, you probably won’t need to go into details about their inner working.</li>
+<li>Transformer Models/Diffusion Models/Multi-Modal Models: these are "GenAI" models. There is a high chance that you will see some questions asking about some properties of these models, so it is recommended that you have a minimal understanding of them. Other than that, you probably won't need to go into details about their inner working.</li>
 <li>Supervised vs. Unsupervised learning: you should know the difference between them and you should know when one is better to use compared to the other.</li>
 <li>Reinforcement Learning (RL): how does it work? What is used for (again, important to know some use cases)</li>
 <li>Machine learning model training and evaluation:<ul>
@@ -114,7 +114,7 @@
 <strong>F1 score</strong>: combines precision and recall into a final score. Use it when both precision and recall are considered important for evaluating your model.</li>
 </ul>
 </li>
-<li>Metrics used for regression models: similar to the metrics from the classification models, you don’t need to know the formulas and mathematics behind these metrics. What you should know for the exam is to recognize them and know if they can be used with a presented model or not:<ul>
+<li>Metrics used for regression models: similar to the metrics from the classification models, you don't need to know the formulas and mathematics behind these metrics. What you should know for the exam is to recognize them and know if they can be used with a presented model or not:<ul>
 <li>
 <strong>MAE (Mean Absolute Error)</strong>: measures the average magnitude of errors between the predicted values and the actual values.</li>
 <li>
@@ -138,13 +138,13 @@
 </li>
 </ul>
 <h3>3. Generative AI and AWS Services for GenAI</h3>
-<p>The exam expects you to be familiar with GenAI models. Obviously, it does not expect you to know about their inner workings, but you should have experience using them. To give you an example, you might be asked to know if, for a certain problem, you would want to use a GenAI-based model or another “legacy” ML model.</p>
+<p>The exam expects you to be familiar with GenAI models. Obviously, it does not expect you to know about their inner workings, but you should have experience using them. To give you an example, you might be asked to know if, for a certain problem, you would want to use a GenAI-based model or another "legacy" ML model.</p>
 <p>Probably the most important AWS service for this exam is <strong>AWS Bedrock</strong>. You might expect around 15-20 questions involving Bedrock in one way or another. Bedrock is essentially a one-stop-shop for GenAI models. It gives you access to a dozen of <strong>Foundation Models</strong>, such as Amazon Titan, a few Anthropic models (<strong>Claude</strong>), and other models from AI21labs, Cohere, stability.ai, Meta (llama), Mistral, etc. Aside from giving access to build on these models, Bedrock offers a bunch of other features. Relevant for the exam are the following:</p>
 <ul>
 <li>
 <strong>Knowledge Bases</strong>: a solution provisioning and using <strong>vector databases</strong>. You may want to use vector databases if you are building a system based on <strong>RAG (Retrieval Augmented Generation)</strong>.</li>
 <li>
-<strong>Agents</strong>: Bedrock’s way of doing function calling. You can integrate your model with an “action”, meaning that aside from answering a message, the model would be able to perform tasks, such as executing a Lambda Function.</li>
+<strong>Agents</strong>: Bedrock's way of doing function calling. You can integrate your model with an "action", meaning that aside from answering a message, the model would be able to perform tasks, such as executing a Lambda Function.</li>
 <li>
 <strong>Guardrails</strong>: you can use them to limit the ability of a model in terms of what it should be able to answer. Aside from that, Guardrails offer other features such as detecting PII data and removing them from the answer.</li>
 <li>
@@ -162,17 +162,17 @@
 </ul>
 </li>
 </ul>
-<p>I personally would not worry much about Amazon Q for the exam. According to my experience, there are not a lot of questions about this service. On the other hand, it is important to make sure you don’t confuse Amazon Q with Kendra, another service built for similar purposes. The exam might put them face-to-face, but you should be able to decide which one to choose for your scenario.</p>
+<p>I personally would not worry much about Amazon Q for the exam. According to my experience, there are not a lot of questions about this service. On the other hand, it is important to make sure you don't confuse Amazon Q with Kendra, another service built for similar purposes. The exam might put them face-to-face, but you should be able to decide which one to choose for your scenario.</p>
 <h3>4. Prompt Engineering</h3>
 <p>Before embarking on my learning journey for the AI Practitioner certification I considered prompt engineering a pseudo-science. My rule of thumb was (and it still is) that if you need better answers from a model, give it as much information as you can. During my preparation, and while building AI chatbots at my workplace, I learned that there are some useful prompting techniques with which you can get way better answers compared to what I was used to before. </p>
 <p>For the AI practitioner certification you should be aware of the following prompting techniques:</p>
 <ul>
 <li>
-<strong>Zero-Shot Prompting</strong>: it is a more “scientific” definition of what I was doing before adopting any prompt engineering techniques. You just throw a query to the model without any specific wording/formatting or examples of expected output. The output of the model may vary, it might be useful for you or it might be total garbage.</li>
+<strong>Zero-Shot Prompting</strong>: it is a more "scientific" definition of what I was doing before adopting any prompt engineering techniques. You just throw a query to the model without any specific wording/formatting or examples of expected output. The output of the model may vary, it might be useful for you or it might be total garbage.</li>
 <li>
 <strong>Few-Shots Prompting</strong>: you provide a prompt with examples of what you would expect as an output from the model. Unexpectedly, this prompting technique works better than I would have imagined. In terms of the exam, you should choose this technique in cases when you are asked for a low-cost solution with the most precision</li>
 <li>
-<strong>Chain of Thought Prompting</strong>: you divide your queries into a sequence of reasoning steps, and you use sentences like “Think step by step”. As a tangent, GPT o1 model uses chain of thought prompting under the hood. This made this technique very popular recently, so expect some questions about it</li>
+<strong>Chain of Thought Prompting</strong>: you divide your queries into a sequence of reasoning steps, and you use sentences like "Think step by step". As a tangent, GPT o1 model uses chain of thought prompting under the hood. This made this technique very popular recently, so expect some questions about it</li>
 <li>
 <strong>Retrieval-Augmented Generation (RAG)</strong>: RAG is also considered a prompting technique. It relies on using a vector database to fetch content related to the user query. This content is then injected into the user prompt as additional context.</li>
 </ul>
@@ -203,7 +203,7 @@
 <li>Domain adaptation fine-tuning: uses unlabeled data for fine-tuning, it is the most expensive approach</li>
 </ol>
 <p>Other SageMaker sub-services you would want to look up are the following: <strong>SageMaker Canvas</strong>, <strong>MLFlow for SageMaker</strong>, <strong>Automatic Model Tuning</strong>. Moreover, SageMaker provides a bunch of built-in machine-learning algorithms (for example: XGBoost, DeepAR, Seq2Seq, etc.). You may want to check them out, to at least recognize them if they pop up during the certification.</p>
-<p>SageMaker is an advanced topic. It is somewhat baffling to me, that it AWS expects you to have such an amount of knowledge about it, considering that the exam is recommended to individuals who won’t ever use this product. If you are comfortable writing a few lines of code and you know what a Jupyter Notebook is, I recommend doing some hands-on practice with SageMaker.</p>
+<p>SageMaker is an advanced topic. It is somewhat baffling to me, that it AWS expects you to have such an amount of knowledge about it, considering that the exam is recommended to individuals who won't ever use this product. If you are comfortable writing a few lines of code and you know what a Jupyter Notebook is, I recommend doing some hands-on practice with SageMaker.</p>
 <h3>5. AWS Managed AI Services</h3>
 <p>AWS offers a comprehensive list of AI services that are managed and trained by them. The list of the services you should be aware of are the following:</p>
 <ul>
@@ -232,7 +232,7 @@
 <li>Hallucinations</li>
 <li>Nondeterminism</li>
 </ul>
-<p>You should be able to detect what are the challenges of a given AI application. You might be asked to find solutions to overcome some of these challenges. As an example, to overcome hallucinations, you can use Knowledge Bases and RAGs, to overcome toxicity you can use Guardrails. To reduce nondeterminism, you can tune the model’s hyperparameters (temperature, Top P, Top K).</p>
+<p>You should be able to detect what are the challenges of a given AI application. You might be asked to find solutions to overcome some of these challenges. As an example, to overcome hallucinations, you can use Knowledge Bases and RAGs, to overcome toxicity you can use Guardrails. To reduce nondeterminism, you can tune the model's hyperparameters (temperature, Top P, Top K).</p>
 <p>Another important topic that may pop up is governance. Governance represents a set of practices that you have to adhere to when developing AI products. For example, you should be able to address ethical concerns of an AI-based solution, you should take into consideration bias and fairness, you should adhere to regulatory and compliance restrictions, you should pay attention to your data lineage and cleanliness, etc. There are a few AWS services you should recognize when talking about governance. These are AWS Config, Amazon Inspector, AWS Audit Manager, AWS Artifact, AWS CloudTrail, AWS Trusted Advisor.</p>
 <p>Generative AI Security Scoping Matrix: it is a framework designed to identify and manage security risks associated with deploying GenAI applications.
 It is used to classify your app in 5 defined GenAI scopes, from low to high ownership:</p>
@@ -257,7 +257,7 @@ It is used to classify your app in 5 defined GenAI scopes, from low to high owne
 <p>Networking:</p>
 <ul>
 <li>You should know what is a VPC.</li>
-<li>VPC Endpoints: they are used to communicate with AWS services from a private VPC. The traffic won’t reach the public internet when using a VPC Endpoint.</li>
+<li>VPC Endpoints: they are used to communicate with AWS services from a private VPC. The traffic won't reach the public internet when using a VPC Endpoint.</li>
 </ul>
 <p>Other services:</p>
 <ul>
@@ -270,27 +270,27 @@ It is used to classify your app in 5 defined GenAI scopes, from low to high owne
 </h2>
 <p>The previous section aimed to present what you need to know to pass the exam. It is not comprehensive material, it might have missing topics or might be inaccurate. If you want a more robust preparation plan, I recommend enrolling in a paid course.</p>
 <p><a href="https://skillbuilder.aws/" target="_blank">AWS Skill Builder</a> is the official learning portal run by AWS Training and Certification. They have a learning path for the AI practitioner exam. I personally did not use this, because the video courses in the learning path do not strictly focus on exam topics. </p>
-<p>What I would recommend is to take one of the Udemy courses from Stephane Maarek or Frank Kane. For my preparation, I used Stephane Maarek’s course. I’m also familiar with Frank’s teaching style, so I’m confident in recommending his course as well. </p>
-<p>As a review for Stephane’s course, it was the first course available on the market. I purchased it on the day he released it. I’m familiar with his teaching style from his other AWS certification courses. I like how organizes the content presented and his presentation makes it easy to take notes. The course was released early, meaning that it had some gaps in terms of the required material. It got updated after more students provided feedback to Stephane. I’m confident recommending it to anybody.</p>
+<p>What I would recommend is to take one of the Udemy courses from Stephane Maarek or Frank Kane. For my preparation, I used Stephane Maarek's course. I'm also familiar with Frank's teaching style, so I'm confident in recommending his course as well. </p>
+<p>As a review for Stephane's course, it was the first course available on the market. I purchased it on the day he released it. I'm familiar with his teaching style from his other AWS certification courses. I like how organizes the content presented and his presentation makes it easy to take notes. The course was released early, meaning that it had some gaps in terms of the required material. It got updated after more students provided feedback to Stephane. I'm confident recommending it to anybody.</p>
 <p>Aside from courses, you may want to take a practice exam before going into the live exam. For this purpose, Skill Builder would be the best option. Please note, that Skill Builder has also a free practice exam with 20 questions. This is a must for anybody who prepares for this certification. In case you are willing to pay, Skill Builder offers a fully-fledged practice exam with 85 questions and with explanation for each question.</p>
 <p>On Udemy, Stephane is also selling a set of practice exams. I did not feel the need to purchase this after I finished everything on Skill Builder, so I cannot provide a review on it.</p>
 <h2>My Experience Taking the Exam<a class="anchor-link" href="#my-experience-taking-the-exam" id="my-experience-taking-the-exam">&lt;&lt;</a>
 </h2>
 <p>I took the exam on Thursday morning from home through Pearson. I had no issues this time with them, everything went smoothly.</p>
-<p>I bombed through all the 85 questions within an hour, after which I spent the next 20 minutes going through the questions I flagged. As I hinted before, the exam was not easy, it had its fair share of challenges. Most of the questions had the difficulty I expected, but it had a considerable amount picked straight from the Machine Learning Specialty question set…at least this is how I felt. Moreover, the spelling of some questions felt really awkward, putting me in a situation where I felt I had to guess what the author was looking for. I suppose this is a downside to taking a beta exam.</p>
+<p>I bombed through all the 85 questions within an hour, after which I spent the next 20 minutes going through the questions I flagged. As I hinted before, the exam was not easy, it had its fair share of challenges. Most of the questions had the difficulty I expected, but it had a considerable amount picked straight from the Machine Learning Specialty question set...at least this is how I felt. Moreover, the spelling of some questions felt really awkward, putting me in a situation where I felt I had to guess what the author was looking for. I suppose this is a downside to taking a beta exam.</p>
 <p>I did not encounter any new types of questions, all of my questions were multiple choice and multiple selection. These new types of questions are not some new innovation from AWS. Anybody, who had the chance to take a Microsoft Azure exam, should have been exposed to these types of questions. My opinion about them is that they do not affect the difficulty of the exam. On a personal level, I detest the ordering type of questions, while I prefer the case studies.</p>
 <p>That being said, I passed without issues. My score was lower than what I expected, but at the end of the day, It is not something I care that much about.</p>
 <h2>My List of Recommendations for You for the Exam<a class="anchor-link" href="#my-list-of-recommendations-for-you-for-the-exam" id="my-list-of-recommendations-for-you-for-the-exam">&lt;&lt;</a>
 </h2>
 <ul>
-<li>Keep an eye on the clock. 85 questions are a lot. You have less than 1.5 minutes per question. Don’t spend a lot of time on any single question. Many of them can be answered straight away as long as you have decent preparation. Try to select the correct answer and move on.</li>
-<li>If you are not sure about a question, flag it and move on. You will have time to return to it later and try to figure it out. It is important, to not panic if you don’t know something at first glance.</li>
-<li>You will encounter questions that you won’t know the answer to. This is fine. The official exam guide is intentionally vague. Any course you take, will have some gaps. Don’t be sad if you encounter something entirely new during the exam. The one thing that matters is to pass it, the final score does not matter a lot.</li>
+<li>Keep an eye on the clock. 85 questions are a lot. You have less than 1.5 minutes per question. Don't spend a lot of time on any single question. Many of them can be answered straight away as long as you have decent preparation. Try to select the correct answer and move on.</li>
+<li>If you are not sure about a question, flag it and move on. You will have time to return to it later and try to figure it out. It is important, to not panic if you don't know something at first glance.</li>
+<li>You will encounter questions that you won't know the answer to. This is fine. The official exam guide is intentionally vague. Any course you take, will have some gaps. Don't be sad if you encounter something entirely new during the exam. The one thing that matters is to pass it, the final score does not matter a lot.</li>
 <li>The exam is challenging, but with adequate training, anybody should be able to pass it. You should be fine.</li>
 </ul>
 <h2>Closing Notes<a class="anchor-link" href="#closing-notes" id="closing-notes">&lt;&lt;</a>
 </h2>
-<p>Ultimately, I enjoyed the process of preparation and sitting through the exam itself. And you should be enjoying yours too. Even if it won’t have any significant effect on my career, I’m proud that I was able to pass it.</p>
+<p>Ultimately, I enjoyed the process of preparation and sitting through the exam itself. And you should be enjoying yours too. Even if it won't have any significant effect on my career, I'm proud that I was able to pass it.</p>
 <p>I wish happy learning and good luck to anybody preparing to be an AI Practitioner!</p></article>
 <div class="utterances">
 </div>
