@@ -31,7 +31,7 @@
 <meta content="@ervin_szilagyi" property="twitter:creator">
 <meta content="https://ervinszilagyi.dev/articles/img-building-super-slim-containerized-lambdas-revisited/cover.png" property="twitter:image">
 <meta content="summary_large_image" property="twitter:card">
-<meta content="2025-04-02 12:19:36 UTC" name="last-updated">
+<meta content="2025-04-02 13:52:30 UTC" name="last-updated">
 </head>
 <body class="light-mode">
 <nav class="menu">
@@ -67,7 +67,7 @@
 </h2>
 <p>Recently, I was reading through some AWS blogs when I stumbled upon this article, <a href="https://aws.amazon.com/blogs/containers/optimize-your-container-workloads-for-sustainability/" target="_blank">Optimize your container workloads for sustainability</a> by Karthik Rajendran and Isha Dua. Among other topics, the article discusses reducing the size of your Lambda container images to achieve better sustainability. Some of the main points discussed are <strong>how</strong> and <strong>why</strong> to reduce the size of Lambda containers - the idea being that smaller containers require less bandwidth to transfer over the internet, take up less storage on disk, and are usually faster to build, thereby consuming less energy.</p>
 <p>At first glance, this might seem like a minor optimization, but when you consider that AWS has millions of customers building Docker images, it suddenly makes sense to recommend working with slimmer images. Furthermore, having smaller images is considered a best practice overall.</p>
-<p>Around three years ago, I wrote an article about <strong>“how”</strong>, I was discussing ways to reduce the size of Lambda containers. My article was titled <a href="articles/building-super-slim-containerized-lambdas.html">Building Super Slim Containerized Lambdas on AWS</a> and it primarily focused on Lambda functions written in Rust. Reading the AWS blog article reminded me that I should probably revisit the topic of creating slim Lambda images and provide a more informed perspective.</p>
+<p>Around three years ago, I wrote an article about the <strong>“how”</strong>, I was discussing ways to reduce the size of Lambda containers. My article was titled <a href="articles/building-super-slim-containerized-lambdas.html">Building Super Slim Containerized Lambdas on AWS</a> and it primarily focused on Lambda functions written in Rust. Reading the AWS blog article reminded me that I should probably revisit the topic of creating slim Lambda images and provide a more informed perspective.</p>
 <h2>Short Recap<a class="anchor-link" href="#short-recap" id="short-recap">&lt;&lt;</a>
 </h2>
 <p>As I mentioned, in my old article, I used Rust to build a Lambda function. Code written in Rust is compiled into a binary. To execute this binary as a Lambda function, you can either upload the binary directly to AWS Lambda or package it in a Docker image, push the image to Amazon ECR, and configure a Lambda function to use that image.</p>
