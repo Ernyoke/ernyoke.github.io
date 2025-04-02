@@ -1,0 +1,324 @@
+<html data-theme="light" lang="en">
+<head>
+<title>Building Super Slim Containerized Lambdas on AWS - Revisited - ervinszilagyi.dev</title>
+<link href="https://ervinszilagyi.dev/images/logo48.png" rel="icon" type="image/png">
+<link href="https://ervinszilagyi.dev/styles/styles.css" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/all.min.css" rel="stylesheet">
+<link href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+<link href="https://ervinszilagyi.dev/styles/atom-one.css" rel="stylesheet" title="light">
+<link disabled href="https://ervinszilagyi.dev/styles/atom-one-dark.css" rel="alternate stylesheet" title="dark">
+<script src="https://ervinszilagyi.dev/scripts/scripts.js"></script>
+<script data-domain="ervinszilagyi.dev" defer src="https://plausible.io/js/plausible.js"></script>
+<meta charset="utf-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<script>
+        const isDarkMode = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let theme = localStorage.getItem("theme");
+        if (!theme) {
+            theme = isDarkMode() ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+    </script>
+<meta content="Building Super Slim Containerized Lambdas on AWS - Revisited" property="og:title">
+<meta content="Personal web page and blog." property="og:description">
+<meta content="https://ervinszilagyi.dev/building-super-slim-containerized-lambdas-revisited.html" property="og:url">
+<meta content="https://ervinszilagyi.dev/articles/img-building-super-slim-containerized-lambdas-revisited/cover.png" property="og:image">
+<meta content="Building Super Slim Containerized Lambdas on AWS - Revisited" property="twitter:title">
+<meta content="Personal web page and blog." property="twitter:description">
+<meta content="@ervin_szilagyi" property="twitter:site">
+<meta content="@ervin_szilagyi" property="twitter:creator">
+<meta content="https://ervinszilagyi.dev/articles/img-building-super-slim-containerized-lambdas-revisited/cover.png" property="twitter:image">
+<meta content="summary_large_image" property="twitter:card">
+<meta content="2025-04-02 08:47:58 UTC" name="last-updated">
+</head>
+<body class="light-mode">
+<nav class="menu">
+<div class="nav-left">
+<ul>
+<li>
+<a href="https://ervinszilagyi.dev/">
+<img alt="logo" class="logo" src="https://ervinszilagyi.dev/images/logo48.png">
+<span class="sitename">Ervin Szilágyi</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="nav-right">
+<ul>
+<li>
+<a class="fa fa-circle" id="themeSwitcher" onclick="switchTheme()"></a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/resume.html">Résumé</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/projects.html">Projects</a>
+</li>
+<li>
+<a aria-hidden="true" href="https://ervinszilagyi.dev/blog.html">Blog</a>
+</li>
+</ul>
+</div>
+</nav>
+<article id="main-content"><h1>Building Super Slim Containerized Lambdas on AWS - Revisited</h1>
+<h2>Introduction<a class="anchor-link" href="#introduction" id="introduction">&lt;&lt;</a>
+</h2>
+<p>Recently, I was reading through some AWS blogs when I stumbled upon this article, <a href="https://aws.amazon.com/blogs/containers/optimize-your-container-workloads-for-sustainability/" target="_blank">Optimize your container workloads for sustainability</a> by Karthik Rajendran and Isha Dua. Among other topics, the article discusses reducing the size of your Lambda container images to achieve better sustainability. Some of the main points discussed are how and why to reduce the size of Lambda containers - the idea being that smaller containers require less bandwidth to transfer over the internet, take up less storage on disk, and are usually faster to build, thereby consuming less energy.</p>
+<p>At first glance, this might seem like a minor optimization, but when you consider that AWS has millions of customers building Docker images, it suddenly makes sense to recommend working with slimmer images. Furthermore, having smaller images is considered a best practice overall.</p>
+<p>Around three years ago, I wrote an article about “how”, I was discussing ways to reduce the size of Lambda containers. My article was titled (Building Super Slim Containerized Lambdas on AWS)[/articles/building-super-slim-containerized-lambdas.html] and it primarily focused on Lambda functions written in Rust. Reading the AWS blog article reminded me that I should probably revisit the topic of creating slim Lambda images and provide a more informed perspective.</p>
+<h2>Short Recap<a class="anchor-link" href="#short-recap" id="short-recap">&lt;&lt;</a>
+</h2>
+<p>As I mentioned, in my old article, I used Rust to build a Lambda function. Code written in Rust is compiled into a binary. To execute this binary as a Lambda function, you can either upload the binary directly to AWS Lambda or package it in a Docker image, push the image to Amazon ECR, and configure a Lambda function to use that image.</p>
+<p>The size of this Docker image can vary significantly. If you use the default image recommended by AWS (<code>public.ecr.aws/lambda/provided</code>), the container size can be a few hundred megabytes. However, if you go with a minimal approach, such as a Distroless image, you can get containers down to just a few dozen megabytes, depending mostly on the size of the compiled binary.</p>
+<p>When it comes to Lambda execution time, image size has little impact. Whether the image is large or small, the function’s execution time remains roughly the same - though I haven’t tested exceptionally large images that might push Lambda’s limits.</p>
+<p>Ultimately, the takeaway from the article was that while Distroless allows you to build smaller images, it might not be all that beneficial since it doesn’t improve performance. I also pointed out that a smaller image can speed up the build pipeline. Admittedly, at that time, I didn’t even consider the sustainability angle. Even after all these years, I can only speculate about its impact. As a solo AWS user, it’s difficult to quantify how much of a difference using smaller images would actually make.</p>
+<p>On the other hand, I’m really excited to dive into the nifty details of building tiny images. </p>
+<h2>Steps to Build a Slim Container<a class="anchor-link" href="#steps-to-build-a-slim-container" id="steps-to-build-a-slim-container">&lt;&lt;</a>
+</h2>
+<p>In order to build slim containers, you would want to leverage the following steps:</p>
+<h3>1. Use tiny base images</h3>
+<p>This is probably the most important step in reducing the image size. In most cases, this step allows us to achieve the greatest size reduction without modifying our application’s source code.</p>
+<p>The general idea is that instead of base images such as <code>public.ecr.aws/lambda/provided:al2</code> (the AWS-recommended image for compiled executables like Rust applications) or images based on Ubuntu you can use images such as Alpine, Distroless or Chainguard. These alternatives have a significantly smaller footprint. </p>
+<p>Distroless and Chainguard images are optimized to include only the essentials needed for execution. They lack a shell, package manager, and most standard Linux binaries, making them extremely small. Alpine-based images include more utilities, such as a shell and basic Linux binaries, yet they are still designed to occupy only a few megabytes on disk.</p>
+<p>The downside of using these small images is that they can be challenging to work with during development or debugging. For example, you cannot directly open a shell in a Distroless image since it does not include one.</p>
+<blockquote>
+<p><strong>ℹ️ Note</strong>:
+To start a shell inside a Distroless image, you can rebuild your image using the <code>:debug</code> tag. For example, instead of <code>FROM gcr.io/distroless/cc:latest-amd64</code> you can have <code>FROM gcr.io/distroless/cc:debug</code>. “Debug” images include busybox, which provides a minimal set of common Linux binaries..</p>
+</blockquote>
+<h1></h1>
+<blockquote>
+<p><strong>ℹ️ Note</strong>:
+Similarly, with Chainguard images, you can append the <code>-dev</code> keyword to the tag of the image. For example, if you have an image built on <code>FROM cgr.dev/chainguard/static:latest</code>, you can rebuild it with <code>FROM cgr.dev/chainguard/static:latest-dev</code> to have access to a shell and other debug tools.</p>
+</blockquote>
+<h3>2. Add strictly what you need to the image</h3>
+<p>This point is similar to the previous one, the difference being that even if you choose the smallest base image possible, you might found yourself having a bunch of unnecessary stuff added back to your image at build time. To avoid this, you can do the following:</p>
+<ol>
+<li>
+<p>Use multistage builds<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>: Most likely, your application is built alongside the Docker image you publish. In many cases, developers copy the source code into the image and then run commands to create the application package. As a result, the final image may contain unnecessary development dependencies that are not required for execution. You can either remove these manually, or just simply use multistage builds. In case of multistage builds, you can use different images for build and execution. In fact, you can use a fully fledged, “large” development image for the build step, after which you copy the artifacts to a stripped down image used for execution.</p>
+</li>
+<li>
+<p>Use <code>.dockerignore</code> to copy only what you need to your image: similarly to <code>.gitignore</code>, .<code>dockerignore</code> let’s you specifies files and folders which you should not copy over to your images at build time.</p>
+</li>
+</ol>
+<h3>3. Use a compiled language to build a small executable</h3>
+<p>Nowadays, it is becoming increasingly challenging to distinguish between interpreted and compiled languages. Many interpreted (or so-called “scripting”) languages use just-in-time (JIT) compilers, meaning the code is compiled to machine code at execution time.</p>
+<p>The key takeaway here is that, to optimize the size of your container, you may want to avoid writing your Lambda functions in languages that require an interpreter or JIT compiler. Instead, you should choose something that compiles to machine code and is compressed into an executable.</p>
+<p>To be more specific, rather than using Python or JavaScript, you might consider Rust, Go, or C++. Of course, I fully understand that this may not always be feasible, and my intention is not to discredit Python, JavaScript, or any other language. However, it is important to recognize that if we prioritize minimizing container size, eliminating the interpreter can free up tens-if not hundreds—of megabytes.</p>
+<h3>4. Static vs dynamic linking</h3>
+<p>In case you followed previous points, your image should be really small right now. At this point, probably your main goal is to reduce the size of the executable. One thing you may encounter at this point is the presence of libc (usually <code>glibc</code>) in your Docker image. Both Distroless and Chainguard present the option to chose a base image the has <code>glibc</code> and an equivalent image that does not have it. Obviously, the image that has glibc is larger in size.</p>
+<p><code>glibc</code>, or the GNU C Library, is the standard C library (libc) implementation used on Linux systems. It offers a wide range of functions that allow programs to interact with the operating system, such as handling input/output, managing memory, and manipulating strings. Rust, relies on <code>glibc</code> for interacting with the operating system. On Linux, this typically means linking against <code>glibc</code>, as Rust’s standard library, <code>libstd</code>, uses it for system calls and other operations. On the other hand, Go offers more flexibility by allowing compilation without relying on the system’s C standard library. By setting <code>CGO_ENABLED=0</code>, Go programs use their own implementations for system interactions, avoiding <code>glibc</code> dependency. This means that if you build a Lambda function with Go, you can just disable linking against <code>glibc</code> and you can put our executable in an image that does not have the library. In case of Rust, you can build an executable that statically links libc by using musl<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>.</p>
+<h3>5. Building an image from Scratch</h3>
+<p>The most minimal base image you can use is <code>scratch</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>. You can simply copy your binary executable to it the image and it will be executed as PID 1. This can work for AWS Lambda functions as well, but you may encounter issues depending on what your Lambda function attempts to accomplish. For example:</p>
+<ul>
+<li>CA (Certificate Authority) certificates will be missing, you wont even have a <code>/etc/ssl/certs/</code> folder. This will cause HTTPS connections to fail. To use any AWS service such as DynamoDB or S3, HTTPS must work.</li>
+<li>Standard directories such as <code>/var</code>, <code>/home</code>, and <code>/root</code> will be missing. The exception is the <code>/tmp</code> directory, which will be mounted by AWS, allowing us to write to a temporary folder if needed.</li>
+<li>Time zone data may cause issues, as the <code>/usr/share/zoneinfo</code> directory will be missing.</li>
+</ul>
+<p>Of course, you can overcome these issues by adding the necessary files and folders at build time, but that defeats the purpose of using the <code>scratch</code> base image. Instead, you would rather choose Distroless or Chainguard.</p>
+<h2>Build the Slimmest Image Possible for a Rust Lambda<a class="anchor-link" href="#build-the-slimmest-image-possible-for-a-rust-lambda" id="build-the-slimmest-image-possible-for-a-rust-lambda">&lt;&lt;</a>
+</h2>
+<p>Following these steps let’s try to build a slim but usable containerized image for a Lambda function developed in Rust. </p>
+<pre><code class="language-bash">ARG FUNCTION_DIR="/function"
+
+FROM rust:1.84-bullseye AS builder
+
+WORKDIR /build
+
+ADD Cargo.toml Cargo.toml
+ADD Cargo.lock Cargo.lock
+ADD src src
+
+# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
+# Docker Buildkit required
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/home/root/app/target \
+    rustup target add x86_64-unknown-linux-musl &amp;&amp; \
+    cargo build --release --target x86_64-unknown-linux-musl
+
+# copy artifacts to a clean image
+FROM cgr.dev/chainguard/static:latest
+
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+
+ENTRYPOINT [ "./bootstrap" ]
+</code></pre>
+<p>The size of this image is 4.03 MB, of which the final base image itself (<code>chainguard/static</code>) accounts for approximately 1.33 MB, while the remaining 2.7 MB is the executable. Admittedly, my Lambda function does not do a lot and has only a few dependencies (the code for the function can be found here: <a href="https://github.com/Ernyoke/aws-lambda-benchmarks/tree/main/aws-lambda-compute-pi-rs/src" target="_blank">GitHub</a>). What I would want to point out is that this Docker image follows the steps outlined above to achieve the reduced size:</p>
+<ol>
+<li>It is using a builder image to compile the executable.</li>
+<li>Only the necessary files a copied to the final image - specifically, the executable named <code>bootstrap</code>
+</li>
+<li>It is using <code>chainguard/static</code> to run the Lambda function. Distroless could have been an option as well, but that would result in a slightly larger image size (4.68 MB).</li>
+<li>It is using <code>x86_64-unknown-linux-musl</code> toolchain to build the executable, ensuring that libc is statically linked.</li>
+</ol>
+<p>Additionally, the target architecture is <code>x86_64</code>. However, with a few modifications, you could build the same image for arm64:</p>
+<pre><code class="language-bash">ARG FUNCTION_DIR="/function"
+
+FROM rust:1.84-bullseye AS builder
+
+WORKDIR /build
+
+ADD Cargo.toml Cargo.toml
+ADD Cargo.lock Cargo.lock
+ADD src src
+
+# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
+# Docker Buildkit required
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/home/root/app/target \
+    rustup target add aarch64-unknown-linux-musl &amp;&amp; \
+    cargo build --release --target aarch64-unknown-linux-musl
+
+# copy artifacts to a clean image
+FROM gcr.io/distroless/static:latest-arm64
+
+COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/bootstrap bootstrap
+
+ENTRYPOINT [ "./bootstrap" ]
+</code></pre>
+<p>The size of this image will be roughly the same - I measured 4.06 MB on my computer. There are minor variations in size depending on the target architecture, with <code>x86_64</code> typically being a few KB smaller. However, this difference is negligible.</p>
+<p>You can still get the image slimmer by using <code>scratch</code>:</p>
+<pre><code class="language-bash">ARG FUNCTION_DIR="/function"
+
+FROM rust:1.84-bullseye AS builder
+
+WORKDIR /build
+
+ADD Cargo.toml Cargo.toml
+ADD Cargo.lock Cargo.lock
+ADD src src
+
+# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
+# Docker Buildkit required
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/home/root/app/target \
+    rustup target add x86_64-unknown-linux-musl &amp;&amp; \
+    cargo build --release --target x86_64-unknown-linux-musl
+
+# copy artifacts to a clean image
+FROM scratch
+
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+
+ENTRYPOINT [ "./bootstrap" ]
+</code></pre>
+<p>In my case, this Lambda function works - it executes successfully and produces the expected output. However, all it does is calculate the value of PI using the Unbounded Spigot Algorithm for the Digits of PI<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>. It is a “toy” function, serving as proof that <code>scratch</code> can work for Lambda functions. Nevertheless, I do not recommend using this base image. The size of this image is 2.69 MB.</p>
+<p>Before closing this section, here is a comparison between base images with Rust executables:</p>
+<p><img alt="Rust Container Image Sizes by Base Images" src="img-building-super-slim-containerized-lambdas-revisited/rust-container-image-sizes-by-base-images.png"></p>
+<h2>Build the Slimmest Image Possible for a Python Lambda<a class="anchor-link" href="#build-the-slimmest-image-possible-for-a-python-lambda" id="build-the-slimmest-image-possible-for-a-python-lambda">&lt;&lt;</a>
+</h2>
+<p>Understandably, there can be several reasons not to use a compiled language for your Lambda function. In this section of the article, we will try to build a slim image for a Lambda function written in Python.</p>
+<p>For this example, I will use a Python image based on Alpine Linux. Alpine-based images are widely known as slim images, but they are not the slimmest possible options. They come with a package manager (<code>apk</code>), a shell, and all the well-known Linux utilities, so they are not as “clean” as Distroless or Chainguard-based images.</p>
+<p>I tried to build an image for a Python Lambda using a Distroless base, but I failed miserably. The AWS Lambda Python Runtime Interface Client relies on C++ modules using CPython<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>. These C++ modules have to be built at installation time and require a bunch of dependencies. Besides, they rely on dynamically linking several dependencies (musl vs. glibc, remember?). I tried to add all the necessary dependencies to the final runtime image, but in the end, whatever I did, it didn’t work out. So I gave up. This might be another project of mine for a later time—to try to make it work.</p>
+<p>Nevertheless, here is how a containerized Lambda function for Python would look:</p>
+<pre><code class="language-bash">ARG FUNCTION_DIR="/home/app/"
+ARG RUNTIME_VERSION="3.11"
+ARG DISTRO_VERSION="3.21"
+
+# Stage 1 - bundle base image + runtime
+# Grab a fresh copy of the image and install GCC
+FROM python:${RUNTIME_VERSION}-alpine${DISTRO_VERSION} AS python-alpine
+# Install GCC (Alpine uses musl but we compile and link dependencies with GCC)
+RUN apk add --no-cache libstdc++
+
+# Stage 2 - build function and dependencies
+FROM python-alpine AS build-image
+
+# Needed for libexecinfo-dev. Alternatives such as libunwind may build awslambdaric, but the function wont execute in the final runtime image.
+# Tanks https://stackoverflow.com/questions/77518311/dockerfile-for-node16-alpine-in-aws-lambda
+RUN apk add --no-cache --update --repository=https://dl-cdn.alpinelinux.org/alpine/v3.16/main/ libexecinfo-dev
+
+# Install aws-lambda-cpp build dependencies
+RUN apk add --no-cache \
+    build-base \
+    libtool \
+    autoconf \
+    automake \
+    libexecinfo-dev \
+    make \
+    cmake \
+    libcurl
+
+ARG FUNCTION_DIR
+ARG RUNTIME_VERSION
+
+RUN mkdir -p ${FUNCTION_DIR}
+
+COPY . ${FUNCTION_DIR}
+
+RUN python${RUNTIME_VERSION} -m pip install awslambdaric --target ${FUNCTION_DIR}
+RUN python${RUNTIME_VERSION} -m pip install -r ${FUNCTION_DIR}requirements.txt --target ${FUNCTION_DIR}
+
+# Stage 3 - final runtime image
+# Grab a fresh copy of the Python image
+FROM python-alpine
+
+ARG FUNCTION_DIR
+
+WORKDIR ${FUNCTION_DIR}
+
+COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
+
+ENTRYPOINT [ "python", "-m", "awslambdaric"]
+
+CMD [ "main.handler" ]
+</code></pre>
+<p>Admittedly, I didn’t come up with all of this by myself. The image is based on <a href="https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support" target="_blank">this</a> blogpost<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup> from <a href="https://bsky.app/profile/danilop.bsky.social" target="_blank">Danilo Poccia</a>.</p>
+<p>The final image size is 81.6 MB, which is significantly smaller than the 717 MB base image (<code>public.ecr.aws/lambda/python</code>) recommended in the AWS documentation<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>.</p>
+<p>To put into perspective what we built, here is a comparison of the Rust x86-64 images and the Python images. The size of the Alpine image is more than three times larger than the largest Distroless image. But all in all, it is still relatively small compared to the base images provided by AWS.</p>
+<p><img alt="Rust (x86-64) and Python Container Image Sizes by Base Images" src="img-building-super-slim-containerized-lambdas-revisited/rust-python-container-image-sizes-by-base-images.png"></p>
+<h2>Conclusions<a class="anchor-link" href="#conclusions" id="conclusions">&lt;&lt;</a>
+</h2>
+<p>Revisiting this topic made me realize that building smaller Docker images can be a lot of fun, but it can also be quite challenging. Returning to the original point of this article, it is true that smaller containers can contribute to sustainability. However, in order to build and work with them as developers, we must invest a significant amount of time and effort.</p>
+<p>Should you go in tomorrow and try to reduce the size of all your Lambda images running in production? Probably not. There is no such thing as a free lunch. You trade ease of use for bandwidth and storage savings. It is up to you to decide if it’s worth it.</p>
+<p>As always, the code referenced in this article can be found on Github: <a href="https://github.com/Ernyoke/aws-lambda-benchmarks" target="_blank">https://github.com/Ernyoke/aws-lambda-benchmarks</a></p>
+<h2>References:<a class="anchor-link" href="#references" id="references">&lt;&lt;</a>
+</h2>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://docs.docker.com/build/building/multi-stage/" target="_blank">Multistage Builds</a>. <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://doc.rust-lang.org/1.15.0/book/advanced-linking.html#static-linking" target="_blank">Rust - Static Linking</a> <a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://doc.rust-lang.org/reference/linkage.html#static-and-dynamic-c-runtimes" target="_blank">The Rust Reference - Static and dynamic C runtimes</a> <a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">↩</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://docs.docker.com/build/building/base-images/#create-a-minimal-base-image-using-scratch" target="_blank">Docker Docs - Create a minimal base image using scratch</a> <a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">↩</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://www.cs.ox.ac.uk/jeremy.gibbons/publications/spigot.pdf" target="_blank">Unbounded Spigot Algorithms for the Digits of Pi - Jeremy Gibbons</a> <a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">↩</a></p>
+</li>
+<li id="fn:6">
+<p><a href="https://github.com/aws/aws-lambda-python-runtime-interface-client" target="_blank">GitHub Repository for AWS Lambda Python Runtime Interface Client</a> <a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">↩</a></p>
+</li>
+<li id="fn:7">
+<p><a href="https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support/" target="_blank">New for AWS Lambda – Container Image Support</a> - in the blogpost is Danilo gives an example for Python 3.9. Based on his Dockerfile, I updated mine to use Python 3.11. At first glance, this should have been pretty easy to do, but I still had to track down dependencies (<code>libexecinfo-dev</code>) that got removed from newer version of Alpine images. <a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">↩</a></p>
+</li>
+<li id="fn:8">
+<p><a href="https://docs.aws.amazon.com/lambda/latest/dg/python-image.html#python-image-instructions" target="_blank">Deploy Python Lambda functions with container images</a> <a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">↩</a></p>
+</li>
+</ol>
+</div></article>
+<div class="utterances">
+</div>
+<footer>
+<span>Site generated with <a href="https://github.com/Ernyoke/ssg" target="_blank">ssg</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/privacy.html">Privacy Policy</a></span>
+<span>|</span>
+<span><a href="https://ervinszilagyi.dev/ai.html">AI</a></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script src="https://ervinszilagyi.dev/scripts/terraform.js" type="text/javascript"></script>
+<script src="https://ervinszilagyi.dev/scripts/dockerfile.min.js" type="text/javascript"></script>
+<script>
+        hljs.registerLanguage('terraform', window.hljsDefineTerraform);
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

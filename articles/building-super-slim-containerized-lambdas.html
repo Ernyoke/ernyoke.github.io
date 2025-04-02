@@ -31,7 +31,7 @@
 <meta content="@ervin_szilagyi" property="twitter:creator">
 <meta content="https://ervinszilagyi.dev/images/cover.png" property="twitter:image">
 <meta content="summary_large_image" property="twitter:card">
-<meta content="2023-05-29 21:52:47 UTC" name="last-updated">
+<meta content="2025-04-02 08:47:58 UTC" name="last-updated">
 </head>
 <body class="light-mode">
 <nav class="menu">
@@ -184,7 +184,7 @@ ENTRYPOINT [ "./bootstrap" ]
 </table>
 <p>All of these measurements were done in <code>us-east-1</code> region. The Lambda had the minimum possible size of RAM allocated (128 MB).</p>
 <p>Comparing the init times with the the ones of the same Lambda running inside the AWS provided `ecr.aws/lambda/provided:al2 image, we get the following:</p>
-<p><img alt="AWS Provided container init times and distroless init times comparison chart" src="img-build-super-slim-containerized-lambdas/aws-vs-distroless.png"></p>
+<p><img alt="AWS Provided container init times and distroless init times comparison chart" src="img-building-super-slim-containerized-lambdas/aws-vs-distroless.png"></p>
 <p>The init times measured above are certainly great. They are way below 100 ms, in many cases below 10 ms. But we should not attribute this to the fact that we are using a distroless base image. In the comparison chart we can see that they are similar to the ones of an container image provided by AWS. What this proves is that the AWS Lambda container cache works as expected by pro-actively caching larger base images as well, but unfortunately we were not able to see meaning gains for a smaller image.</p>
 <h2>Other Gains?<a class="anchor-link" href="#other-gains" id="other-gains">&lt;&lt;</a>
 </h2>

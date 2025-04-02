@@ -82,6 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 h4, h5, h6 {
     line-height: 1em;
     font-weight: bold;
+    font-size: 0.9em;
 }
 
 h1 {
@@ -97,18 +98,6 @@ h2 {
 h3 {
     line-height: 1.5em;
     font-size: 1em;
-}
-
-h4 {
-    font-size: 0.9em;
-}
-
-h5 {
-    font-size: 0.9em;
-}
-
-h6 {
-    font-size: 0.9em;
 }
 
 b, strong {
@@ -176,10 +165,6 @@ nav ul li {
     color: var(--fg) !important;
     display: block;
     line-height: 2em;
-}
-
-#themeSwitcher {
-    
 }
 
 nav div ul li a {
