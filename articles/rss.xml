@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+  <channel>
+    <title>Blog posts and articles - ervinszilagyi.dev</title>
+    <link>https://ervinszilagyi.dev/articles/rss.xml</link>
+    <description>Latest blog posts from ervinszilagyi.dev</description>
+    <atom:link href="https://ervinszilagyi.dev/articles/rss.xml" rel="self"/>
+    <docs>http://www.rssboard.org/rss-specification</docs>
+    <generator>python-feedgen</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 19 Apr 2026 10:22:59 +0000</lastBuildDate>
+    <item>
+      <title>Lessons Learned from Building an MCP Client</title>
+      <link>https://ervinszilagyi.dev/articles/lessons-learned-from-building-an-mcp-client.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/lessons-learned-from-building-an-mcp-client.html</guid>
+      <pubDate>Fri, 25 Jul 2025 19:42:46 +0000</pubDate>
+    </item>
+    <item>
+      <title>Building Super Slim Containerized Lambdas on AWS - Revisited</title>
+      <link>https://ervinszilagyi.dev/articles/building-super-slim-containerized-lambdas-revisited.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/building-super-slim-containerized-lambdas-revisited.html</guid>
+      <pubDate>Wed, 02 Apr 2025 13:54:24 +0000</pubDate>
+    </item>
+    <item>
+      <title>Building Super Slim Containerized Lambdas on AWS</title>
+      <link>https://ervinszilagyi.dev/articles/building-super-slim-containerized-lambdas.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/building-super-slim-containerized-lambdas.html</guid>
+      <pubDate>Wed, 02 Apr 2025 08:47:58 +0000</pubDate>
+    </item>
+    <item>
+      <title>ECS Fargate Custom Logging with Fluent Bit</title>
+      <link>https://ervinszilagyi.dev/articles/ecs-custom-logging-with-fluentbit.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/ecs-custom-logging-with-fluentbit.html</guid>
+      <pubDate>Tue, 11 Mar 2025 16:14:18 +0000</pubDate>
+    </item>
+    <item>
+      <title>An Introduction to AWS Batch</title>
+      <link>https://ervinszilagyi.dev/articles/an-introduction-to-aws-batch.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/an-introduction-to-aws-batch.html</guid>
+      <pubDate>Mon, 10 Mar 2025 10:47:15 +0000</pubDate>
+    </item>
+    <item>
+      <title>How to Build a BlueSky RSS-like Bot with AWS Lambda and Terraform</title>
+      <link>https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</guid>
+      <pubDate>Mon, 10 Mar 2025 09:32:36 +0000</pubDate>
+    </item>
+    <item>
+      <title>Expose our REST API on AWS with a Custom Domain</title>
+      <link>https://ervinszilagyi.dev/articles/expose-our-rest-api-on-aws-with-a-custom-domain.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/expose-our-rest-api-on-aws-with-a-custom-domain.html</guid>
+      <pubDate>Mon, 10 Mar 2025 09:32:36 +0000</pubDate>
+    </item>
+    <item>
+      <title>Terragrunt for Multi-Region/Multi-Account Deployments</title>
+      <link>https://ervinszilagyi.dev/articles/terragrunt-for-multi-region-multi-account-deployments.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/terragrunt-for-multi-region-multi-account-deployments.html</guid>
+      <pubDate>Thu, 24 Oct 2024 17:47:29 +0000</pubDate>
+    </item>
+    <item>
+      <title>About OCP Exams</title>
+      <link>https://ervinszilagyi.dev/articles/about-ocp-exams.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/about-ocp-exams.html</guid>
+      <pubDate>Sat, 28 Sep 2024 22:52:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>About AWS AI Practitioner (Beta) Exam</title>
+      <link>https://ervinszilagyi.dev/articles/about-ai-practitioner-beta-exam.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/about-ai-practitioner-beta-exam.html</guid>
+      <pubDate>Sat, 28 Sep 2024 22:44:09 +0000</pubDate>
+    </item>
+    <item>
+      <title>Recertification and the Current State of AWS Exams</title>
+      <link>https://ervinszilagyi.dev/articles/recertification-and-the-current-state-aws-exams.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/recertification-and-the-current-state-aws-exams.html</guid>
+      <pubDate>Wed, 14 Aug 2024 14:26:55 +0000</pubDate>
+    </item>
+    <item>
+      <title>Fluent Bit with ECS: Configuration Tips and Tricks</title>
+      <link>https://ervinszilagyi.dev/articles/fluentbit-with-ecs-configuration-tips-and-tricks.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/fluentbit-with-ecs-configuration-tips-and-tricks.html</guid>
+      <pubDate>Fri, 29 Dec 2023 15:26:17 +0000</pubDate>
+    </item>
+    <item>
+      <title>Why I Am Not Able to Remove a Security Group?</title>
+      <link>https://ervinszilagyi.dev/articles/why-i-am-not-able-to-remove-a-security-group.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/why-i-am-not-able-to-remove-a-security-group.html</guid>
+      <pubDate>Mon, 25 Dec 2023 13:05:44 +0000</pubDate>
+    </item>
+    <item>
+      <title>Generate "low poly" images using Delaunay triangulation</title>
+      <link>https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</guid>
+      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
+    </item>
+    <item>
+      <title>Electrify your NodeJS AWS Lambdas with Rust</title>
+      <link>https://ervinszilagyi.dev/articles/electrify-your-nodejs-aws-lambdas-with-rust.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/electrify-your-nodejs-aws-lambdas-with-rust.html</guid>
+      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
+    </item>
+    <item>
+      <title>Containers: Under the Hood</title>
+      <link>https://ervinszilagyi.dev/articles/containers-under-the-hood.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/containers-under-the-hood.html</guid>
+      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
+    </item>
+    <item>
+      <title>GCP Associate Cloud Engineer Certification Experience</title>
+      <link>https://ervinszilagyi.dev/articles/gcp-associate-cloud-engineer-certification-experience.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/gcp-associate-cloud-engineer-certification-experience.html</guid>
+      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
+    </item>
+    <item>
+      <title>AWS Lambda Graceful Shutdown</title>
+      <link>https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</guid>
+      <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
+    </item>
+    <item>
+      <title>AWS Lambda Extensions with Rust</title>
+      <link>https://ervinszilagyi.dev/articles/aws-lambda-extensions-with-rust.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/aws-lambda-extensions-with-rust.html</guid>
+      <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
+    </item>
+    <item>
+      <title>Deploy Containers with App Runner</title>
+      <link>https://ervinszilagyi.dev/articles/deploy-containers-with-app-runner.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/deploy-containers-with-app-runner.html</guid>
+      <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
