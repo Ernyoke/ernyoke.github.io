@@ -8,7 +8,7 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 19 Apr 2026 11:44:32 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 20 Apr 2026 06:50:54 +0000</lastBuildDate>
     <item>
       <title>Lessons Learned from Building an MCP Client</title>
       <link>https://ervinszilagyi.dev/articles/lessons-learned-from-building-an-mcp-client.html</link>
@@ -55,21 +55,21 @@
       <pubDate>Mon, 10 Mar 2025 10:47:15 +0000</pubDate>
     </item>
     <item>
-      <title>How to Build a BlueSky RSS-like Bot with AWS Lambda and Terraform</title>
-      <link>https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</link>
-      <description>Personal web page and blog.</description>
-      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
-      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</guid>
-      <enclosure url="https://ervinszilagyi.dev/articles/img-how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform/cover.png" length="0" type="image/png"/>
-      <pubDate>Mon, 10 Mar 2025 09:32:36 +0000</pubDate>
-    </item>
-    <item>
       <title>Expose our REST API on AWS with a Custom Domain</title>
       <link>https://ervinszilagyi.dev/articles/expose-our-rest-api-on-aws-with-a-custom-domain.html</link>
       <description>Personal web page and blog.</description>
       <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
       <guid isPermaLink="true">https://ervinszilagyi.dev/articles/expose-our-rest-api-on-aws-with-a-custom-domain.html</guid>
       <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
+      <pubDate>Mon, 10 Mar 2025 09:32:36 +0000</pubDate>
+    </item>
+    <item>
+      <title>How to Build a BlueSky RSS-like Bot with AWS Lambda and Terraform</title>
+      <link>https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform.html</guid>
+      <enclosure url="https://ervinszilagyi.dev/articles/img-how-to-build-a-bluesky-rss-like-bot-with-aws-lambda-and-terraform/cover.png" length="0" type="image/png"/>
       <pubDate>Mon, 10 Mar 2025 09:32:36 +0000</pubDate>
     </item>
     <item>
@@ -127,11 +127,11 @@
       <pubDate>Mon, 25 Dec 2023 13:05:44 +0000</pubDate>
     </item>
     <item>
-      <title>Generate "low poly" images using Delaunay triangulation</title>
-      <link>https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</link>
+      <title>Containers: Under the Hood</title>
+      <link>https://ervinszilagyi.dev/articles/containers-under-the-hood.html</link>
       <description>Personal web page and blog.</description>
       <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
-      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</guid>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/containers-under-the-hood.html</guid>
       <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
       <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
     </item>
@@ -145,15 +145,6 @@
       <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
     </item>
     <item>
-      <title>Containers: Under the Hood</title>
-      <link>https://ervinszilagyi.dev/articles/containers-under-the-hood.html</link>
-      <description>Personal web page and blog.</description>
-      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
-      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/containers-under-the-hood.html</guid>
-      <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
-      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
-    </item>
-    <item>
       <title>GCP Associate Cloud Engineer Certification Experience</title>
       <link>https://ervinszilagyi.dev/articles/gcp-associate-cloud-engineer-certification-experience.html</link>
       <description>Personal web page and blog.</description>
@@ -163,13 +154,13 @@
       <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
     </item>
     <item>
-      <title>AWS Lambda Graceful Shutdown</title>
-      <link>https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</link>
+      <title>Generate "low poly" images using Delaunay triangulation</title>
+      <link>https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</link>
       <description>Personal web page and blog.</description>
       <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
-      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</guid>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/generate-low-poly-images-using-del-triangulation.html</guid>
       <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
-      <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
+      <pubDate>Mon, 29 May 2023 21:50:52 +0000</pubDate>
     </item>
     <item>
       <title>AWS Lambda Extensions with Rust</title>
@@ -177,6 +168,15 @@
       <description>Personal web page and blog.</description>
       <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
       <guid isPermaLink="true">https://ervinszilagyi.dev/articles/aws-lambda-extensions-with-rust.html</guid>
+      <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
+      <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
+    </item>
+    <item>
+      <title>AWS Lambda Graceful Shutdown</title>
+      <link>https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</link>
+      <description>Personal web page and blog.</description>
+      <author>ervin_szilagyi[at]outlook.com (Ervin Szilagyi)</author>
+      <guid isPermaLink="true">https://ervinszilagyi.dev/articles/aws-lambda-graceful-shutdown.html</guid>
       <enclosure url="https://ervinszilagyi.dev/images/cover.png" length="0" type="image/png"/>
       <pubDate>Mon, 29 May 2023 21:44:49 +0000</pubDate>
     </item>

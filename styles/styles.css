@@ -179,9 +179,9 @@ nav div ul li a {
     flex: 4;
 }
 
-.nav-left {
+/* .nav-left {
     flex: 1;
-}
+} */
 
 .nav-left ul li {
     float: left;
